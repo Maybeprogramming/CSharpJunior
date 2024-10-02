@@ -4,6 +4,9 @@
     {
         static void Main()
         {
+            Console.Title = "ДЗ: Поликлиника";
+
+
         }
     }
 }
