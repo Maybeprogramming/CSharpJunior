@@ -4,8 +4,19 @@
     {
         static void Main()
         {
-            int picturesCount = 52;
-            int pictureInRow = 3;
+            Console.Title = "ДЗ: Картинки";
+            int pictures = 52;
+            int maxPicturesInRow = 3;
+            int usedPictures;
+            int unusedPictures;
+
+            usedPictures = pictures / maxPicturesInRow;
+            unusedPictures = pictures % maxPicturesInRow;
+
+            Console.WriteLine($"Полностью заполненных рядов: {usedPictures}.");
+            Console.WriteLine($"Картинок сверх меры: {unusedPictures}.");
+
+            Console.ReadKey();
         }
     }
 }
