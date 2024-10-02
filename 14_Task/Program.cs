@@ -1,0 +1,9 @@
+﻿namespace _14_Task
+{
+    internal class Program
+    {
+        static void Main()
+        {
+        }
+    }
+}
