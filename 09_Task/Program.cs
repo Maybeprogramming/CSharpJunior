@@ -3,17 +3,18 @@
     public class Program
     {
         private static void Main()
-        {
+        {            
             const string CommandGoToCafe = "1";
             const string CommandGoToCinema = "2";
             const string CommandGoToBank = "3";
             const string CommandGoToExit = "exit";
-            const string WelcomeMessage = "Добро пожаловать в развлекательный центр ";
-            const string MenuHeaderMessage = "Введите команду для перехода";
-            const string ContinueMessage = "\nЧтобы продолжить нажмите любую клавишу...";
 
+            Console.Title = "ДЗ: Контроль выхода";
             string userInputCommand;
             bool isTired = false;
+            string WelcomeMessage = "Добро пожаловать в развлекательный центр";
+            string MenuHeaderMessage = "Введите команду для перехода";
+            string ContinueMessage = "\nЧтобы продолжить нажмите любую клавишу...";
 
             while (isTired == false)
             {
@@ -37,7 +38,7 @@
                         break;
 
                     case CommandGoToCafe:
-                        Console.WriteLine("Вы заказали кофе с круасанов в кафе");
+                        Console.WriteLine("Вы заказали кофе с круасаном в кафе");
                         break;
 
                     case CommandGoToCinema:
