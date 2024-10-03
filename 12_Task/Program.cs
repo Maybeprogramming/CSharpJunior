@@ -15,7 +15,7 @@
             int randomNumber;
             string userInput;
             string name;
-            int minLenthName = 1;
+            int minLengthName = 1;
             int age;
             bool isWork = true;
             string continueMessege = "\nНажмите клавишу чтобы продолжить...";
@@ -44,7 +44,7 @@
                         Console.WriteLine("Напишите ваше имя: ");
                         name = Console.ReadLine();
 
-                        if (name.Length >= minLenthName)
+                        if (name.Length >= minLengthName)
                         {
                             Console.WriteLine($"Установлено имя: {name}");
                         }
