@@ -2,8 +2,30 @@
 {
     public class Program
     {
-        static void Main()
+        private static void Main()
         {
+            int number;
+            int minNumber = 0;
+            int maxNumber = 100;
+            int firstNumber = 3;
+            int secondNumber = 5;
+            int sumNumber = 0;
+            Random random = new Random();
+
+            number = random.Next(minNumber, ++maxNumber);
+            Console.WriteLine($"Числа кратные \"{firstNumber}\" и \"{secondNumber}\":");
+
+            for (int i = 0; i <= number; i++)
+            {
+                if (i % firstNumber == 0 || i % secondNumber == 0)
+                {
+                    sumNumber += i;
+                    Console.Write($" {i} ");
+                }
+            }
+
+            Console.WriteLine($"\nСумма чисел: {sumNumber}");
+            Console.ReadKey();
         }
     }
 }
