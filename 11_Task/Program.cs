@@ -4,6 +4,7 @@
     {
         private static void Main()
         {
+            Console.Title = "ДЗ: Сумма чисел";
             int number;
             int minNumber = 0;
             int maxNumber = 100;
