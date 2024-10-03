@@ -1,6 +1,6 @@
 ﻿namespace _50_Task
 {
-    internal class Program
+    public class Program
     {
         static void Main()
         {
