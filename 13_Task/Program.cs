@@ -13,19 +13,9 @@
             const string CommandToExit = "7";
 
             Console.Title = "ДЗ: Конвертер валют";
-            float rubValue;
-            float usdValue;
-            float eurValue;
-            int minRubCount = 300;
-            int maxRubCount = 600;
-            int minUsdCount = 20;
-            int maxUsdCount = 50;
-            int minEurCount = 10;
-            int maxEurCount = 30;
-            Random random = new Random();
-            rubValue = random.Next(minRubCount, ++maxRubCount);
-            usdValue = random.Next(minUsdCount, ++maxUsdCount);
-            eurValue = random.Next(minEurCount, ++maxEurCount);
+            float rubValue = 5000;
+            float usdValue = 1000;
+            float eurValue = 2000;
             float rubToUsdCost = 65;
             float rubToEurCost = 75;
             float usdToRubCost = 0.02f;
@@ -38,7 +28,7 @@
             bool isWork = true;
             string continueMessage = "\nНажмите любую клавишу чтобы продолжить";
             string inncorrectInputCountMessage = "У вас недостаточно средств для выполнения этой операции";
-            string menuText = $"\nМеню для обмена:" +
+            string menuText = $"\nМеню обмена:" +
                 $"\n{CommandRubToUsd} - рубль -> доллар, по курсу {rubToUsdCost} за 1 доллар" +
                 $"\n{CommandRubToEur} - рубль -> евро, по курсу {rubToEurCost} за 1 евро" +
                 $"\n{CommandUsdToRub} - доллар -> рубль, по курсу {usdToRubCost} за 1 рубль" +
