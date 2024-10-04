@@ -13,9 +13,9 @@
             const string CommandToExit = "7";
 
             Console.Title = "ДЗ: Конвертер валют";
-            float rubValue = 5000;
-            float usdValue = 1000;
-            float eurValue = 2000;
+            float rubOnWallet = 5000;
+            float usdOnWallet = 1000;
+            float eurOnWallet = 2000;
             float rubToUsdCost = 65;
             float rubToEurCost = 75;
             float usdToRubCost = 0.02f;
@@ -41,7 +41,7 @@
             while (isWork)
             {
                 Console.Clear();
-                Console.WriteLine($"У вас на балансе: {rubValue} рублей, {usdValue} долларов, {eurValue} евро");
+                Console.WriteLine($"У вас на балансе: {rubOnWallet} рублей, {usdOnWallet} долларов, {eurOnWallet} евро");
                 Console.WriteLine(menuText);
                 Console.Write(requestCommandMessage);
                 userInputCommand = Console.ReadLine();
@@ -56,15 +56,15 @@
                         Console.Write("Сколько рублей вы хотите обменять на доллары? ");
                         userInputValue = Convert.ToSingle(Console.ReadLine());
 
-                        if (rubValue < userInputValue)
+                        if (rubOnWallet < userInputValue)
                         {
                             Console.WriteLine(inncorrectInputCountMessage);
                             break;
                         }
 
                         amountMoneyToBuy = userInputValue / rubToUsdCost;
-                        rubValue -= userInputValue;
-                        usdValue += amountMoneyToBuy;
+                        rubOnWallet -= userInputValue;
+                        usdOnWallet += amountMoneyToBuy;
                         Console.WriteLine($"Вы обменяли {userInputValue} рублей на {amountMoneyToBuy} долларов");
                         break;
 
@@ -72,15 +72,15 @@
                         Console.Write("Сколько рублей вы хотите обменять на евро? ");
                         userInputValue = Convert.ToSingle(Console.ReadLine());
 
-                        if (rubValue < userInputValue)
+                        if (rubOnWallet < userInputValue)
                         {
                             Console.WriteLine(inncorrectInputCountMessage);
                             break;
                         }
 
                         amountMoneyToBuy = userInputValue / rubToEurCost;
-                        rubValue -= userInputValue;
-                        eurValue += amountMoneyToBuy;
+                        rubOnWallet -= userInputValue;
+                        eurOnWallet += amountMoneyToBuy;
                         Console.WriteLine($"Вы обменяли {userInputValue} рублей на {amountMoneyToBuy} евро");
                         break;
 
@@ -88,15 +88,15 @@
                         Console.Write("Сколько долларов вы хотите обменять на рубли? ");
                         userInputValue = Convert.ToSingle(Console.ReadLine());
 
-                        if (usdValue < userInputValue)
+                        if (usdOnWallet < userInputValue)
                         {
                             Console.WriteLine(inncorrectInputCountMessage);
                             break;
                         }
 
                         amountMoneyToBuy = userInputValue / usdToRubCost;
-                        usdValue -= userInputValue;
-                        rubValue += amountMoneyToBuy;
+                        usdOnWallet -= userInputValue;
+                        rubOnWallet += amountMoneyToBuy;
                         Console.WriteLine($"Вы обменяли {userInputValue} долларов на {amountMoneyToBuy} рублей");
                         break;
 
@@ -104,15 +104,15 @@
                         Console.Write("Сколько долларов вы хотите обменять на евро? ");
                         userInputValue = Convert.ToSingle(Console.ReadLine());
 
-                        if (usdValue < userInputValue)
+                        if (usdOnWallet < userInputValue)
                         {
                             Console.WriteLine(inncorrectInputCountMessage);
                             break;
                         }
 
                         amountMoneyToBuy = userInputValue / usdToEurCost;
-                        usdValue -= userInputValue;
-                        eurValue += amountMoneyToBuy;
+                        usdOnWallet -= userInputValue;
+                        eurOnWallet += amountMoneyToBuy;
                         Console.WriteLine($"Вы обменяли {userInputValue} долларов на {amountMoneyToBuy} евро");
                         break;
 
@@ -120,15 +120,15 @@
                         Console.Write("Сколько евро вы хотите обменять на рубли? ");
                         userInputValue = Convert.ToSingle(Console.ReadLine());
 
-                        if (eurValue < userInputValue)
+                        if (eurOnWallet < userInputValue)
                         {
                             Console.WriteLine(inncorrectInputCountMessage);
                             break;
                         }
 
                         amountMoneyToBuy = userInputValue / eurToRubCost;
-                        eurValue -= userInputValue;
-                        rubValue += amountMoneyToBuy;
+                        eurOnWallet -= userInputValue;
+                        rubOnWallet += amountMoneyToBuy;
                         Console.WriteLine($"Вы обменяли {userInputValue} евро на {amountMoneyToBuy} рублей");
                         break;
 
@@ -136,15 +136,15 @@
                         Console.Write("Сколько евро вы хотите обменять на доллары? ");
                         userInputValue = Convert.ToSingle(Console.ReadLine());
 
-                        if (eurValue < userInputValue)
+                        if (eurOnWallet < userInputValue)
                         {
                             Console.WriteLine(inncorrectInputCountMessage);
                             break;
                         }
 
                         amountMoneyToBuy = userInputValue / eurToRubCost;
-                        eurValue -= userInputValue;
-                        usdValue += amountMoneyToBuy;
+                        eurOnWallet -= userInputValue;
+                        usdOnWallet += amountMoneyToBuy;
                         Console.WriteLine($"Вы обменяли {userInputValue} евро на {amountMoneyToBuy} долларов");
                         break;
 
