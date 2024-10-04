@@ -8,11 +8,8 @@
             const string CommandFireball = "2";
             const string CommandExplosion = "3";
             const string CommandPlayerHealing = "4";
-            const string ExitBattleCommand = "exit";
 
             Console.Title = "ДЗ: Бой с боссом";
-            Console.WindowHeight = 40;
-            Console.WindowWidth = 120;
 
             string name = "Валанар";
             int playerHealth = 600;
@@ -25,7 +22,7 @@
             int restorationHealth = 200;
             int restorationMana = 200;
             int restorationManaByStep = 50;
-            int restorationCount = 2;
+            int restorationsCount = 2;
             int fireballManaCost = 250;
             bool isUsedFireball = false;
 
@@ -36,7 +33,6 @@
 
             bool isPlayerDoneStep = false;
             bool isEnemyDoneStep = false;
-            bool isRunCombat = true;
             string userInput;
 
             string skillBaseAttackInfo = $"Обычная атака клинком с нанесением [{damageBaseAttack}] урона";
@@ -53,44 +49,38 @@
                                $"\n {CommandBaseAttack} - {skillBaseAttackInfo}" +
                                $"\n {CommandFireball} - {skillFireballInfo}" +
                                $"\n {CommandExplosion} - {skillExplosionInfo}" +
-                               $"\n {CommandPlayerHealing} - {skillRestorationHealthInfo}" +
-                               $"\n {ExitBattleCommand} - побег с поля боя...";
+                               $"\n {CommandPlayerHealing} - {skillRestorationHealthInfo}";
 
-            string continueMessage = "\nНажмите любую клавишу чтобы продолжить...\n";
-            string startBattleMessage = "\nДа начнётся битва героя с боссом!!!";
-            string requestCommandMessage = "\nВведите команду: ";
+            string continueMessage = "Нажмите любую клавишу чтобы продолжить";
+            string startBattleMessage = "Да начнётся битва героя с боссом!!!";
+            string requestCommandMessage = "Введите команду: ";
             string playerStepBreakMessage = "Такого умения нет, вы пропускаете свой ход.";
             string playerStepMessage = ">------ Ход игрока ------<";
-            string enemyStepMessage = ">------ Ход босса ------<";
-            string playerVictoryMessage = $"Битва окончена! Игрок {name} победил своего врага {enemyName}! Да здравствует победа!";
-            string enemyVictoryMessage = $"Битва окончена! Игрок {name} пал смертью храбрых. {enemyName} - победил в этой битве!";
-            string drowInBattleMessage = $"Битва окончена ничьей! Игрок {name} и {enemyName} не добились успеха в битве!";
-            string loseEscapeFromBattleMessage = "Вы сбежали с битвы, позор вам!";
+            string enemyStepMessage = "\n>------ Ход босса ------<";
+            string playerVictoryMessage = $"Битва окончена! Игрок [{name}] победил своего врага [{enemyName}]! Да здравствует победа!";
+            string enemyVictoryMessage = $"Битва окончена! Игрок [{name}] пал смертью храбрых. [{enemyName}] - победил в этой битве!";
+            string drowInBattleMessage = $"Битва окончена ничьей! Игрок [{name}] и [{enemyName}] не добились успеха в битве!";
 
             Console.WriteLine(startBattleMessage);
 
-            while (isRunCombat == true)
+            while (playerHealth > 0 && enemyHealth > 0)
             {
                 Console.Clear();
                 Console.WriteLine($"Здоровье игрока: [{playerHealth}/{maxPlayerHealth}] единиц." +
                                    $"\nМана игрока: [{playerMana}/{maxPlayerMana}] единиц." +
-                                   $"\nЗелий восстановления: [{restorationCount}] шт." +
+                                   $"\nЗелий восстановления: [{restorationsCount}] шт." +
                                    $"\n------------------------------------------------" +
                                    $"\nЗдоровье босса: [{enemyHealth}/{maxEnemyHealth}] единиц.\n");
 
                 while (isPlayerDoneStep == false && enemyHealth > 0)
                 {
                     Console.WriteLine(skillMenu);
-                    Console.Write(requestCommandMessage);
+                    Console.WriteLine(requestCommandMessage);
                     userInput = Console.ReadLine();
                     Console.WriteLine(playerStepMessage);
 
                     switch (userInput)
                     {
-                        case ExitBattleCommand:
-                            Console.WriteLine(loseEscapeFromBattleMessage);
-                            return;
-
                         case CommandBaseAttack:
                             enemyHealth -= damageBaseAttack;
                             Console.WriteLine(battleTextSkillBaseAttack);
@@ -134,7 +124,7 @@
                             break;
 
                         case CommandPlayerHealing:
-                            if (restorationCount > 0)
+                            if (restorationsCount > 0)
                             {
                                 if (playerHealth + restorationHealth <= maxPlayerHealth)
                                 {
@@ -155,7 +145,7 @@
                                 }
 
                                 Console.WriteLine(battleTextSkillRestorationHealth);
-                                restorationCount--;
+                                restorationsCount--;
                             }
                             else
                             {
@@ -167,6 +157,7 @@
 
                         default:
                             Console.WriteLine(playerStepBreakMessage);
+                            isPlayerDoneStep = true;
                             break;
                     }
                 }
@@ -175,17 +166,12 @@
                 {
                     Console.WriteLine(enemyStepMessage);
                     playerHealth -= damageEnemy;
-                    Console.WriteLine($"{enemyName} нанёс {damageEnemy} единиц урона игроку [{name}].\n");
+                    Console.WriteLine($"Враг [{enemyName}] нанёс [{damageEnemy}] урона игроку [{name}].\n");
                     isEnemyDoneStep = true;
                 }
 
                 isPlayerDoneStep = false;
                 isEnemyDoneStep = false;
-
-                if (playerHealth <= 0 || enemyHealth <= 0)
-                {
-                    isRunCombat = false;
-                }
 
                 if (playerMana + restorationManaByStep < maxPlayerMana)
                 {
