@@ -11,13 +11,14 @@
             const string ExitBattleCommand = "exit";
 
             Console.Title = "ДЗ: Бой с боссом";
-            Console.WindowHeight = 50;
-            Console.WindowWidth = 100;
-            Random random = new Random();
+            Console.WindowHeight = 40;
+            Console.WindowWidth = 120;
 
             string name = "Валанар";
-            int playerHealth = 500;
-            int playerMana = 500;
+            int playerHealth = 600;
+            int maxPlayerHealth = 1000;
+            int playerMana = 400;
+            int maxPlayerMana = 400;
             int damageBaseAttack = 100;
             int damageFireball = 150;
             int damageExplosion = 250;
@@ -40,7 +41,7 @@
             string skillBaseAttackInfo = $"Обычная атака клинком с нанесением [{damageBaseAttack}] урона";
             string skillFireballInfo = $"Бросок огненного шара с нанесением [{damageFireball}] урона";
             string skillExplosionInfo = $"Произвести взрыв горящего врага с нанесением [{damageExplosion}] урона";
-            string skillRestorationHealthInfo = $"Выпить зелье восстановления [{restorationHealth}] здоровья и [{restorationMana}] маны";
+            string skillRestorationHealthInfo = $"Выпить зелье и восстановить [{restorationHealth}] здоровья и [{restorationMana}] маны";
 
             string battleTextSkillBaseAttack = $"Игрок [{name}] делает обычную атаку врагу [{enemyName}]";
             string battleTextSkillFireball = $"Игрок [{name}] бросает огненный шар в врага [{enemyName}]";
@@ -72,11 +73,11 @@
                 Console.Clear();
                 Console.WriteLine($"Здоровье игрока: [{playerHealth}] единиц." +
                                    $"\nМана игрока: [{playerMana}] единиц." +
-                                   $"\nЗелий восстановления: [{restorationCount}] хода." +
+                                   $"\nЗелий восстановления: [{restorationCount}] шт." +
                                    $"\n------------------------------------------------" +
                                    $"\nЗдоровье босса: [{healthEnemy}] единиц.\n");
 
-                while (isPlayerDoneStep == false)
+                while (isPlayerDoneStep == false && healthEnemy > 0)
                 {
                     Console.WriteLine(skillMenu);
                     Console.Write(requestCommandMessage);
@@ -102,7 +103,6 @@
                                 playerMana -= fireballManaCost;
                                 Console.WriteLine(battleTextSkillFireball);
                                 isUsedFireball = true;
-                                isPlayerDoneStep = true;
                             }
                             else
                             {
@@ -111,6 +111,7 @@
                                     $"\n Вам не хватает маны.");
                             }
 
+                            isPlayerDoneStep = true;
                             break;
 
                         case CommandExplosion:
@@ -119,7 +120,6 @@
                                 healthEnemy -= damageExplosion;
                                 Console.WriteLine(battleTextSkillExplosion);
                                 isUsedFireball = false;
-                                isPlayerDoneStep = true;
                             }
                             else
                             {
@@ -129,30 +129,48 @@
                                     $"\n[{skillFireballInfo}].");
                             }
 
+                            isPlayerDoneStep = true;
                             break;
 
                         case CommandPlayerHealing:
                             if (restorationCount > 0)
                             {
-                                playerHealth += restorationHealth;
-                                playerMana += restorationMana;
+                                if (playerHealth + restorationHealth < maxPlayerHealth)
+                                {
+                                    playerHealth += restorationHealth;
+                                }
+                                else
+                                {
+                                    playerHealth = maxPlayerHealth;
+                                }
+
+                                if (playerMana + restorationMana < maxPlayerMana)
+                                {
+                                    playerMana += restorationMana;
+                                }
+                                else
+                                {
+                                    playerMana = maxPlayerMana;
+                                }
+
                                 Console.WriteLine(battleTextSkillRestorationHealth);
                                 restorationCount--;
-                                isPlayerDoneStep = true;
+                            }
+                            else
+                            {
+                                Console.WriteLine($"У вас закончились зелья");
                             }
 
+                            isPlayerDoneStep = true;
                             break;
 
                         default:
                             Console.WriteLine(playerStepBreakMessage);
                             break;
                     }
-
-                    Console.WriteLine(continueMessage);
-                    Console.ReadKey();
                 }
 
-                while (isEnemyDoneStep == false)
+                while (isEnemyDoneStep == false && playerHealth > 0)
                 {
                     Console.WriteLine(enemyStepMessage);
                     playerHealth -= damageEnemy;
@@ -168,7 +186,14 @@
                     isRunCombat = false;
                 }
 
-                playerMana += restorationManaByStep;
+                if (playerMana + restorationManaByStep < maxPlayerMana)
+                {
+                    playerMana += restorationManaByStep;
+                }
+                else
+                {
+                    playerMana = maxPlayerMana;
+                }
 
                 Console.WriteLine(continueMessage);
                 Console.ReadKey();
