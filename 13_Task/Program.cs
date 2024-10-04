@@ -51,7 +51,7 @@
             while (isWork)
             {
                 Console.Clear();
-                Console.WriteLine($"\nУ вас на балансе: {rubValue} рублей, {usdValue} долларов, {eurValue} евро");
+                Console.WriteLine($"У вас на балансе: {rubValue} рублей, {usdValue} долларов, {eurValue} евро");
                 Console.WriteLine(programmMenu);
                 Console.Write(requestCommandMessage);
                 userInputCommand = Console.ReadLine();
