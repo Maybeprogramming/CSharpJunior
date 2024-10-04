@@ -66,113 +66,100 @@
                         Console.Write("Сколько рублей вы хотите обменять на доллары? ");
                         userInputValue = Convert.ToSingle(Console.ReadLine());
 
-                        if (rubValue >= userInputValue)
-                        {
-                            amountMoneyToBuy = userInputValue / rubToUsdCost;
-                            rubValue -= userInputValue;
-                            usdValue += amountMoneyToBuy;
-                            Console.WriteLine($"Вы обменяли {userInputValue} рублей на {amountMoneyToBuy} долларов");
-                        }
-                        else
+                        if (rubValue < userInputValue)
                         {
                             Console.WriteLine(inncorrectInputCountMessage);
+                            break;
                         }
 
+                        amountMoneyToBuy = userInputValue / rubToUsdCost;
+                        rubValue -= userInputValue;
+                        usdValue += amountMoneyToBuy;
+                        Console.WriteLine($"Вы обменяли {userInputValue} рублей на {amountMoneyToBuy} долларов");
                         break;
 
                     case CommandRubToEur:
                         Console.Write("Сколько рублей вы хотите обменять на евро? ");
                         userInputValue = Convert.ToSingle(Console.ReadLine());
 
-                        if (rubValue >= userInputValue)
-                        {
-                            amountMoneyToBuy = userInputValue / rubToEurCost;
-                            rubValue -= userInputValue;
-                            eurValue += amountMoneyToBuy;
-                            Console.WriteLine($"Вы обменяли {userInputValue} рублей на {amountMoneyToBuy} евро");
-                        }
-                        else
+                        if (rubValue < userInputValue)
                         {
                             Console.WriteLine(inncorrectInputCountMessage);
+                            break;
                         }
 
+                        amountMoneyToBuy = userInputValue / rubToEurCost;
+                        rubValue -= userInputValue;
+                        eurValue += amountMoneyToBuy;
+                        Console.WriteLine($"Вы обменяли {userInputValue} рублей на {amountMoneyToBuy} евро");
                         break;
 
                     case CommandUsdToRub:
                         Console.Write("Сколько долларов вы хотите обменять на рубли? ");
                         userInputValue = Convert.ToSingle(Console.ReadLine());
 
-                        if (usdValue >= userInputValue)
-                        {
-                            amountMoneyToBuy = userInputValue / usdToRubCost;
-                            usdValue -= userInputValue;
-                            rubValue += amountMoneyToBuy;
-                            Console.WriteLine($"Вы обменяли {userInputValue} долларов на {amountMoneyToBuy} рублей");
-                        }
-                        else
+                        if (usdValue < userInputValue)
                         {
                             Console.WriteLine(inncorrectInputCountMessage);
+                            break;
                         }
 
+                        amountMoneyToBuy = userInputValue / usdToRubCost;
+                        usdValue -= userInputValue;
+                        rubValue += amountMoneyToBuy;
+                        Console.WriteLine($"Вы обменяли {userInputValue} долларов на {amountMoneyToBuy} рублей");
                         break;
 
                     case CommandUsdToEur:
                         Console.Write("Сколько долларов вы хотите обменять на евро? ");
                         userInputValue = Convert.ToSingle(Console.ReadLine());
 
-                        if (usdValue >= userInputValue)
-                        {
-                            amountMoneyToBuy = userInputValue / usdToEurCost;
-                            usdValue -= userInputValue;
-                            eurValue += amountMoneyToBuy;
-                            Console.WriteLine($"Вы обменяли {userInputValue} долларов на {amountMoneyToBuy} евро");
-                        }
-                        else
+                        if (usdValue < userInputValue)
                         {
                             Console.WriteLine(inncorrectInputCountMessage);
+                            break;
                         }
 
+                        amountMoneyToBuy = userInputValue / usdToEurCost;
+                        usdValue -= userInputValue;
+                        eurValue += amountMoneyToBuy;
+                        Console.WriteLine($"Вы обменяли {userInputValue} долларов на {amountMoneyToBuy} евро");
                         break;
 
                     case CommandEurToRub:
                         Console.Write("Сколько евро вы хотите обменять на рубли? ");
                         userInputValue = Convert.ToSingle(Console.ReadLine());
 
-                        if (eurValue >= userInputValue)
-                        {
-                            amountMoneyToBuy = userInputValue / eurToRubCost;
-                            eurValue -= userInputValue;
-                            rubValue += amountMoneyToBuy;
-                            Console.WriteLine($"Вы обменяли {userInputValue} евро на {amountMoneyToBuy} рублей");
-                        }
-                        else
+                        if (eurValue < userInputValue)
                         {
                             Console.WriteLine(inncorrectInputCountMessage);
+                            break;
                         }
 
+                        amountMoneyToBuy = userInputValue / eurToRubCost;
+                        eurValue -= userInputValue;
+                        rubValue += amountMoneyToBuy;
+                        Console.WriteLine($"Вы обменяли {userInputValue} евро на {amountMoneyToBuy} рублей");
                         break;
 
                     case CommandEurToUsd:
                         Console.Write("Сколько евро вы хотите обменять на доллары? ");
                         userInputValue = Convert.ToSingle(Console.ReadLine());
 
-                        if (eurValue >= userInputValue)
-                        {
-                            amountMoneyToBuy = userInputValue / eurToRubCost;
-                            eurValue -= userInputValue;
-                            usdValue += amountMoneyToBuy;
-                            Console.WriteLine($"Вы обменяли {userInputValue} евро на {amountMoneyToBuy} долларов");
-                        }
-                        else
+                        if (eurValue < userInputValue)
                         {
                             Console.WriteLine(inncorrectInputCountMessage);
+                            break;
                         }
 
+                        amountMoneyToBuy = userInputValue / eurToRubCost;
+                        eurValue -= userInputValue;
+                        usdValue += amountMoneyToBuy;
+                        Console.WriteLine($"Вы обменяли {userInputValue} евро на {amountMoneyToBuy} долларов");
                         break;
 
                     default:
                         Console.Write($"Такой команды не существует, попробуйте ввести другую");
-
                         break;
                 }
 
