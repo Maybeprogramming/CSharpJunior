@@ -38,7 +38,7 @@
             bool isWork = true;
             string continueMessage = "\nНажмите любую клавишу чтобы продолжить";
             string inncorrectInputCountMessage = "У вас недостаточно средств для выполнения этой операции";
-            string programmMenu = $"\nМеню для обмена:" +
+            string menuText = $"\nМеню для обмена:" +
                 $"\n{CommandRubToUsd} - рубль -> доллар, по курсу {rubToUsdCost} за 1 доллар" +
                 $"\n{CommandRubToEur} - рубль -> евро, по курсу {rubToEurCost} за 1 евро" +
                 $"\n{CommandUsdToRub} - доллар -> рубль, по курсу {usdToRubCost} за 1 рубль" +
@@ -52,7 +52,7 @@
             {
                 Console.Clear();
                 Console.WriteLine($"У вас на балансе: {rubValue} рублей, {usdValue} долларов, {eurValue} евро");
-                Console.WriteLine(programmMenu);
+                Console.WriteLine(menuText);
                 Console.Write(requestCommandMessage);
                 userInputCommand = Console.ReadLine();
 
