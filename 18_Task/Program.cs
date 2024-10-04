@@ -25,15 +25,12 @@
             int restorationsCount = 2;
             int fireballManaCost = 250;
             bool isUsedFireball = false;
+            string userInput;
 
             string enemyName = "Бальтазар";
             int enemyHealth = 1000;
             int maxEnemyHealth = 1000;
             int damageEnemy = 100;
-
-            bool isPlayerDoneStep = false;
-            bool isEnemyDoneStep = false;
-            string userInput;
 
             string skillBaseAttackInfo = $"Обычная атака клинком с нанесением [{damageBaseAttack}] урона";
             string skillFireballInfo = $"Бросок огненного шара с нанесением [{damageFireball}] урона";
@@ -72,7 +69,7 @@
                                    $"\n------------------------------------------------" +
                                    $"\nЗдоровье босса: [{enemyHealth}/{maxEnemyHealth}] единиц.\n");
 
-                while (isPlayerDoneStep == false && enemyHealth > 0)
+                if (enemyHealth > 0)
                 {
                     Console.WriteLine(skillMenu);
                     Console.WriteLine(requestCommandMessage);
@@ -84,7 +81,6 @@
                         case CommandBaseAttack:
                             enemyHealth -= damageBaseAttack;
                             Console.WriteLine(battleTextSkillBaseAttack);
-                            isPlayerDoneStep = true;
                             break;
 
                         case CommandFireball:
@@ -102,7 +98,6 @@
                                     $"\n Вам не хватает маны.");
                             }
 
-                            isPlayerDoneStep = true;
                             break;
 
                         case CommandExplosion:
@@ -120,7 +115,6 @@
                                     $"\n[{skillFireballInfo}].");
                             }
 
-                            isPlayerDoneStep = true;
                             break;
 
                         case CommandPlayerHealing:
@@ -152,26 +146,20 @@
                                 Console.WriteLine($"У вас закончились зелья");
                             }
 
-                            isPlayerDoneStep = true;
                             break;
 
                         default:
                             Console.WriteLine(playerStepBreakMessage);
-                            isPlayerDoneStep = true;
                             break;
                     }
                 }
 
-                while (isEnemyDoneStep == false && playerHealth > 0)
+                if (playerHealth > 0)
                 {
                     Console.WriteLine(enemyStepMessage);
                     playerHealth -= damageEnemy;
                     Console.WriteLine($"Враг [{enemyName}] нанёс [{damageEnemy}] урона игроку [{name}].\n");
-                    isEnemyDoneStep = true;
                 }
-
-                isPlayerDoneStep = false;
-                isEnemyDoneStep = false;
 
                 if (playerMana + restorationManaByStep < maxPlayerMana)
                 {
