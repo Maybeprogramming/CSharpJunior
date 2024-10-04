@@ -36,25 +36,22 @@
             float userInputValue;
             float amountMoneyToBuy;
             bool isWork = true;
-            string continueMessage = "\nНажмите любую клавишу чтобы продолжить...";
-            string welcomeMessage = "Добро пожаловать в пункт обмена валют \"Мультиконвертер\"";
+            string continueMessage = "\nНажмите любую клавишу чтобы продолжить";
             string inncorrectInputCountMessage = "У вас недостаточно средств для выполнения этой операции";
-            string userBalanceInfo = $"\nУ вас на балансе: {rubValue} рублей, {usdValue} долларов, {eurValue} евро";
             string programmMenu = $"\nМеню для обмена:" +
-                $"\n{CommandRubToUsd} - для обмена рублей в доллары, по курсу {rubToUsdCost} за 1 доллар" +
-                $"\n{CommandRubToEur} - для обмена рублей в евро, по курсу {rubToEurCost} за 1 евро" +
-                $"\n{CommandUsdToRub} - для обмена долларов в рубли, по курсу {usdToRubCost} за 1 рубль" +
-                $"\n{CommandUsdToEur} - для обмена долларов в евро, по курсу {usdToEurCost} за 1 евро" +
-                $"\n{CommandEurToRub} - для обмена евро в рубли, по курсу {eurToRubCost} за 1 рубль" +
-                $"\n{CommandEurToUsd} - для обмена евро в доллары, по курсу {eurToUsdCost} за 1 доллар" +
+                $"\n{CommandRubToUsd} - рубль -> доллар, по курсу {rubToUsdCost} за 1 доллар" +
+                $"\n{CommandRubToEur} - рубль -> евро, по курсу {rubToEurCost} за 1 евро" +
+                $"\n{CommandUsdToRub} - доллар -> рубль, по курсу {usdToRubCost} за 1 рубль" +
+                $"\n{CommandUsdToEur} - доллар -> евро, по курсу {usdToEurCost} за 1 евро" +
+                $"\n{CommandEurToRub} - евро -> рубль, по курсу {eurToRubCost} за 1 рубль" +
+                $"\n{CommandEurToUsd} - евро -> доллар, по курсу {eurToUsdCost} за 1 доллар" +
                 $"\n{CommandToExit} - для выхода из пункта обмена";
             string requestCommandMessage = $"\nВведите команду: ";
 
             while (isWork)
             {
                 Console.Clear();
-                Console.WriteLine(welcomeMessage);
-                Console.WriteLine(userBalanceInfo);
+                Console.WriteLine($"\nУ вас на балансе: {rubValue} рублей, {usdValue} долларов, {eurValue} евро");
                 Console.WriteLine(programmMenu);
                 Console.Write(requestCommandMessage);
                 userInputCommand = Console.ReadLine();
@@ -182,8 +179,6 @@
                 Console.WriteLine(continueMessage);
                 Console.ReadLine();
             }
-
-            Console.ReadKey();
         }
     }
 }
