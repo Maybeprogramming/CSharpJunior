@@ -2,7 +2,7 @@
 {
     public class Program
     {
-        static void Main()
+        private static void Main()
         {
             const string CommandPrint = "1";
             const string CommandExit = "2";
