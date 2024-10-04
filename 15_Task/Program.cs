@@ -23,17 +23,17 @@
                 if (userInput == password)
                 {
                     Console.WriteLine(topSecretMessege);
-                    Console.WriteLine(continueMessege);
-                    Console.ReadLine();
+                    break;
                 }
                 else
                 {
                     leftTryInputPassword = tryPasswordCount - (i + 1);
                     Console.WriteLine(incorrectInputPassworMessage);
                     Console.WriteLine($"Осталось {leftTryInputPassword} попыток для ввода пароля.");
-                    Console.WriteLine(continueMessege);
-                    Console.ReadLine();
                 }
+
+                Console.WriteLine(continueMessege);
+                Console.ReadLine();
             }
         }
     }
