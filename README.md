@@ -22,13 +22,8 @@ int b = 38;
 int c = (31 – 5 * a) / b;
 Console.WriteLine(c);
 
-> [!IMPORTANT]
 > ВАЖНО!!! Не запускать код и попытаться подумать головой. 
 > Также надо написать ответ “Почему?”
-
-> [!IMPORTANT]
-> Key information users need to know to achieve their goal.
-> 
 
 Приоритет арифметических операций:
 В скобках сначала выполнится умножение 5 * 10 = 50,
