@@ -30,7 +30,8 @@
             bool isUsedFireball = false;
 
             string enemyName = "Бальтазар";
-            int healthEnemy = 1000;
+            int enemyHealth = 1000;
+            int maxEnemyHealth = 1000;
             int damageEnemy = 100;
 
             bool isPlayerDoneStep = false;
@@ -71,13 +72,13 @@
             while (isRunCombat == true)
             {
                 Console.Clear();
-                Console.WriteLine($"Здоровье игрока: [{playerHealth}] единиц." +
-                                   $"\nМана игрока: [{playerMana}] единиц." +
+                Console.WriteLine($"Здоровье игрока: [{playerHealth}/{maxPlayerHealth}] единиц." +
+                                   $"\nМана игрока: [{playerMana}/{maxPlayerMana}] единиц." +
                                    $"\nЗелий восстановления: [{restorationCount}] шт." +
                                    $"\n------------------------------------------------" +
-                                   $"\nЗдоровье босса: [{healthEnemy}] единиц.\n");
+                                   $"\nЗдоровье босса: [{enemyHealth}/{maxEnemyHealth}] единиц.\n");
 
-                while (isPlayerDoneStep == false && healthEnemy > 0)
+                while (isPlayerDoneStep == false && enemyHealth > 0)
                 {
                     Console.WriteLine(skillMenu);
                     Console.Write(requestCommandMessage);
@@ -91,7 +92,7 @@
                             return;
 
                         case CommandBaseAttack:
-                            healthEnemy -= damageBaseAttack;
+                            enemyHealth -= damageBaseAttack;
                             Console.WriteLine(battleTextSkillBaseAttack);
                             isPlayerDoneStep = true;
                             break;
@@ -99,7 +100,7 @@
                         case CommandFireball:
                             if (playerMana >= fireballManaCost)
                             {
-                                healthEnemy -= damageFireball;
+                                enemyHealth -= damageFireball;
                                 playerMana -= fireballManaCost;
                                 Console.WriteLine(battleTextSkillFireball);
                                 isUsedFireball = true;
@@ -117,7 +118,7 @@
                         case CommandExplosion:
                             if (isUsedFireball == true)
                             {
-                                healthEnemy -= damageExplosion;
+                                enemyHealth -= damageExplosion;
                                 Console.WriteLine(battleTextSkillExplosion);
                                 isUsedFireball = false;
                             }
@@ -135,7 +136,7 @@
                         case CommandPlayerHealing:
                             if (restorationCount > 0)
                             {
-                                if (playerHealth + restorationHealth < maxPlayerHealth)
+                                if (playerHealth + restorationHealth <= maxPlayerHealth)
                                 {
                                     playerHealth += restorationHealth;
                                 }
@@ -144,7 +145,7 @@
                                     playerHealth = maxPlayerHealth;
                                 }
 
-                                if (playerMana + restorationMana < maxPlayerMana)
+                                if (playerMana + restorationMana <= maxPlayerMana)
                                 {
                                     playerMana += restorationMana;
                                 }
@@ -181,7 +182,7 @@
                 isPlayerDoneStep = false;
                 isEnemyDoneStep = false;
 
-                if (playerHealth <= 0 || healthEnemy <= 0)
+                if (playerHealth <= 0 || enemyHealth <= 0)
                 {
                     isRunCombat = false;
                 }
@@ -199,7 +200,7 @@
                 Console.ReadKey();
             }
 
-            if (playerHealth <= 0 && healthEnemy <= 0)
+            if (playerHealth <= 0 && enemyHealth <= 0)
             {
                 Console.WriteLine(drowInBattleMessage);
             }
@@ -207,7 +208,7 @@
             {
                 Console.WriteLine(enemyVictoryMessage);
             }
-            else if (healthEnemy <= 0)
+            else if (enemyHealth <= 0)
             {
                 Console.WriteLine(playerVictoryMessage);
             }
