@@ -12,6 +12,7 @@
             const string CommandEurToUsd = "6";
             const string CommandToExit = "7";
 
+            Console.Title = "ДЗ: Конвертер валют";
             float rubValue;
             float usdValue;
             float eurValue;
