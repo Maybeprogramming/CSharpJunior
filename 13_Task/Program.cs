@@ -13,11 +13,11 @@
             const string CommandToExit = "7";
 
             Console.Title = "ДЗ: Конвертер валют";
-            float rubOnWallet = 5000;
-            float usdOnWallet = 1000;
-            float eurOnWallet = 2000;
-            float rubToUsdCost = 65;
-            float rubToEurCost = 75;
+            float rubOnWallet = 5000f;
+            float usdOnWallet = 1000f;
+            float eurOnWallet = 2000f;
+            float rubToUsdCost = 65f;
+            float rubToEurCost = 75f;
             float usdToRubCost = 0.02f;
             float usdToEurCost = 1.2f;
             float eurToRubCost = 0.01f;
