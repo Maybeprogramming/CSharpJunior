@@ -13,7 +13,7 @@ namespace _23_Task
             int[] numbers;
             int number;
             int arraySize;
-            int maxRandomNumber = 5;
+            int maxRandomNumber = 9;
 
             Console.Write("Введите размер массива: ");
             arraySize = Convert.ToInt32(Console.ReadLine());
