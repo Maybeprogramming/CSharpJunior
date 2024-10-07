@@ -9,7 +9,7 @@
             int[] numbers;
             int minLenthNumber = 4;
             int maxLenthNumber = 20;
-            int maxRandNumber = 10;
+            int maxRandomNumber = 10;
             numbers = new int[random.Next(minLenthNumber, maxLenthNumber)];
             int userInput;
             int firstNumber;
@@ -17,7 +17,7 @@
 
             for (int i = 0; i < numbers.Length; i++)
             {
-                numbers[i] = random.Next(maxRandNumber);
+                numbers[i] = random.Next(maxRandomNumber);
             }
 
             Console.WriteLine($"Исходный массив, размерностью {numbers.Length} элементов:");
@@ -30,10 +30,7 @@
             Console.Write("\n\nВведите значение на которое желаете сдвинуть элементы массива на позицию влево: ");
             userInput = Convert.ToInt32(Console.ReadLine());
 
-            if (userInput > numbers.Length)
-            {
-                shiftStepsOnLeft = userInput % numbers.Length;
-            }
+            shiftStepsOnLeft = userInput % numbers.Length;
 
             for (int i = 0; i < shiftStepsOnLeft; i++)
             {
