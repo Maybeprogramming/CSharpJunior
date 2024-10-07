@@ -10,7 +10,7 @@
             string titleText = "ДЗ: Динамический массив";
             int[] numbers = new int[0];
             bool isWork = true;
-            string requestCommandOrNumber = $"\nВведите команду или число: ";
+            string requesеMessage = $"\nВведите команду или число: ";
             string continueMessage = $"\nНажмите любую клавишу чтобы продолжить";
             string commandMenu = $"{CommandSum} - команда для вычисления суммы всех чисел в массиве" +
                                  $"\n{CommandExit} - выйти из приложения";
@@ -33,7 +33,7 @@
                     Console.Write($"{number} ");
                 }
 
-                Console.WriteLine(requestCommandOrNumber);
+                Console.WriteLine(requesеMessage);
                 userInput = Console.ReadLine();
                 isParseToInt = Int32.TryParse(userInput, out inputNumber);
 
