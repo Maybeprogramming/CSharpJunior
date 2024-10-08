@@ -24,7 +24,7 @@ namespace _28_Task
                 Console.Clear();
                 Display.Print(requestMessage);
                 userInput = Console.ReadLine();
-                number = ParseStringToInt(userInput, out bool isParseToInt);
+                number = ParseToIntNumber(userInput, out bool isParseToInt);
 
                 if (isParseToInt == true)
                 {
@@ -41,7 +41,7 @@ namespace _28_Task
             }
         }
 
-        private static int ParseStringToInt(string userInput, out bool isParseToInt)
+        private static int ParseToIntNumber(string userInput, out bool isParseToInt)
         {
             isParseToInt = int.TryParse(userInput, out int result);
             return result;
