@@ -4,6 +4,7 @@
     {
         static void Main()
         {
+            Console.Title = "ДЗ: ReadInt";
         }
     }
 }
