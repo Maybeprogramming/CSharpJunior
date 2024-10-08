@@ -22,7 +22,6 @@
                          $"\n{CommandFindDossier} - Поиск досье по фамилии сотрудника" +
                          $"\n{CommandExit} - Выйти из программы";
             string requestMessage = "\nВведите команду: ";
-            string exitMessage = "\nРабота программы завершена\n";
             string errorMessageMenu = "Такой команды нет";
             string userInput;
             string continueMessage = "\nДля продолжения нажмите любую клавишу...";
@@ -64,8 +63,6 @@
                 Console.WriteLine(continueMessage);
                 Console.ReadLine();
             }
-
-            Console.Write(exitMessage, ConsoleColor.Green);
         }
 
         private static void AddDossier(ref string[] names, ref string[] positions)
@@ -86,7 +83,7 @@
         {
             Console.Clear();
 
-            if (IsEmptyDossier(names, positions))
+            if (IsEmptyDossier(names, positions) == false)
             {
                 Console.Write("Архив всех досье:\n");
                 ConsoleColor defaultColor = Console.ForegroundColor;
@@ -112,7 +109,7 @@
             Console.Clear();
             ShowAllDossier(names, positions);
 
-            if (!IsEmptyDossier(names, positions))
+            if (IsEmptyDossier(names, positions))
             {
                 return;
             }
@@ -206,7 +203,7 @@
         private static bool IsEmptyDossier(string[] names, string[] positions)
         {
             int emptyValue = 0;
-            return names.Length != emptyValue && positions.Length != emptyValue;
+            return names.Length == emptyValue && positions.Length == emptyValue;
         }
     }
 }
