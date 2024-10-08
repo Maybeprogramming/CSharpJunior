@@ -14,7 +14,7 @@ namespace _28_Task
         private static void Work()
         {
             bool isTryParse = false;
-            string requestNumber = "Введите число: ";
+            string requestMessage = "Введите число: ";
             string continueMessage = "\n\nНажмите любую клавишу чтобы продолжить...";
             string userInput;
             int number;
@@ -22,7 +22,7 @@ namespace _28_Task
             while (isTryParse == false)
             {
                 Console.Clear();
-                Display.Print(requestNumber);
+                Display.Print(requestMessage);
                 userInput = Console.ReadLine();
                 number = ParseStringToInt(userInput, out bool isParseToInt);
 
