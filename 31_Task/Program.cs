@@ -72,10 +72,10 @@
             Console.WriteLine("Добавление нового досье на сотрудника");
             Console.Write("Введите ФИО сотрудника: ");
             userInput = Console.ReadLine();
-            names = AddElementToArray(userInput, names);
+            names = AddElement(userInput, names);
             Console.Write($"Введите должность сотрудника {userInput}: ");
             userInput = Console.ReadLine();
-            positions = AddElementToArray(userInput, positions);
+            positions = AddElement(userInput, positions);
             Console.Write($"\nДосье успешно добавлено: {names[names.Length - 1]} - {positions[positions.Length - 1]}\n");
         }
 
@@ -124,8 +124,8 @@
                 if (indexToRemove >= 0 && indexToRemove < names.Length)
                 {
                     Console.Write($"\nДосье успешно удалено: {names[indexToRemove]} - {positions[indexToRemove]}\n");
-                    names = RemoveElementFromArray(indexToRemove, names);
-                    positions = RemoveElementFromArray(indexToRemove, positions);
+                    names = RemoveElement(indexToRemove, names);
+                    positions = RemoveElement(indexToRemove, positions);
                 }
                 else
                 {
@@ -170,7 +170,7 @@
             }
         }
 
-        private static string[] AddElementToArray(string inputString, string[] sourceArray)
+        private static string[] AddElement(string inputString, string[] sourceArray)
         {
             string[] tempArray = new string[sourceArray.Length + 1];
 
@@ -183,7 +183,7 @@
             return tempArray;
         }
 
-        private static string[] RemoveElementFromArray(int indexToRemove, string[] sourceArray)
+        private static string[] RemoveElement(int indexToRemove, string[] sourceArray)
         {
             string[] tempArray = new string[sourceArray.Length - 1];
 
@@ -203,6 +203,7 @@
         private static bool IsEmptyDossier(string[] names, string[] positions)
         {
             int emptyValue = 0;
+
             return names.Length == emptyValue && positions.Length == emptyValue;
         }
     }
