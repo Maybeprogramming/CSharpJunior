@@ -9,3 +9,7 @@
 Все элементы являются обычными символами 
 
 Не используйте Task.Run
+
+static void TryCollectCherry(char[,] map, int playerPositionX, int playerPositionY, ref int collectCherry, char characterSymbol, char emptySymbol) 
+если метод возвращает один параметр, 
+то нужно использовать возвращаемое значение. )
