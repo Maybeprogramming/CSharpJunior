@@ -9,6 +9,7 @@
             int bracketsCount = 0;
             int depthCount = 0;
             int balanceValue = 0;
+
             char bracketOpenChar = '(';
             char bracketCloseChar = ')';
 
@@ -23,23 +24,23 @@
                 }
                 else if (userInput[i] == bracketCloseChar)
                 {
-                    if (i != userInput.Length - 1 && userInput[i + 1] != bracketOpenChar)
-                    {
-                        depthCount++;
-                    }
-
                     bracketsCount--;
+
+                    if (bracketsCount < balanceValue)
+                    {
+                        break;
+                    }
                 }
 
-                if (bracketsCount < balanceValue)
+                if (bracketsCount > depthCount)
                 {
-                    break;
+                    depthCount = bracketsCount;
                 }
             }
 
             if (bracketsCount == balanceValue)
             {
-                Console.WriteLine($"\"{userInput}\" - cтрока корректная, максимальная глубина составляет: {depthCount + 1}");
+                Console.WriteLine($"\"{userInput}\" - cтрока корректная, максимальная глубина составляет: {depthCount}");
             }
             else
             {
