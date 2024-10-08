@@ -1,7 +1,4 @@
-﻿using static System.Net.Mime.MediaTypeNames;
-using System.Drawing;
-
-namespace _31_Task
+﻿namespace _31_Task
 {
     public class Program
     {
