@@ -13,20 +13,19 @@
         private static int TryParseToInt()
         {
             bool isTryParse = false;
-            string requestNumber = "Введите число: ";
             string userInput;
             int result = 0;
 
             while (isTryParse == false)
             {
                 Console.Clear();
-                Console.WriteLine(requestNumber);
+                Console.WriteLine("Введите число: ");
                 userInput = Console.ReadLine();
                 isTryParse = int.TryParse(userInput, out result);
 
                 if (isTryParse == false)
                 {
-                    Console.WriteLine($"Вы ввели не число: {userInput}", ConsoleColor.Red);
+                    Console.WriteLine($"Вы ввели не число: {userInput}");
                     Console.ReadLine();
                 }
             }
