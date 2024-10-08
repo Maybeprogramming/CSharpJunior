@@ -20,6 +20,7 @@
             {
                 Console.Clear();
                 Console.WriteLine("Введите число: ");
+
                 userInput = Console.ReadLine();
                 isTryParse = int.TryParse(userInput, out result);
 
