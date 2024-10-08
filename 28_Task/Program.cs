@@ -15,7 +15,7 @@ namespace _28_Task
         {
             bool isTryParse = false;
             string requestMessage = "Введите число: ";
-            string continueMessage = "\n\nНажмите любую клавишу чтобы продолжить...";
+            string continueMessage = "\n\nНажмите любую клавишу чтобы продолжить";
             string userInput;
             int number;
 
@@ -24,12 +24,11 @@ namespace _28_Task
                 Console.Clear();
                 Display.Print(requestMessage);
                 userInput = Console.ReadLine();
-                number = ParseToIntNumber(userInput, out bool isParseToInt);
+                isTryParse = TryParseToInt(userInput, out number);
 
-                if (isParseToInt == true)
+                if (isTryParse == true)
                 {
                     Display.Print($"\nВы ввели число: {number}", ConsoleColor.Green);
-                    isTryParse = isParseToInt;
                 }
                 else
                 {
@@ -41,10 +40,9 @@ namespace _28_Task
             }
         }
 
-        private static int ParseToIntNumber(string userInput, out bool isParseToInt)
+        private static bool TryParseToInt(string userInput, out int result)
         {
-            isParseToInt = int.TryParse(userInput, out int result);
-            return result;
+            return Int32.TryParse(userInput, out result);
         }        
     }
 }
