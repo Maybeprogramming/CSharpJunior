@@ -1,4 +1,6 @@
-﻿namespace _30_Task
+﻿using System.Drawing;
+
+namespace _30_Task
 {
     public class Program
     {
@@ -17,16 +19,15 @@
             Random random = new();
 
             int[] arrayNumbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
-            char[] arraySymbols = { '!', '@', '#', '$', '%', '^', '&', '*', '(', ')' };
-            string[] arrayText = { "Один", "Два", "Три", "Четыре", "Пять" };
-            bool[] arrarBool = { true, true, true, false, false, false };
-            float[] arrayFloat = { 1.1f, 2.2f, 3.3f, 4.4f, 5.5f, 6.6f, 7.7f, 8.8f, 9.9f, 0.01f };
 
-            StartShuffle(random, arrayNumbers, "Массив типа Int");
-            StartShuffle(random, arraySymbols, "Массив типа Char");
-            StartShuffle(random, arrayText, "Массив типа String");
-            StartShuffle(random, arrarBool, "Массив типа Bool");
-            StartShuffle(random, arrayFloat, "Массив типа Float");
+            Print($"Массив типа Int\n");
+            Print("Исходный массив: ");
+            Print(arrayNumbers, ConsoleColor.Green);
+
+            arrayNumbers = Shuffle(arrayNumbers, random);
+
+            Print("Перемешанный массив: ");
+            Print(arrayNumbers, ConsoleColor.Yellow);
         }
 
         private static void ConsoleSetup()
@@ -37,19 +38,6 @@
             int bufferHeight = 40;
             Console.SetWindowSize(screenWidth, screenHeight);
             Console.SetBufferSize(bufferWidth, bufferHeight);
-        }
-
-        private static void StartShuffle<T>(Random random, T[] sourceArray, string title)
-        {
-            Print($"{title}\n");
-            Print("Исходный массив: ");
-            Print(sourceArray);
-
-            sourceArray = Shuffle(sourceArray, random);
-
-            Print("Перемешанный массив: ");
-            Print(sourceArray);
-            Print("\n");
         }
 
         private static T[] Shuffle<T>(T[] array, Random random)
@@ -67,11 +55,11 @@
             return array;
         }
 
-        private static void Print<T>(T[] array)
+        private static void Print<T>(T[] array, ConsoleColor color = ConsoleColor.White)
         {
             foreach (T element in array)
             {
-                Console.Write($"{element} ");
+                Print($"{element} ", color);
             }
 
             Console.WriteLine();

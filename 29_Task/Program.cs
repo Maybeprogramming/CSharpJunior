@@ -33,22 +33,25 @@
 
             int valueForDraw = barLength * currentPercent / maxPercent;
 
-            for (int i = 0; i < valueForDraw; i++)
-            {
-                bar += valueChar;
-            }
+            bar = FillBar(bar, valueChar, valueForDraw);
 
             Console.SetCursorPosition(leftPosition, topPosition);
             Console.Write($"{nameBar}: [{bar}");
 
             bar = "";
-
-            for (int i = valueForDraw; i < barLength; i++)
-            {
-                bar += emptyChar;
-            }
+            bar = FillBar(bar, valueChar, valueForDraw);
 
             Console.Write($"{bar}] [{currentPercent}/{maxPercent}%]");
+        }
+
+        private static string FillBar(string bar, char valueChar, int valueForDraw)
+        {
+            for (int i = 0; i < valueForDraw; i++)
+            {
+                bar += valueChar;
+            }
+
+            return bar;
         }
     }
 }
