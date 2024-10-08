@@ -1,8 +1,8 @@
 ﻿namespace _30_Task
 {
-    internal class Program
+    public class Program
     {
-        static void Main()
+        private static void Main()
         {
             Console.Title = "ДЗ: Канзас сити шафл";
 
@@ -16,17 +16,17 @@
         {
             Random random = new();
 
-            int[] arrayNumbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };
+            int[] arrayNumbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 };
             char[] arraySymbols = { '!', '@', '#', '$', '%', '^', '&', '*', '(', ')' };
             string[] arrayText = { "Один", "Два", "Три", "Четыре", "Пять" };
             bool[] arrarBool = { true, true, true, false, false, false };
             float[] arrayFloat = { 1.1f, 2.2f, 3.3f, 4.4f, 5.5f, 6.6f, 7.7f, 8.8f, 9.9f, 0.01f };
 
-            arrayNumbers = Shuffle2(random, arrayNumbers);
-            arraySymbols = Shuffle2(random, arraySymbols);
-            arrayText = Shuffle2(random, arrayText);
-            arrarBool = Shuffle2(random, arrarBool);
-            arrayFloat = Shuffle2(random, arrayFloat);
+            StartShuffle(random, arrayNumbers, "Массив типа Int");
+            StartShuffle(random, arraySymbols, "Массив типа Char");
+            StartShuffle(random, arrayText, "Массив типа String");
+            StartShuffle(random, arrarBool, "Массив типа Bool");
+            StartShuffle(random, arrayFloat, "Массив типа Float");
         }
 
         private static void ConsoleSetup()
@@ -39,21 +39,20 @@
             Console.SetBufferSize(bufferWidth, bufferHeight);
         }
 
-        private static T[] Shuffle2<T>(Random random, T[] sourceArray)
+        private static void StartShuffle<T>(Random random, T[] sourceArray, string title)
         {
-            Print("Исходный массив: \n");
+            Print($"{title}\n");
+            Print("Исходный массив: ");
             Print(sourceArray);
 
-            sourceArray = Shuffle(ref sourceArray, random);
+            sourceArray = Shuffle(sourceArray, random);
 
+            Print("Перемешанный массив: ");
+            Print(sourceArray);
             Print("\n");
-            Print("Перемешанный массив: \n");
-            Print(sourceArray);
-
-            return sourceArray;
         }
 
-        private static T[] Shuffle<T>(ref T[] array, Random random)
+        private static T[] Shuffle<T>(T[] array, Random random)
         {
             int index;
 
@@ -68,15 +67,17 @@
             return array;
         }
 
-        static void Print<T>(T[] array)
+        private static void Print<T>(T[] array)
         {
-            foreach (var element in array)
+            foreach (T element in array)
             {
-                Console.Write($" {element}");
+                Console.Write($"{element} ");
             }
+
+            Console.WriteLine();
         }
 
-        static void Print(string text, ConsoleColor color = ConsoleColor.White)
+        private static void Print(string text, ConsoleColor color = ConsoleColor.White)
         {
             ConsoleColor defaultColor = Console.ForegroundColor;
             Console.ForegroundColor = color;
