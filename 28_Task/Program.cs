@@ -8,27 +8,28 @@ namespace _28_Task
         {
             Console.Title = "ДЗ: ReadInt";
 
-            Work();
+            StartToParse();
         }
 
-        private static void Work()
+        private static void StartToParse()
         {
             bool isTryParse = false;
-            string requestMessage = "Введите число: ";
-            string continueMessage = "\n\nНажмите любую клавишу чтобы продолжить";
+            string requestNumber = "Введите число: ";
+            string continueMessage = "\n\nНажмите любую клавишу чтобы продолжить...";
             string userInput;
             int number;
 
             while (isTryParse == false)
             {
                 Console.Clear();
-                Display.Print(requestMessage);
+                Display.Print(requestNumber);
                 userInput = Console.ReadLine();
-                isTryParse = TryParseToInt(userInput, out number);
+                number = ParseStringToInt(userInput, out bool isParseToInt);
 
-                if (isTryParse == true)
+                if (isParseToInt == true)
                 {
                     Display.Print($"\nВы ввели число: {number}", ConsoleColor.Green);
+                    isTryParse = isParseToInt;
                 }
                 else
                 {
@@ -40,9 +41,10 @@ namespace _28_Task
             }
         }
 
-        private static bool TryParseToInt(string userInput, out int result)
+        private static int ParseStringToInt(string userInput, out bool isParseToInt)
         {
-            return Int32.TryParse(userInput, out result);
-        }        
+            isParseToInt = int.TryParse(userInput, out int result);
+            return result;
+        }
     }
 }
