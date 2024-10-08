@@ -1,6 +1,4 @@
-﻿using UserUtils;
-
-namespace _28_Task
+﻿namespace _28_Task
 {
     public class Program
     {
@@ -8,42 +6,31 @@ namespace _28_Task
         {
             Console.Title = "ДЗ: ReadInt";
 
-            StartToParse();
+            int number = TryParseToInt();
+            Console.WriteLine($"Вы ввели число: {number}");
         }
 
-        private static void StartToParse()
+        private static int TryParseToInt()
         {
             bool isTryParse = false;
             string requestNumber = "Введите число: ";
-            string continueMessage = "\n\nНажмите любую клавишу чтобы продолжить...";
             string userInput;
-            int number;
+            int result = 0;
 
             while (isTryParse == false)
             {
                 Console.Clear();
-                Display.Print(requestNumber);
+                Console.WriteLine(requestNumber);
                 userInput = Console.ReadLine();
-                number = ParseStringToInt(userInput, out bool isParseToInt);
+                isTryParse = int.TryParse(userInput, out result);
 
-                if (isParseToInt == true)
+                if (isTryParse == false)
                 {
-                    Display.Print($"\nВы ввели число: {number}", ConsoleColor.Green);
-                    isTryParse = isParseToInt;
+                    Console.WriteLine($"Вы ввели не число: {userInput}", ConsoleColor.Red);
+                    Console.ReadLine();
                 }
-                else
-                {
-                    Display.Print($"\nВы ввели не число: {userInput}", ConsoleColor.Red);
-                }
-
-                Display.Print(continueMessage);
-                Console.ReadLine();
             }
-        }
 
-        private static int ParseStringToInt(string userInput, out bool isParseToInt)
-        {
-            isParseToInt = int.TryParse(userInput, out int result);
             return result;
         }
     }

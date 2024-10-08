@@ -19,7 +19,7 @@ namespace _29_Task
             int leftPositionHealth = 0;
             int topPositionHealth = 0;
             int leftPositionMana = 0;
-            int toptPositionMana = 1;
+            int topPositionMana = 1;
             int currentMana = 6;
             int maxMana = 10;
             string nameManaBar = "MP";
@@ -51,7 +51,7 @@ namespace _29_Task
             {
                 Console.Clear();
                 DrawBar(nameHealthBar, currentHealth, maxHealth, ConsoleColor.Red, topPositionHealth, leftPositionHealth);
-                DrawBar(nameManaBar, currentMana, maxMana, ConsoleColor.Blue, toptPositionMana, leftPositionMana);
+                DrawBar(nameManaBar, currentMana, maxMana, ConsoleColor.Blue, topPositionMana, leftPositionMana);
                 Display.Print("\n");
                 DrawMenu(menu, leftPositionMenu, topPositionMenu);
                 Display.Print(requestMessage);
@@ -76,7 +76,7 @@ namespace _29_Task
                         break;
 
                     case SetPositionBarsCommand:
-                        SetPositionUserInterface(ref leftPositionHealth, ref topPositionHealth, ref leftPositionMana, ref toptPositionMana, ref leftPositionMenu, ref topPositionMenu);
+                        SetPositionUserInterface(ref leftPositionHealth, ref topPositionHealth, ref leftPositionMana, ref topPositionMana, ref leftPositionMenu, ref topPositionMenu);
                         break;
 
                     case ExitCommand:
@@ -102,12 +102,12 @@ namespace _29_Task
             Display.Print(menuText);
         }
 
-        private static void DrawBar(string nameBar, int value, int maxValue, ConsoleColor color, int topPosition, int leftPosition, char valueSymbol = '#', char remainingSymbol = '_')
+        private static void DrawBar(string nameBar, int value, int maxValue, ConsoleColor color, int topPosition, int leftPosition, int barLength = 10, char valueSymbol = '#', char remainingSymbol = '_')
         {
             ConsoleColor defaultColor = Console.BackgroundColor;
             string bar = "";
             int fullScalePercent = 100;
-            int maxDrawSymbols = 10;
+            int maxDrawSymbols = 5;
             int valueForDraw = value * fullScalePercent / maxValue / maxDrawSymbols;
             float remainderOfDivision = ((float)value * fullScalePercent) / maxValue - (valueForDraw * maxDrawSymbols);
 
@@ -134,7 +134,7 @@ namespace _29_Task
                 bar += remainingSymbol;
             }
 
-            Console.Write($"{bar}] {nameBar}");
+            Console.Write($"{bar}] [{value}/{maxValue}] {nameBar}");
         }
 
         private static int TakeParametrValue(int currentStat, string requestText, string warningText)
