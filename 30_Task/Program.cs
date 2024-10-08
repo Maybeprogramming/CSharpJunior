@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace _30_Task
+﻿namespace _30_Task
 {
     public class Program
     {
