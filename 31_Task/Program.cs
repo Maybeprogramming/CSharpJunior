@@ -4,11 +4,11 @@
     {
         private static void Main()
         {
-            const string CreateCardMenu = "1";
-            const string ShowCardMenu = "2";
-            const string DeleteCardMenu = "3";
-            const string FindBySernameMenu = "4";
-            const string ExitMenu = "5";
+            const string CommandAddDossier = "1";
+            const string CommandShowDossier = "2";
+            const string ComandDeleteDossier = "3";
+            const string CommandFindDossier = "4";
+            const string CommandExit = "5";
 
             Console.Title = "ДЗ: Кадровый учет";
 
@@ -16,18 +16,18 @@
             string[] positions = { "Главный инженер", "Специалист по кадрам", "Диспетчер", "Механик" };
             bool isWork = true;
             string menu = $"Меню программы по учёту кадров организации:" +
-                         $"\n{CreateCardMenu} - Добавить досье сотрудника" +
-                         $"\n{ShowCardMenu} - Вывести все досье на сотрудников" +
-                         $"\n{DeleteCardMenu} - Удалить досье сотрудника организации" +
-                         $"\n{FindBySernameMenu} - Поиск досье по фамилии сотрудника" +
-                         $"\n{ExitMenu} - Выйти из программы";
+                         $"\n{CommandAddDossier} - Добавить досье сотрудника" +
+                         $"\n{CommandShowDossier} - Вывести все досье на сотрудников" +
+                         $"\n{ComandDeleteDossier} - Удалить досье сотрудника организации" +
+                         $"\n{CommandFindDossier} - Поиск досье по фамилии сотрудника" +
+                         $"\n{CommandExit} - Выйти из программы";
             string requestMessage = "\nВведите команду: ";
             string exitMessage = "\nРабота программы завершена\n";
             string errorMessageMenu = "Такой команды нет";
             string userInput;
-            string continueMessage = "\nДля продолжения нажмите любую клавишу...";            
+            string continueMessage = "\nДля продолжения нажмите любую клавишу...";
 
-            while (isWork == true)
+            while (isWork)
             {
                 Console.Clear();
                 Console.WriteLine(menu);
@@ -36,28 +36,28 @@
 
                 switch (userInput)
                 {
-                    case CreateCardMenu:
-                        CreateCard(ref names, ref positions);
+                    case CommandAddDossier:
+                        AddDossier(ref names, ref positions);
                         break;
 
-                    case ShowCardMenu:
-                        ShowAllCards(names, positions);
+                    case CommandShowDossier:
+                        ShowAllDossier(names, positions);
                         break;
 
-                    case DeleteCardMenu:
-                        DeleteCard(ref names, ref positions);
+                    case ComandDeleteDossier:
+                        DeleteDossier(ref names, ref positions);
                         break;
 
-                    case FindBySernameMenu:
-                        SearchBySername(names, positions);
+                    case CommandFindDossier:
+                        FindDossier(names, positions);
                         break;
 
-                    case ExitMenu:
+                    case CommandExit:
                         isWork = false;
                         break;
 
                     default:
-                        Console.Write($"\n\"{userInput}\" - {errorMessageMenu}\n");
+                        Console.Write($"\n{errorMessageMenu}\n");
                         break;
                 }
 
@@ -68,7 +68,7 @@
             Console.Write(exitMessage, ConsoleColor.Green);
         }
 
-        private static void CreateCard(ref string[] names, ref string[] positions)
+        private static void AddDossier(ref string[] names, ref string[] positions)
         {
             string userInput;
             Console.Clear();
@@ -82,11 +82,11 @@
             Console.Write($"\nДосье успешно добавлено: {names[names.Length - 1]} - {positions[positions.Length - 1]}\n");
         }
 
-        private static void ShowAllCards(string[] names, string[] positions)
+        private static void ShowAllDossier(string[] names, string[] positions)
         {
             Console.Clear();
 
-            if (IsEmptyCard(names, positions) == false)
+            if (IsEmptyDossier(names, positions))
             {
                 Console.Write("Архив всех досье:\n");
                 ConsoleColor defaultColor = Console.ForegroundColor;
@@ -106,13 +106,13 @@
             }
         }
 
-        private static void DeleteCard(ref string[] names, ref string[] positions)
+        private static void DeleteDossier(ref string[] names, ref string[] positions)
         {
             string userInput;
             Console.Clear();
-            ShowAllCards(names, positions);
+            ShowAllDossier(names, positions);
 
-            if (IsEmptyCard(names, positions) == true)
+            if (!IsEmptyDossier(names, positions))
             {
                 return;
             }
@@ -120,7 +120,7 @@
             Console.Write($"\nДля удаления досье введите порядковый номер сотрудника из списка: ");
             userInput = Console.ReadLine();
 
-            if (Int32.TryParse(userInput, out int indexToRemove) == true)
+            if (int.TryParse(userInput, out int indexToRemove))
             {
                 --indexToRemove;
 
@@ -132,16 +132,16 @@
                 }
                 else
                 {
-                    Console.Write($"\n\"{indexToRemove + 1}\" - такого индекса нет\n");
+                    Console.Write($"\n[{indexToRemove + 1}] - такого индекса нет\n");
                 }
             }
             else
             {
-                Console.Write($"\n\"{userInput}\" - вы ввели не число\n");
+                Console.Write($"\n[{userInput}] - вы ввели не число\n");
             }
         }
 
-        private static void SearchBySername(string[] names, string[] positions)
+        private static void FindDossier(string[] names, string[] positions)
         {
             string userInput;
             Console.Clear();
@@ -150,7 +150,7 @@
             int findSurnameCount = 0;
             bool isFoundEmployee = false;
             char symbolToSplit = ' ';
-            Console.WriteLine($"Совпадения по запросу \"{userInput}\":");
+            Console.WriteLine($"Совпадения по запросу [{userInput}]:");
 
             for (int i = 0; i < names.Length; i++)
             {
@@ -160,10 +160,7 @@
                 {
                     if (userInput.ToLower() == surname[j].ToLower())
                     {
-                        Console.Write($"\n{findSurnameCount + 1} - ");
-                        Console.Write($"{names[i]}");
-                        Console.Write($" занимает должность: ");
-                        Console.Write($"{positions[i]}\n");
+                        Console.Write($"\n{findSurnameCount + 1} - {names[i]} занимает должность: {positions[i]}\n");
                         findSurnameCount++;
                         isFoundEmployee = true;
                     }
@@ -186,8 +183,7 @@
             }
 
             tempArray[tempArray.Length - 1] = inputString;
-            sourceArray = tempArray;
-            return sourceArray;
+            return tempArray;
         }
 
         private static string[] RemoveElementFromArray(int indexToRemove, string[] sourceArray)
@@ -204,22 +200,13 @@
                 tempArray[i - 1] = sourceArray[i];
             }
 
-            sourceArray = tempArray;
-            return sourceArray;
+            return tempArray;
         }
 
-        private static bool IsEmptyCard(string[] names, string[] positions)
+        private static bool IsEmptyDossier(string[] names, string[] positions)
         {
             int emptyValue = 0;
-
-            if (names.Length == emptyValue && positions.Length == emptyValue)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return names.Length != emptyValue && positions.Length != emptyValue;
         }
     }
 }
