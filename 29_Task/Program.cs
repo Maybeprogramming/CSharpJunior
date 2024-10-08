@@ -7,13 +7,13 @@
             Console.Title = "ДЗ: UIElement";
 
             string healthBarName = "HP";
-            int healthPercentValue = 40;
+            int healthPercentValue = 250;
             int topPositionHealthBar = 1;
             int leftPositionHealthBar = 5;
             int lengthHealthBar = 20;
 
             string manaBarName = "MP";
-            int manaPercentValue = 60;
+            int manaPercentValue = 40;
             int topPositionManaBar = 3;
             int leftPositionManaBar = 5;
             int lengthManaBar = 10;
@@ -31,22 +31,29 @@
             char emptyChar = '_';
             int maxPercent = 100;
 
+            if (currentPercent > maxPercent)
+            {
+                currentPercent = maxPercent;
+            }
+
             int valueForDraw = barLength * currentPercent / maxPercent;
 
-            bar = FillBar(bar, valueChar, valueForDraw);
+            bar += FillBar(valueChar, valueForDraw);
 
             Console.SetCursorPosition(leftPosition, topPosition);
             Console.Write($"{nameBar}: [{bar}");
 
             bar = "";
-            bar = FillBar(bar, valueChar, valueForDraw);
+            bar += FillBar(emptyChar, barLength, valueForDraw);
 
             Console.Write($"{bar}] [{currentPercent}/{maxPercent}%]");
         }
 
-        private static string FillBar(string bar, char valueChar, int valueForDraw)
+        private static string FillBar(char valueChar, int toValue, int fromValue = 0)
         {
-            for (int i = 0; i < valueForDraw; i++)
+            string bar = String.Empty;
+
+            for (int i = fromValue; i < toValue; i++)
             {
                 bar += valueChar;
             }
