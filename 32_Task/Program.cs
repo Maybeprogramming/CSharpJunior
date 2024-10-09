@@ -1,8 +1,8 @@
 ﻿namespace _32_Task
 {
-    internal class Program
+    public class Program
     {
-        static void Main()
+        private static void Main()
         {
             Console.Title = "ДЗ: Brave new world";
             Console.CursorVisible = false;
@@ -71,7 +71,7 @@
                 {
                     Move(ref playerPositionX, ref playerPositionY, playerDirectionX, playerDirectionY, playerSymbol, emptySymbol);
 
-                    TryCollectCherry(map, playerPositionX, playerPositionY, ref collectCherrys, cherrySymbol, emptySymbol);
+                    collectCherrys += TryCollectCherry(map, playerPositionX, playerPositionY, cherrySymbol, emptySymbol);
                 }
 
                 Task.Delay(delayMiliseconds).Wait();
@@ -90,16 +90,21 @@
             Console.ReadLine();
         }
 
-        static void TryCollectCherry(char[,] map, int playerPositionX, int playerPositionY, ref int collectCherry, char characterSymbol, char emptySymbol)
+        private static int TryCollectCherry(char[,] map, int playerPositionX, int playerPositionY, char characterSymbol, char emptySymbol)
         {
+            int cherryCount = 1;
+            int emptyCount = 0;
+
             if (map[playerPositionX, playerPositionY] == characterSymbol)
             {
-                collectCherry++;
                 map[playerPositionX, playerPositionY] = emptySymbol;
+                return cherryCount;
             }
+
+            return emptyCount;
         }
 
-        static void Move(ref int positionX, ref int positionY, int directionX, int directionY, char characterSymbol, char emptySymbol)
+        private static void Move(ref int positionX, ref int positionY, int directionX, int directionY, char characterSymbol, char emptySymbol)
         {
             Print(positionX, positionY, emptySymbol);
 
@@ -109,13 +114,13 @@
             Print(positionX, positionY, characterSymbol);
         }
 
-        static void Print(int positionX, int positionY, char symbol)
+        private static void Print(int positionX, int positionY, char symbol)
         {
             Console.SetCursorPosition(positionY, positionX);
             Console.Write(symbol);
         }
 
-        static void ChangeDirection(ConsoleKeyInfo key, ref int directionX, ref int directionY)
+        private static void ChangeDirection(ConsoleKeyInfo key, ref int directionX, ref int directionY)
         {
             const ConsoleKey KeyUp = ConsoleKey.UpArrow;
             const ConsoleKey KeyDown = ConsoleKey.DownArrow;
@@ -146,7 +151,7 @@
             }
         }
 
-        static char[,] ReadMap(string[] templateMap, ref int playerX, ref int playerY, char characterSymbol, ref int allCherry, char cherry, char cherrySpawnPoint)
+        private static char[,] ReadMap(string[] templateMap, ref int playerX, ref int playerY, char characterSymbol, ref int allCherry, char cherry, char cherrySpawnPoint)
         {
             char[,] map = new char[templateMap.GetLength(0), templateMap[0].Length];
 
@@ -172,7 +177,7 @@
             return map;
         }
 
-        static void DrawMap(char[,] map)
+        private static void DrawMap(char[,] map)
         {
             for (int i = 0; i < map.GetLength(0); i++)
             {
