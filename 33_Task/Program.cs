@@ -5,16 +5,16 @@
         private static void Main()
         {
             Console.Title = "ДЗ: Толковый словарь";
-            StartWorkDictionary();
+            WorkDictionary();
         }
 
-        private static void StartWorkDictionary()
+        private static void WorkDictionary()
         {
             const string FindWordCommand = "1";
             const string PrintWorldsCommand = "2";
             const string Exit = "3";
 
-            Dictionary<string, string> dictionaryWords = InitialDictionary(); ;
+            Dictionary<string, string> dictionaryWords = InitialDictionary();
             string titleMenu = "Меню \"толкового словаря\":";
             string menu = $"\n{FindWordCommand} - Найти значение слова" +
                           $"\n{PrintWorldsCommand} - Показать список слов - значений" +
