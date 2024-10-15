@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace _34_Task
+﻿namespace _34_Task
 {
     class Program
     {
