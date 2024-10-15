@@ -1,25 +1,23 @@
-﻿namespace _34_Task
+﻿using System;
+
+namespace _34_Task
 {
     class Program
     {
         static void Main()
         {
             Console.Title = "ДЗ: Очередь в магазине";
-            WorkShop();
+
+            Queue<int> customers = FillQueueCustomers();
+            WorkShop(customers);
         }
 
-        private static void WorkShop()
+        private static void WorkShop(Queue<int> customers)
         {
-            Random random = new();
             string requestMessage = "Нажмите любую клавишу для продолжения";
             int shopBalance = 0;
-            int queueCustomerCount = 15;
-            int minMoneyCustomer = 50;
-            int maxMoneyCustomer = 500;
             int currentCustomer = 0;
             int paidMoney;
-
-            Queue<int> customers = FillingQueueCustomers(random, queueCustomerCount, minMoneyCustomer, maxMoneyCustomer);
 
             while (customers.Count > 0)
             {
@@ -43,9 +41,13 @@
             Console.ReadLine();
         }
 
-        private static Queue<int> FillingQueueCustomers(Random random, int queueCustomerCount, int minMoneyCustomer, int maxMoneyCustomer)
+        private static Queue<int> FillQueueCustomers()
         {
             Queue<int> customers = new Queue<int>();
+            Random random = new();
+            int queueCustomerCount = 15;
+            int minMoneyCustomer = 50;
+            int maxMoneyCustomer = 500;
 
             for (int i = 0; i < queueCustomerCount; i++)
             {
