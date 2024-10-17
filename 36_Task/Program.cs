@@ -107,10 +107,10 @@
             Console.WriteLine($"\n{dossiers[inputPosition][inputNumber]} - успешно удалён из базы!");
             dossiers[inputPosition].RemoveAt(inputNumber);
 
-            CheckPositionForEmpty(dossiers, inputPosition);
+            TryRemoveosition(dossiers, inputPosition);
         }
 
-        private static void CheckPositionForEmpty(Dictionary<string, List<string>> dossiers, string position)
+        private static void TryRemoveosition(Dictionary<string, List<string>> dossiers, string position)
         {
             if (dossiers[position].Count == 0)
             {
