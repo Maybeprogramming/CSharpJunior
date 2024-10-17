@@ -18,6 +18,7 @@
             Dictionary<string, List<string>> dossiers = GetRandomDossiers(5);
             bool isRun = true;
             int userInput;
+            bool isNumber;
 
             while (isRun)
             {
@@ -29,60 +30,131 @@
                     $"\n{CommandShowDossiers} - Показать все досье" +
                     $"\n{CommandExit} - Выход");
 
-                if (int.TryParse(Console.ReadLine(),out userInput))
+                isNumber = int.TryParse(Console.ReadLine(), out userInput);
+
+                if (isNumber == false)
                 {
-                    switch (userInput)
-                    {
-                        case CommandAddDossier:
-                            AddDossier(dossiers);
-                            break;
-
-                        case CommandRemoveDossier:
-                            RemoveDossier(dossiers);
-                            break;
-
-                        case CommandShowDossiers:
-                            ShowDossiers(dossiers);
-                            break;
-                        case CommandExit:
-                            isRun = false;
-                            break;
-
-                        default:
-                            Console.WriteLine("Такой команды нет, попробуйте ввести другую");
-                            break;
-                    }
+                    Console.WriteLine("Вы ввели не число!");
+                    Console.ReadLine();
+                    continue;
                 }
-                else
+
+                switch (userInput)
                 {
-                    Console.WriteLine("Ошибка ввода, попробуйте ещё раз");
+                    case CommandAddDossier:
+                        AddDossier(dossiers);
+                        break;
+
+                    case CommandRemoveDossier:
+                        RemoveDossier(dossiers);
+                        break;
+
+                    case CommandShowDossiers:
+                        ShowDossiers(dossiers);
+                        break;
+                    case CommandExit:
+                        isRun = false;
+                        break;
+
+                    default:
+                        Console.WriteLine("Команды с таким номером нет!");
+                        break;
                 }
+
+                Console.ReadLine();
             }
-
-            Console.ReadLine();
         }
 
         private static void RemoveDossier(Dictionary<string, List<string>> dossiers)
         {
-            Console.WriteLine("Удаление");
+            int indexNumber;
+            string inputPosition;
+
+            Console.Clear();
+            Console.WriteLine("Список всех должностей");
+
+            foreach (string potition in dossiers.Keys)
+            {
+                Console.WriteLine($"{potition}");
+            }
+
+            inputPosition = ReadUserInputText("\nВведите должность:");
+
+            if (dossiers.ContainsKey(inputPosition))
+            {
+                indexNumber = 0;
+                int inputIndex;
+                bool isNumber;
+                Console.WriteLine($"{inputPosition}:");
+
+                foreach (string employee in dossiers[inputPosition])
+                {
+                    Console.WriteLine($"{++indexNumber}. {employee}");
+                }
+
+                Console.WriteLine($"\nВведите номер сотрудника:");
+                isNumber = int.TryParse(Console.ReadLine(), out inputIndex);
+                inputIndex--;
+
+                if (inputIndex >= 0 && inputIndex < dossiers[inputPosition].Count)
+                {
+                    Console.WriteLine($"\n{dossiers[inputPosition][inputIndex]} - успешно удалён из базы!");
+                    dossiers[inputPosition].RemoveAt(inputIndex);
+                }
+                else if (isNumber)
+                {
+                    Console.WriteLine("Вы ввели неккоректный номер!");
+                }
+                else
+                {
+                    Console.WriteLine("Вы ввели не число!");
+                }
+
+                if (dossiers[inputPosition].Count == 0)
+                {
+                    dossiers.Remove(inputPosition);
+                    Console.WriteLine($"Удалена должность: {inputPosition}, так как нет сотрудников в этой должности!");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Такой должности нет!");
+            }
         }
 
         private static void AddDossier(Dictionary<string, List<string>> dossiers)
+        {            
+            string inputPosition = ReadUserInputText("Введите должность:");
+            string inputEmployeeName = ReadUserInputText("Введите ФИО сотрудника:");
+
+            if(dossiers.ContainsKey(inputPosition))
+            {
+                dossiers[inputPosition].Add(inputEmployeeName);
+            }
+            else
+            {
+                List<string> employes = [inputEmployeeName];
+                dossiers.Add(inputPosition, employes);
+            }
+
+            Console.WriteLine("Сотрудник успешно добавлен в базу!");
+        }
+
+        private static string ReadUserInputText(string message)
         {
-            Console.WriteLine("Добавление");
+            Console.WriteLine(message);
+            return Console.ReadLine();
         }
 
         private static void ShowDossiers(Dictionary<string, List<string>> dossiers)
         {
             int indexPosition = 0;
 
-            foreach (var keyPosition in dossiers.Keys)
+            foreach (var dossier in dossiers)
             {
-                List<string> fullNamesEmployers = dossiers[keyPosition];
-
-                foreach (var fullName in fullNamesEmployers)
+                foreach (string fullName in dossier.Value)
                 {
-                    Console.WriteLine($"{++indexPosition}. {keyPosition} - {fullName}");
+                    Console.WriteLine($"{++indexPosition}. {dossier.Key} - {fullName}");
                 }
             }
         }
