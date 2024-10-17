@@ -91,22 +91,22 @@
             }
 
             Console.WriteLine($"\nВведите номер сотрудника для удаления:");
-            isNumber = int.TryParse(Console.ReadLine(), out inputNumber);
-            inputNumber--;
 
-            if (inputNumber >= 0 && inputNumber < dossiers[inputPosition].Count)
-            {
-                Console.WriteLine($"\n{dossiers[inputPosition][inputNumber]} - успешно удалён из базы!");
-                dossiers[inputPosition].RemoveAt(inputNumber);
-            }
-            else if (isNumber)
-            {
-                Console.WriteLine("Сотрудника с таким номером нет в списке!");
-            }
-            else
+            if (int.TryParse(Console.ReadLine(), out inputNumber) == false)
             {
                 Console.WriteLine("Вы ввели не число!");
+                return;
             }
+
+            if (inputNumber < 0 && inputNumber >= dossiers[inputPosition].Count)
+            {
+                Console.WriteLine("Сотрудника с таким номером нет в списке!");
+                return;
+            }
+
+            inputNumber--;
+            Console.WriteLine($"\n{dossiers[inputPosition][inputNumber]} - успешно удалён из базы!");
+            dossiers[inputPosition].RemoveAt(inputNumber);
 
             CheckPositionForEmpty(dossiers, inputPosition);
         }
