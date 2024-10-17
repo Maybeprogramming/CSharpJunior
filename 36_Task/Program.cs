@@ -71,7 +71,6 @@
             int indexEmployee = 0;
             string inputPosition;
             int inputNumber;
-            bool isNumber;
 
             ShowPositions(dossiers);
 
