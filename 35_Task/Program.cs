@@ -14,18 +14,14 @@
 
             Console.Title = "ДЗ: Динамический массив продвинутый";
             List<int> numbersList = new List<int>();
-            int sumNumbers = 0;
             string userInput;
             bool isRunProgramm = true;
-            string requestCommandOrNumber = $"\n\nВведите команду или число: ";
             string continueMessage = $"\nНажмите любую клавишу чтобы продолжить";
             string commandMenu = $"Меню:" +
                                  $"\n{CommandSum} - сумма всех чисел" +
                                  $"\n{CommandExit} - выйти из приложения\n";
-            string noElementsInArraymessage = $"\nОшибка! Вы ещё не ввели ни одного числа!";
-            string errorCommandMessage = "Ошибка! Такого числа или команды нет!";
             int inputNumber;
-            bool isTryParseToInt;
+            bool isNumber;
 
             while (isRunProgramm == true)
             {
@@ -37,14 +33,14 @@
                     Console.Write($"{number} ");
                 }
 
-                Console.Write(requestCommandOrNumber);
+                Console.Write("\n\nВведите команду или число: ");
                 userInput = Console.ReadLine();
-                isTryParseToInt = Int32.TryParse(userInput, out int result);
+                isNumber = Int32.TryParse(userInput, out int result);
 
                 switch (userInput)
                 {
                     case CommandSum:
-                        SumNumbers(numbersList, sumNumbers, noElementsInArraymessage);
+                        SumNumbers(numbersList);
                         break;
 
                     case CommandExit:
@@ -52,7 +48,7 @@
                         break;
 
                     default:
-                        TryAddNumberToList(numbersList, errorCommandMessage, isTryParseToInt, result);
+                        TryAddNumberToList(numbersList, isNumber, result);
                         break;
                 }
 
@@ -62,7 +58,7 @@
             }
         }
 
-        private static void TryAddNumberToList(List<int> numberList, string errorCommandMessage, bool isTryParseToInt, int result)
+        private static void TryAddNumberToList(List<int> numberList, bool isTryParseToInt, int result)
         {
             if (isTryParseToInt == true)
             {
@@ -70,12 +66,14 @@
             }
             else
             {
-                Console.WriteLine(errorCommandMessage);
+                Console.WriteLine("Ошибка! Такого числа или команды нет!");
             }
         }
 
-        private static void SumNumbers(List<int> numberList, int sumNumbers, string noElementsInArraymessage)
+        private static void SumNumbers(List<int> numberList)
         {
+            int sumNumbers = 0;
+
             if (numberList.Count > 0)
             {
                 sumNumbers = numberList.Sum(number => number);
@@ -83,7 +81,7 @@
             }
             else
             {
-                Console.WriteLine(noElementsInArraymessage);
+                Console.WriteLine($"\nОшибка! Вы ещё не ввели ни одного числа!");
             }
 
             sumNumbers = 0;
