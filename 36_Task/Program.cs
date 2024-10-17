@@ -71,7 +71,7 @@
             string inputPosition;
 
             Console.Clear();
-            Console.WriteLine("Список всех должностей");
+            Console.WriteLine("Список всех должностей и сотрудников");
 
             foreach (string potition in dossiers.Keys)
             {
@@ -103,7 +103,7 @@
                 }
                 else if (isNumber)
                 {
-                    Console.WriteLine("Вы ввели неккоректный номер!");
+                    Console.WriteLine("Сотрудника с таким номером нет в списке!");
                 }
                 else
                 {
@@ -167,7 +167,7 @@
             List<string> names = new List<string>() { "Алексей", "Иван", "Олег", "Сергей", "Роман" };
             List<string> surNames = new List<string>() { "Геннадьевич", "Николаевич", "Михайлович", "Алексеевич", "Олегович" };
             List<string> lastNames = new List<string>() { "Иванов", "Петров", "Бычков", "Андреев", "Тимашков" };
-
+            
             for (int i = 0; i < amountDossiers; i++)
             {
                 string position = GetRandomString(positions, random);
@@ -181,8 +181,7 @@
                 }
                 else
                 {
-                    List<string> employers = dossiers[position];
-                    employers.Add(fullName);
+                    dossiers[position].Add(fullName);
                 }
             }
 
