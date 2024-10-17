@@ -97,7 +97,7 @@
                 return;
             }
 
-            if (inputNumber < 0 || inputNumber >= dossiers[inputPosition].Count)
+            if (inputNumber < 0 || inputNumber > dossiers[inputPosition].Count)
             {
                 Console.WriteLine("Сотрудника с таким номером нет в списке!");
                 return;
