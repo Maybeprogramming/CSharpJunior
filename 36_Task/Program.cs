@@ -70,7 +70,7 @@
         {
             int indexEmployee = 0;
             string inputPosition;
-            int inputIndex;
+            int inputNumber;
             bool isNumber;
 
             ShowPositions(dossiers);
@@ -91,13 +91,13 @@
             }
 
             Console.WriteLine($"\nВведите номер сотрудника для удаления:");
-            isNumber = int.TryParse(Console.ReadLine(), out inputIndex);
-            inputIndex--;
+            isNumber = int.TryParse(Console.ReadLine(), out inputNumber);
+            inputNumber--;
 
-            if (inputIndex >= 0 && inputIndex < dossiers[inputPosition].Count)
+            if (inputNumber >= 0 && inputNumber < dossiers[inputPosition].Count)
             {
-                Console.WriteLine($"\n{dossiers[inputPosition][inputIndex]} - успешно удалён из базы!");
-                dossiers[inputPosition].RemoveAt(inputIndex);
+                Console.WriteLine($"\n{dossiers[inputPosition][inputNumber]} - успешно удалён из базы!");
+                dossiers[inputPosition].RemoveAt(inputNumber);
             }
             else if (isNumber)
             {
