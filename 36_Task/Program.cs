@@ -21,6 +21,7 @@
 
             while (isRun)
             {
+                Console.Clear();
                 Console.WriteLine(
                     $"Меню:" +
                     $"\n{CommandAddDossier} - Добавить досье" +
