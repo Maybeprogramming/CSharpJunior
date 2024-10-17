@@ -68,75 +68,70 @@
 
         private static void RemoveDossier(Dictionary<string, List<string>> dossiers)
         {
-            int indexNumber;
+            int indexEmployee = 0;
             string inputPosition;
+            int inputIndex;
+            bool isNumber;
 
-            Console.Clear();
-            Console.WriteLine("Список всех должностей и сотрудников");
-
-            foreach (string potition in dossiers.Keys)
-            {
-                Console.WriteLine($"{potition}");
-            }
+            ShowPositions(dossiers);
 
             inputPosition = ReadUserInputText("\nВведите должность:");
 
-            if (dossiers.ContainsKey(inputPosition))
+            if (dossiers.ContainsKey(inputPosition) == false)
             {
-                indexNumber = 0;
-                int inputIndex;
-                bool isNumber;
-                Console.WriteLine($"{inputPosition}:");
+                Console.WriteLine("Такой должности нет!!");
+                return;
+            }
 
-                foreach (string employee in dossiers[inputPosition])
-                {
-                    Console.WriteLine($"{++indexNumber}. {employee}");
-                }
+            Console.WriteLine($"В должности [{inputPosition}] следующие сотрудники:");
 
-                Console.WriteLine($"\nВведите номер сотрудника:");
-                isNumber = int.TryParse(Console.ReadLine(), out inputIndex);
-                inputIndex--;
+            foreach (string employee in dossiers[inputPosition])
+            {
+                Console.WriteLine($"{++indexEmployee}. {employee}");
+            }
 
-                if (inputIndex >= 0 && inputIndex < dossiers[inputPosition].Count)
-                {
-                    Console.WriteLine($"\n{dossiers[inputPosition][inputIndex]} - успешно удалён из базы!");
-                    dossiers[inputPosition].RemoveAt(inputIndex);
-                }
-                else if (isNumber)
-                {
-                    Console.WriteLine("Сотрудника с таким номером нет в списке!");
-                }
-                else
-                {
-                    Console.WriteLine("Вы ввели не число!");
-                }
+            Console.WriteLine($"\nВведите номер сотрудника для удаления:");
+            isNumber = int.TryParse(Console.ReadLine(), out inputIndex);
+            inputIndex--;
 
-                if (dossiers[inputPosition].Count == 0)
-                {
-                    dossiers.Remove(inputPosition);
-                    Console.WriteLine($"Удалена должность: {inputPosition}, так как нет сотрудников в этой должности!");
-                }
+            if (inputIndex >= 0 && inputIndex < dossiers[inputPosition].Count)
+            {
+                Console.WriteLine($"\n{dossiers[inputPosition][inputIndex]} - успешно удалён из базы!");
+                dossiers[inputPosition].RemoveAt(inputIndex);
+            }
+            else if (isNumber)
+            {
+                Console.WriteLine("Сотрудника с таким номером нет в списке!");
             }
             else
             {
-                Console.WriteLine("Такой должности нет!");
+                Console.WriteLine("Вы ввели не число!");
+            }
+
+            CheckPositionForEmpty(dossiers, inputPosition);
+        }
+
+        private static void CheckPositionForEmpty(Dictionary<string, List<string>> dossiers, string position)
+        {
+            if (dossiers[position].Count == 0)
+            {
+                dossiers.Remove(position);
+                Console.WriteLine($"Удалена должность: {position}, так как нет сотрудников в этой должности!");
             }
         }
 
         private static void AddDossier(Dictionary<string, List<string>> dossiers)
-        {            
+        {
             string inputPosition = ReadUserInputText("Введите должность:");
             string inputEmployeeName = ReadUserInputText("Введите ФИО сотрудника:");
 
-            if(dossiers.ContainsKey(inputPosition))
+            if (dossiers.ContainsKey(inputPosition) == false)
             {
-                dossiers[inputPosition].Add(inputEmployeeName);
-            }
-            else
-            {
-                List<string> employes = [inputEmployeeName];
+                List<string> employes = new();
                 dossiers.Add(inputPosition, employes);
             }
+
+            dossiers[inputPosition].Add(inputEmployeeName);
 
             Console.WriteLine("Сотрудник успешно добавлен в базу!");
         }
@@ -145,6 +140,17 @@
         {
             Console.WriteLine(message);
             return Console.ReadLine();
+        }
+
+        private static void ShowPositions(Dictionary<string, List<string>> dossiers)
+        {
+            Console.Clear();
+            Console.WriteLine("Список всех должностей:");
+
+            foreach (string potition in dossiers.Keys)
+            {
+                Console.WriteLine($"{potition}");
+            }
         }
 
         private static void ShowDossiers(Dictionary<string, List<string>> dossiers)
@@ -168,7 +174,7 @@
             List<string> names = new List<string>() { "Алексей", "Иван", "Олег", "Сергей", "Роман" };
             List<string> surNames = new List<string>() { "Геннадьевич", "Николаевич", "Михайлович", "Алексеевич", "Олегович" };
             List<string> lastNames = new List<string>() { "Иванов", "Петров", "Бычков", "Андреев", "Тимашков" };
-            
+
             for (int i = 0; i < amountDossiers; i++)
             {
                 string position = GetRandomString(positions, random);
