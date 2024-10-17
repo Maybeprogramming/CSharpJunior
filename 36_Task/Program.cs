@@ -15,7 +15,8 @@
             const int CommandShowDossiers = 3;
             const int CommandExit = 4;
 
-            Dictionary<string, List<string>> dossiers = GetRandomDossiers(5);
+            int randomEmployes = 10;
+            Dictionary<string, List<string>> dossiers = GetRandomDossiers(randomEmployes);
             bool isRun = true;
             int userInput;
             bool isNumber;
