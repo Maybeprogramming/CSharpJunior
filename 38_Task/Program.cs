@@ -32,11 +32,6 @@
             _damage = damage;
         }
 
-        public string Name => _name;
-        public string Class => _classType;
-        public int Health => _health;
-        public int Damage => _damage;
-
         public void ShowInfo()
         {
             Console.WriteLine($"" +
