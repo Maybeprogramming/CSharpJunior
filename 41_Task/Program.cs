@@ -66,20 +66,19 @@
         private void TransferCards()
         {
             int amountCards = DesiredNumberCards();
-
-            if (amountCards < 0)
-            {
-                Console.Write($"\nОшибка! введеное число должно быть больше 0!");
-                return;
-            }
-
             _player.TakeCards(_deck.GiveCards(amountCards));
         }
 
         private int DesiredNumberCards()
         {
-            Console.WriteLine("\nВведите количество карт: ");
-            int disireNumberCards = ReadInputNumber();
+            int disireNumberCards = 0;
+
+            while (disireNumberCards <= 0)
+            {
+                Console.WriteLine("\nВведите положительное количество карт: ");
+                disireNumberCards = ReadInputNumber();
+            }
+
             return disireNumberCards;
         }
 
