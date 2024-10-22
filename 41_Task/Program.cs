@@ -14,8 +14,8 @@
 
     class Croupier
     {
-        private Player _player = new();
-        private Deck _deck = new();
+        private Player _player;
+        private Deck _deck;
 
         public Croupier(Player player, Deck deck)
         {
@@ -65,21 +65,15 @@
 
         private void TransferCards()
         {
-            int amountCards = DesiredNumberCards();
-            _player.TakeCards(_deck.GiveCards(amountCards));
-        }
+            int amountCards = 0;
 
-        private int DesiredNumberCards()
-        {
-            int disireNumberCards = 0;
-
-            while (disireNumberCards <= 0)
+            while (amountCards <= 0)
             {
                 Console.WriteLine("\nВведите положительное количество карт: ");
-                disireNumberCards = ReadInputNumber();
+                amountCards = ReadInputNumber();
             }
 
-            return disireNumberCards;
+            _player.TakeCards(_deck.GiveCards(amountCards));
         }
 
         private int ReadInputNumber()
@@ -136,17 +130,17 @@
 
     class Card
     {
+        private string _value;
+        private string _suit;
+
         public Card(string value, string suit)
         {
-            Value = value;
-            Suit = suit;
+            _value = value;
+            _suit = suit;
         }
 
-        public string Value { get; }
-        public string Suit { get; }
-
         public string GetInfo() =>
-            $"{Value} : {Suit}";
+            $"{_value} : {_suit}";
     }
 
     class Deck
