@@ -1,9 +1,9 @@
 ﻿namespace _40_Task
 {
 
-    class Program
+    public class Program
     {
-        static void Main()
+        public static void Main()
         {
             Console.Title = "ДЗ: База данных игроков";
 
@@ -13,7 +13,7 @@
         }
     }
 
-    class ViewData
+    public class ViewData
     {
         public void Work(DataBase dataSheet)
         {
