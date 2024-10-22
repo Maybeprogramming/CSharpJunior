@@ -14,11 +14,11 @@
     {
         public void RunGame()
         {
-            const string CommandTakeSomeCards = "1";
+            const string CommandTakeCards = "1";
             const string CommandStopGame = "2";
 
             string menu = $"Крупье:" +
-                          $"\n{CommandTakeSomeCards} - взять несколько карт" +
+                          $"\n{CommandTakeCards} - взять несколько карт" +
                           $"\n{CommandStopGame} - завершить партию" +
                           $"\nВведите комадну: ";
             string userInput;
@@ -35,8 +35,8 @@
 
                 switch (userInput)
                 {
-                    case CommandTakeSomeCards:
-                        TakeSomeCards(player, deck);
+                    case CommandTakeCards:
+                        TakeCards(player, deck);
                         break;
 
                     case CommandStopGame:
@@ -54,7 +54,7 @@
             }
         }
 
-        private static void TakeSomeCards(Player player, Deck deck)
+        private static void TakeCards(Player player, Deck deck)
         {
             int amountCards = DesiredNumberCards();
             player.TakeSomeCards(deck.GiveCards(amountCards));
