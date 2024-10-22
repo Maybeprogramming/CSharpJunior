@@ -56,8 +56,41 @@
 
         private static void TakeSomeCards(Player player, Deck deck)
         {
-            int amountCards = player.DesiredNumberCards();
-            player.TakeSomeCards(deck.GiveSomeCards(amountCards));
+            int amountCards = DesiredNumberCards();
+            player.TakeSomeCards(deck.GiveCards(amountCards));
+        }
+
+        public static int DesiredNumberCards()
+        {
+            Console.WriteLine("\nВведите количество карт: ");
+            int disireNumberCards = ReadInputNumber();
+            return disireNumberCards;
+        }
+
+        private static int ReadInputNumber()
+        {
+            bool isNumber = false;
+            string userInput;
+            int result = 0;
+
+            while (isNumber == false)
+            {
+                userInput = Console.ReadLine();
+                isNumber = int.TryParse(userInput, out result);
+
+                if (isNumber == false)
+                {
+                    Console.WriteLine($"Вы ввели не число: {userInput}");
+                }
+
+                if (result < 0)
+                {
+                    Console.Write($"Ошибка! Введеное число должно быть больше 0!\nПопробуйте снова: ");
+                    isNumber = false;
+                }
+            }
+
+            return result;
         }
     }
 
@@ -98,39 +131,6 @@
                 Console.WriteLine(card.GetInfo());
             }
         }
-
-        public int DesiredNumberCards()
-        {
-            Console.WriteLine("\nВведите количество карт: ");
-            int disireNumberCards = ReadInputNumber();
-            return disireNumberCards;
-        }
-
-        private int ReadInputNumber()
-        {
-            bool isTryParse = false;
-            string userInput;
-            int result = 0;
-
-            while (isTryParse == false)
-            {
-                userInput = Console.ReadLine();
-                isTryParse = int.TryParse(userInput, out result);
-
-                if (isTryParse == false)
-                {
-                    Console.WriteLine($"Вы ввели не число: {userInput}");
-                }
-
-                if (result < 0)
-                {
-                    Console.Write($"Ошибка! Введеное число должно быть больше 0!\nПопробуйте снова: ");
-                    isTryParse = false;
-                }
-            }
-
-            return result;
-        }
     }
 
     class Card
@@ -153,10 +153,10 @@
 
         public Deck()
         {
-            _cards = FillDeck();
+            _cards = Fill();
         }
 
-        public List<Card> GiveSomeCards(int cardsAmount)
+        public List<Card> GiveCards(int cardsAmount)
         {
             List<Card> givenCards = new();
 
@@ -173,7 +173,7 @@
             return null;
         }
 
-        private Stack<Card> FillDeck()
+        private Stack<Card> Fill()
         {
             Random random = new();
             List<Card> cards = CreateCards();
