@@ -7,15 +7,15 @@
         {
             Console.Title = "ДЗ: База данных игроков";
 
-            DataBase playerDataBase = new();
+            Database playerDatabase = new();
             ViewData view = new();
-            view.Work(playerDataBase);
+            view.Work(playerDatabase);
         }
     }
 
     public class ViewData
     {
-        public void Work(DataBase dataSheet)
+        public void Work(Database database)
         {
             const string CommandShowPlayersData = "1";
             const string CommandAddPlayerToDataBase = "2";
@@ -24,7 +24,7 @@
             const string CommandUnBanPlayerById = "5";
             const string CommandExitProgramm = "6";
 
-            string _menu = $"Меню:" +
+            string menu = $"Меню:" +
                            $"\n{CommandShowPlayersData} - Вывести информацию обо всех игроках" +
                            $"\n{CommandAddPlayerToDataBase} - Добавить нового игрока в базу" +
                            $"\n{CommandRemovePlayerInDataBase} - Удалить игрока из базы" +
@@ -32,45 +32,45 @@
                            $"\n{CommandUnBanPlayerById} - Разбанить игкрока по ID" +
                            $"\n{CommandExitProgramm} - Выход из программы" +
                            $"\n\nВведите команду: ";
-            string _userInput;
-            bool _isRun = true;
-            DataBase playersDataSheet = dataSheet;
+            string userInput;
+            bool isRun = true;
+            Database playersDatabase = database;
 
-            while (_isRun)
+            while (isRun)
             {
                 Console.Clear();
-                Console.Write(_menu);
+                Console.Write(menu);
 
-                _userInput = Console.ReadLine();
+                userInput = Console.ReadLine();
 
-                switch (_userInput)
+                switch (userInput)
                 {
                     case CommandShowPlayersData:
-                        playersDataSheet.ShowPlayers();
+                        playersDatabase.ShowPlayers();
                         break;
 
                     case CommandAddPlayerToDataBase:
-                        playersDataSheet.AddPlayer();
+                        playersDatabase.AddPlayer();
                         break;
 
                     case CommandRemovePlayerInDataBase:
-                        playersDataSheet.RemovePlayer();
+                        playersDatabase.RemovePlayer();
                         break;
 
                     case CommandBanPlayerById:
-                        playersDataSheet.BanPlayer();
+                        playersDatabase.BanPlayer();
                         break;
 
                     case CommandUnBanPlayerById:
-                        playersDataSheet.UnbanPlayer();
+                        playersDatabase.UnbanPlayer();
                         break;
 
                     case CommandExitProgramm:
-                        _isRun = false;
+                        isRun = false;
                         break;
 
                     default:
-                        Console.WriteLine($"{_userInput} - такой команды нет! Повторите ещё раз.");
+                        Console.WriteLine($"{userInput} - такой команды нет! Повторите ещё раз.");
                         break;
                 }
 
@@ -85,16 +85,21 @@
         }
     }
 
-    public class DataBase
+    public class Database
     {
-        private List<Player> _players = new()
+        private List<Player> _players;
+
+        public Database()
         {
-            new Player ("Свирепый", 20),
-            new Player ("Шустрый", 30),
-            new Player ("Проницательный", 25),
-            new Player ("Великолепный", 45),
-            new Player ("Важный", 80)
-        };
+            _players = new()
+            {
+                new Player ("Свирепый", 20),
+                new Player ("Шустрый", 30),
+                new Player ("Проницательный", 25),
+                new Player ("Великолепный", 45),
+                new Player ("Важный", 80)
+            };
+        }
 
         public void ShowPlayers()
         {
@@ -211,12 +216,12 @@
 
     public class Player
     {
-        private static int s_id = 0;
+        private static int s_lastId = 0;
 
         public Player(string name, int level, bool isBan = false)
         {
-            ++s_id;
-            Id = s_id;
+            ++s_lastId;
+            Id = s_lastId;
             Level = SetLevel(level);
             Name = name;
             IsBanned = isBan;
