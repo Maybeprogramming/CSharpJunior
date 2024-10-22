@@ -5,12 +5,12 @@
         static void Main()
         {
             Console.Title = "ДЗ: Колода карт";
-            GameTable gameTable = new();
-            gameTable.RunGame();
+            Croupier croupier = new();
+            croupier.RunGame();
         }
     }
 
-    class GameTable
+    class Croupier
     {
         public void RunGame()
         {
@@ -24,7 +24,7 @@
             string userInput;
             bool isRun = true;
             Player player = new();
-            Croupier croupier = new();
+            Deck deck = new();
 
             while (isRun == true)
             {
@@ -36,7 +36,7 @@
                 switch (userInput)
                 {
                     case CommandTakeSomeCards:
-                        TakeSomeCards(player, croupier);
+                        TakeSomeCards(player, deck);
                         break;
 
                     case CommandStopGame:
@@ -54,7 +54,7 @@
             }
         }
 
-        private static void TakeSomeCards(Player player, Croupier deck)
+        private static void TakeSomeCards(Player player, Deck deck)
         {
             int amountCards = player.DesiredNumberCards();
             player.TakeSomeCards(deck.GiveSomeCards(amountCards));
@@ -147,11 +147,11 @@
         public string GetInfo() => $"{Value} : {Suit}";
     }
 
-    class Croupier
+    class Deck
     {
         private Stack<Card> _cards;
 
-        public Croupier()
+        public Deck()
         {
             _cards = FillDeck();
         }
