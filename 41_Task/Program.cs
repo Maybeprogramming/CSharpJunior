@@ -24,7 +24,7 @@
             string userInput;
             bool isRun = true;
             Player player = new();
-            Croupier deck = new();
+            Croupier croupier = new();
 
             while (isRun == true)
             {
@@ -36,7 +36,7 @@
                 switch (userInput)
                 {
                     case CommandTakeSomeCards:
-                        TakeSomeCards(player, deck);
+                        TakeSomeCards(player, croupier);
                         break;
 
                     case CommandStopGame:
