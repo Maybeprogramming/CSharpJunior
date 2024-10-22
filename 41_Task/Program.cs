@@ -5,13 +5,24 @@
         static void Main()
         {
             Console.Title = "ДЗ: Колода карт";
-            Croupier croupier = new();
+            Player player = new();
+            Deck deck = new();
+            Croupier croupier = new(player, deck);
             croupier.RunGame();
         }
     }
 
     class Croupier
     {
+        private Player _player = new();
+        private Deck _deck = new();
+
+        public Croupier(Player player, Deck deck)
+        {
+            _player = player;
+            _deck = deck;
+        }
+
         public void RunGame()
         {
             const string CommandTakeCards = "1";
@@ -23,10 +34,8 @@
                           $"\nВведите комадну: ";
             string userInput;
             bool isRun = true;
-            Player player = new();
-            Deck deck = new();
 
-            while (isRun == true)
+            while (isRun)
             {
                 Console.Clear();
                 Console.WriteLine(menu);
@@ -36,7 +45,7 @@
                 switch (userInput)
                 {
                     case CommandTakeCards:
-                        TakeCards(player, deck);
+                        TransferCards();
                         break;
 
                     case CommandStopGame:
@@ -48,46 +57,39 @@
                         break;
                 }
 
-                player.ShowCards();
+                _player.ShowCards();
                 Console.WriteLine($"\nНажмите любую клавишу для продолжения");
                 Console.ReadLine();
             }
         }
 
-        private static void TakeCards(Player player, Deck deck)
+        private void TransferCards()
         {
             int amountCards = DesiredNumberCards();
-            player.TakeSomeCards(deck.GiveCards(amountCards));
+
+            if (amountCards < 0)
+            {
+                Console.Write($"\nОшибка! введеное число должно быть больше 0!");
+                return;
+            }
+
+            _player.TakeCards(_deck.GiveCards(amountCards));
         }
 
-        public static int DesiredNumberCards()
+        private int DesiredNumberCards()
         {
             Console.WriteLine("\nВведите количество карт: ");
             int disireNumberCards = ReadInputNumber();
             return disireNumberCards;
         }
 
-        private static int ReadInputNumber()
+        private int ReadInputNumber()
         {
-            bool isNumber = false;
-            string userInput;
-            int result = 0;
+            int result;
 
-            while (isNumber == false)
+            while (int.TryParse(Console.ReadLine(), out result) == false)
             {
-                userInput = Console.ReadLine();
-                isNumber = int.TryParse(userInput, out result);
-
-                if (isNumber == false)
-                {
-                    Console.WriteLine($"Вы ввели не число: {userInput}");
-                }
-
-                if (result < 0)
-                {
-                    Console.Write($"Ошибка! Введеное число должно быть больше 0!\nПопробуйте снова: ");
-                    isNumber = false;
-                }
+                Console.WriteLine($"Вы ввели не число, повторите попытку");
             }
 
             return result;
@@ -103,7 +105,7 @@
             _cards = new();
         }
 
-        public void TakeSomeCards(List<Card> cards)
+        public void TakeCards(List<Card> cards)
         {
             if (cards != null && cards.Count != 0)
             {
@@ -120,7 +122,7 @@
         {
             if (_cards.Count == 0)
             {
-                Console.WriteLine("У игрока нет карт на руках");
+                Console.WriteLine("\nУ игрока нет карт на руках");
                 return;
             }
 
@@ -144,7 +146,8 @@
         public string Value { get; }
         public string Suit { get; }
 
-        public string GetInfo() => $"{Value} : {Suit}";
+        public string GetInfo() =>
+            $"{Value} : {Suit}";
     }
 
     class Deck
@@ -209,17 +212,17 @@
 
         private List<Card> Shuffle(List<Card> collection, Random random)
         {
-            List<Card> tempCollection = new(collection);
-            int elementIndex;
+            int index;
 
-            for (int i = 0; i < tempCollection.Count; i++)
+            for (int i = 0; i < collection.Count; i++)
             {
-                elementIndex = random.Next(collection.Count);
-                tempCollection[i] = collection[elementIndex];
-                collection.RemoveAt(elementIndex);
+                index = random.Next(collection.Count);
+                Card card = collection[collection.Count - i - 1];
+                collection[collection.Count - i - 1] = collection[index];
+                collection[index] = card;
             }
 
-            return tempCollection;
+            return collection;
         }
     }
 }
