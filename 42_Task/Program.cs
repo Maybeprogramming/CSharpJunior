@@ -1,6 +1,6 @@
 ﻿namespace _42_Task
 {
-    public class Program
+    class Program
     {
         static void Main()
         {
