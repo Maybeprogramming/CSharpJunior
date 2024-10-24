@@ -263,7 +263,7 @@ namespace _42_Task
         {
             if (index < 0 || index >= _books.Count)
             {
-                Display.Print("Книги с таким индексом нет!");
+                Display.Print("\nКниги с таким индексом нет!", ConsoleColor.Red);
 
                 return false;
             }
