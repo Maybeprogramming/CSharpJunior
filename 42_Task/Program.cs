@@ -1,10 +1,8 @@
-﻿
-
-namespace _42_Task
+﻿namespace _42_Task
 {
-    class Program
+    public class Program
     {
-        static void Main()
+        public static void Main()
         {
             Console.Title = "ДЗ: Хранилище книг";
             Console.WindowWidth = 120;
@@ -16,7 +14,7 @@ namespace _42_Task
         }
     }
 
-    class ViewLibrary
+    public class ViewLibrary
     {
         LibraryBooks _libraryBooks;
 
@@ -115,7 +113,7 @@ namespace _42_Task
             }
         }
 
-        public void ShowFindMenu()
+        private void ShowFindMenu()
         {
             const string TitleMenu = "1";
             const string AuthorMenu = "2";
@@ -136,7 +134,7 @@ namespace _42_Task
             Display.Print("По какому параметру хотите показать книги в хранилище?");
             Display.Print(menu);
 
-            inputPropertyBook = (PropertyBook)ReadInputNumber("\nВведите команду: ") - 1;            
+            inputPropertyBook = (PropertyBook)ReadInputNumber("\nВведите команду: ") - 1;
 
             switch (inputPropertyBook)
             {
@@ -186,7 +184,7 @@ namespace _42_Task
         {
             string userInput;
             Display.Print(message);
- 
+
             return Console.ReadLine();
         }
 
@@ -203,7 +201,7 @@ namespace _42_Task
         }
     }
 
-    class Book
+    public class Book
     {
         public Book(string titeleName, string author, int firstPublicationYear, string genre)
         {
@@ -213,10 +211,10 @@ namespace _42_Task
             Genre = genre;
         }
 
-        public string TitleName { get; private set; }
-        public string Author { get; private set; }
-        public int FirstPublicationYear { get; private set; }
-        public string Genre { get; private set; }
+        public string TitleName { get; }
+        public string Author { get; }
+        public int FirstPublicationYear { get; }
+        public string Genre { get; }
 
         public override string ToString()
         {
@@ -224,7 +222,7 @@ namespace _42_Task
         }
     }
 
-    class LibraryBooks
+    public class LibraryBooks
     {
         private List<Book> _books;
 
@@ -275,7 +273,7 @@ namespace _42_Task
         }
     }
 
-    enum PropertyBook
+    public enum PropertyBook
     {
         TitleName,
         Author,
@@ -283,7 +281,7 @@ namespace _42_Task
         Genre
     }
 
-    static class Display
+    public static class Display
     {
         public static void Print(string message)
         {
