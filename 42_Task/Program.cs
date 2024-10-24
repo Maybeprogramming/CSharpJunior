@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace _42_Task
+﻿namespace _42_Task
 {
     public class Program
     {
