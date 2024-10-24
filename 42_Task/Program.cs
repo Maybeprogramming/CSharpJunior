@@ -1,4 +1,6 @@
-﻿namespace _42_Task
+﻿using System.Collections.Generic;
+
+namespace _42_Task
 {
     public class Program
     {
@@ -144,45 +146,53 @@
             switch (inputPropertyBook)
             {
                 case PropertyBook.TitleName:
-                    {
-                        userInput = ReadInput("\nВведите название книги: ");
-                        books = _library.Books.Where(book => book.TitleName.ToLower().Equals(userInput.ToLower()));
-                        ShowBooks(books);
-
-                        break;
-                    }
+                    FindByTitleName();
+                    break;
 
                 case PropertyBook.Author:
-                    {
-                        userInput = ReadInput("Введите Автора книга: ");
-                        books = _library.Books.Where(book => book.Author.ToLower().Equals(userInput.ToLower()));
-                        ShowBooks(books);
-
-                        break;
-                    }
+                    FindByAuthor();
+                    break;
 
                 case PropertyBook.Year:
-                    {
-                        int inputYear = ReadInputNumber("Введите год публикации книги: ");
-                        books = _library.Books.Where(book => book.FirstPublicationYear == inputYear);
-                        ShowBooks(books);
-
-                        break;
-                    }
+                    FindByYear();
+                    break;
 
                 case PropertyBook.Genre:
-                    {
-                        userInput = ReadInput("Введите жанр: ");
-                        books = _library.Books.Where(book => book.Genre.ToLower().Equals(userInput.ToLower()));
-                        ShowBooks(books);
-
-                        break;
-                    }
+                    FindByGenre();
+                    break;
 
                 default:
                     Console.WriteLine("Нет такого параметра!");
                     break;
             }
+        }
+
+        private void FindByGenre()
+        {
+            string userInput = ReadInput("Введите жанр: ");
+            IEnumerable<Book> books = _library.Books.Where(book => book.Genre.ToLower().Equals(userInput.ToLower()));
+            ShowBooks(books);
+        }
+
+        private void FindByYear()
+        {
+            int inputYear = ReadInputNumber("Введите год публикации книги: ");
+            IEnumerable<Book> books = _library.Books.Where(book => book.FirstPublicationYear == inputYear);
+            ShowBooks(books);
+        }
+
+        private void FindByAuthor()
+        {
+            string userInput = ReadInput("Введите Автора книга: ");
+            IEnumerable<Book> books = _library.Books.Where(book => book.Author.ToLower().Equals(userInput.ToLower()));
+            ShowBooks(books);
+        }
+
+        private void FindByTitleName()
+        {
+            string userInput = ReadInput("\nВведите название книги: ");
+            IEnumerable<Book> books = _library.Books.Where(book => book.TitleName.ToLower().Equals(userInput.ToLower()));
+            ShowBooks(books);
         }
 
         private string ReadInput(string message)
