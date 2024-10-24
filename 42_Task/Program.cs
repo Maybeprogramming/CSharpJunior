@@ -6,7 +6,7 @@
         {
             Console.Title = "ДЗ: Хранилище книг";
             Console.WindowWidth = 120;
-            LibraryBooks libraryBooks = new();
+            Library libraryBooks = new();
             ViewLibrary viewLibrary = new(libraryBooks);
             viewLibrary.Work();
 
@@ -16,11 +16,11 @@
 
     public class ViewLibrary
     {
-        LibraryBooks _libraryBooks;
+        private Library _library;
 
-        public ViewLibrary(LibraryBooks libraryBooks)
+        public ViewLibrary(Library libraryBooks)
         {
-            _libraryBooks = libraryBooks;
+            _library = libraryBooks;
         }
 
         public void Work()
@@ -28,15 +28,15 @@
             const string ShowAllBooksCommand = "1";
             const string AddBookCommand = "2";
             const string RemoveBookCommand = "3";
-            const string ShowByParameter = "4";
-            const string ExitProgramm = "5";
+            const string ShowByParameterCommand = "4";
+            const string ExitCommand = "5";
 
             string menu = $"Меню:" +
                           $"\n{ShowAllBooksCommand} - показать все книги в хранилище" +
                           $"\n{AddBookCommand} - добавить книгу в хранилище" +
                           $"\n{RemoveBookCommand} - убрать книгу из хранилища" +
-                          $"\n{ShowByParameter} - показать книги по заданному параметру" +
-                          $"\n{ExitProgramm} - закрыть хранилище книг" +
+                          $"\n{ShowByParameterCommand} - показать книги по заданному параметру" +
+                          $"\n{ExitCommand} - закрыть хранилище книг" +
                           $"\nВведите команду: ";
             bool isRun = true;
 
@@ -48,7 +48,7 @@
                 switch (Console.ReadLine())
                 {
                     case ShowAllBooksCommand:
-                        ShowBooks(_libraryBooks.Books);
+                        ShowBooks(_library.Books);
                         break;
 
                     case AddBookCommand:
@@ -59,11 +59,11 @@
                         ShowMenuRemoveBook();
                         break;
 
-                    case ShowByParameter:
+                    case ShowByParameterCommand:
                         ShowFindMenu();
                         break;
 
-                    case ExitProgramm:
+                    case ExitCommand:
                         isRun = false;
                         break;
 
@@ -87,19 +87,24 @@
             Display.Print("Введите жанр книги: ");
             string inputGenre = Console.ReadLine();
 
-            _libraryBooks.Add(inputTitleName, inputAuthor, inputPublicationYear, inputGenre);
+            _library.Add(new Book(inputTitleName, inputAuthor, inputPublicationYear, inputGenre));
         }
 
         private void ShowMenuRemoveBook()
         {
+            Book book;
             int inputIndex;
-            ShowBooks(_libraryBooks.Books);
+            ShowBooks(_library.Books);
 
             do
             {
-                inputIndex = ReadInputNumber("\nВведите номер книги для удаления из хранилища: ") - 1;
+                inputIndex = ReadInputNumber("\nВведите номер книги для удаления из хранилища: ");
             }
-            while (_libraryBooks.TryRemove(inputIndex) == false);
+            while (inputIndex <= 0 || inputIndex > _library.Books.Count);
+
+            book = _library.Books[inputIndex - 1];
+
+            _library.Remove(book);
         }
 
         private void ShowBooks(IEnumerable<Book> books)
@@ -141,7 +146,7 @@
                 case PropertyBook.TitleName:
                     {
                         userInput = ReadInput("\nВведите название книги: ");
-                        books = _libraryBooks.Books.Where(book => book.TitleName.ToLower().Equals(userInput.ToLower()));
+                        books = _library.Books.Where(book => book.TitleName.ToLower().Equals(userInput.ToLower()));
                         ShowBooks(books);
 
                         break;
@@ -150,7 +155,7 @@
                 case PropertyBook.Author:
                     {
                         userInput = ReadInput("Введите Автора книга: ");
-                        books = _libraryBooks.Books.Where(book => book.Author.ToLower().Equals(userInput.ToLower()));
+                        books = _library.Books.Where(book => book.Author.ToLower().Equals(userInput.ToLower()));
                         ShowBooks(books);
 
                         break;
@@ -159,7 +164,7 @@
                 case PropertyBook.Year:
                     {
                         int inputYear = ReadInputNumber("Введите год публикации книги: ");
-                        books = _libraryBooks.Books.Where(book => book.FirstPublicationYear == inputYear);
+                        books = _library.Books.Where(book => book.FirstPublicationYear == inputYear);
                         ShowBooks(books);
 
                         break;
@@ -168,7 +173,7 @@
                 case PropertyBook.Genre:
                     {
                         userInput = ReadInput("Введите жанр: ");
-                        books = _libraryBooks.Books.Where(book => book.Genre.ToLower().Equals(userInput.ToLower()));
+                        books = _library.Books.Where(book => book.Genre.ToLower().Equals(userInput.ToLower()));
                         ShowBooks(books);
 
                         break;
@@ -222,11 +227,11 @@
         }
     }
 
-    public class LibraryBooks
+    public class Library
     {
         private List<Book> _books;
 
-        public LibraryBooks()
+        public Library()
         {
             _books = new()
             {
@@ -250,26 +255,16 @@
 
         public IReadOnlyList<Book> Books => _books;
 
-        public void Add(string titleName, string author, int publicationYear, string genre)
+        public void Add(Book book)
         {
-            Book book = new(titleName, author, publicationYear, genre);
             Display.Print($"{book} - добавлена в библеотеку", ConsoleColor.Green);
             _books.Add(book);
         }
 
-        public bool TryRemove(int index)
+        public void Remove(Book book)
         {
-            if (index < 0 || index >= _books.Count)
-            {
-                Display.Print("\nКниги с таким индексом нет!", ConsoleColor.Red);
-
-                return false;
-            }
-
-            Display.Print($"\nКнига убрана с полки: {_books[index]}");
-            _books.Remove(_books[index]);
-
-            return true;
+            Display.Print($"\nКнига убрана с полки: {book}");
+            _books.Remove(book);
         }
     }
 
