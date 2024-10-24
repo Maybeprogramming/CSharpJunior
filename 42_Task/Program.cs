@@ -50,7 +50,7 @@ namespace _42_Task
                 switch (Console.ReadLine())
                 {
                     case ShowAllBooksCommand:
-                        ShowAllBook();
+                        ShowBooks(_libraryBooks.Books);
                         break;
 
                     case AddBookCommand:
@@ -85,8 +85,7 @@ namespace _42_Task
             string inputTitleName = Console.ReadLine();
             Display.Print("Введите автора книги: ");
             string inputAuthor = Console.ReadLine();
-            Display.Print("Введите год первой публикации книги: ");
-            int inputPublicationYear = ReadInputNumber();
+            int inputPublicationYear = ReadInputNumber("Введите год первой публикации книги: ");
             Display.Print("Введите жанр книги: ");
             string inputGenre = Console.ReadLine();
 
@@ -96,22 +95,21 @@ namespace _42_Task
         private void ShowMenuRemoveBook()
         {
             int inputIndex;
-            ShowAllBook();
+            ShowBooks(_libraryBooks.Books);
 
             do
             {
-                Display.Print("\nВведите номер книги для удаления из хранилища: ");
-                inputIndex = ReadInputNumber() - 1;
+                inputIndex = ReadInputNumber("\nВведите номер книги для удаления из хранилища: ") - 1;
             }
             while (_libraryBooks.TryRemove(inputIndex) == false);
         }
 
-        private void ShowAllBook()
+        private void ShowBooks(IEnumerable<Book> books)
         {
             int indexNumber = 0;
-            Display.Print("\nСписок всех книг:", ConsoleColor.Blue);
+            Display.Print("\nСписок книг:", ConsoleColor.Blue);
 
-            foreach (Book book in _libraryBooks.Books)
+            foreach (Book book in books)
             {
                 Display.Print($"\n{++indexNumber}. {book}");
             }
@@ -129,77 +127,51 @@ namespace _42_Task
                           $"\n{YearMenu} - по году публикации" +
                           $"\n{GenreMenu} - по жанру";
 
+            int indexNumber = 0;
+            string userInput;
+            PropertyBook inputPropertyBook;
+            IEnumerable<Book> books;
+
             Console.Clear();
             Display.Print("По какому параметру хотите показать книги в хранилище?");
             Display.Print(menu);
 
-            int indexNumber = 0;
-            string userInput;
-            PropertyBook propertyBook;
+            inputPropertyBook = (PropertyBook)ReadInputNumber("\nВведите команду: ") - 1;            
 
-            Display.Print("\nВведите команду: ");
-
-            propertyBook = (PropertyBook)ReadInputNumber() - 1;
-
-            Display.Print($"Конкретизируйте параметр для показа: ");
-            userInput = Console.ReadLine();
-
-            switch (propertyBook)
+            switch (inputPropertyBook)
             {
                 case PropertyBook.TitleName:
                     {
-                        foreach (var book in _libraryBooks.Books)
-                        {
-                            if (book.TitleName.Equals(userInput))
-                            {
-                                Display.Print($"\n{++indexNumber}. " + book);
-                            }
-                        }
+                        userInput = ReadInput("\nВведите название книги: ");
+                        books = _libraryBooks.Books.Where(book => book.TitleName.ToLower().Equals(userInput.ToLower()));
+                        ShowBooks(books);
 
                         break;
                     }
 
                 case PropertyBook.Author:
                     {
-                        foreach (var book in _libraryBooks.Books)
-                        {
-                            if (book.Author.Equals(userInput))
-                            {
-                                Display.Print($"\n{++indexNumber}. " + book);
-                            }
-                        }
+                        userInput = ReadInput("Введите Автора книга: ");
+                        books = _libraryBooks.Books.Where(book => book.Author.ToLower().Equals(userInput.ToLower()));
+                        ShowBooks(books);
 
                         break;
                     }
 
                 case PropertyBook.Year:
                     {
-                        if (int.TryParse(userInput, out int result) == false)
-                        {
-                            Display.Print($"Вы ввели не число!", ConsoleColor.Red);
-                            break;
-                        }
-
-                        foreach (var book in _libraryBooks.Books)
-                        {
-                            if (book.FirstPublicationYear == result)
-                            {
-                                Display.Print($"\n{++indexNumber}. " + book);
-                            }
-                        }
+                        int inputYear = ReadInputNumber("Введите год публикации книги: ");
+                        books = _libraryBooks.Books.Where(book => book.FirstPublicationYear == inputYear);
+                        ShowBooks(books);
 
                         break;
                     }
 
                 case PropertyBook.Genre:
                     {
-                        foreach (var book in _libraryBooks.Books)
-                        {
-                            if (book.Genre.Equals(userInput))
-                            {
-                                Display.Print($"\n{++indexNumber}. " + book);
-                            }
-                        }
+                        userInput = ReadInput("Введите жанр: ");
+                        books = _libraryBooks.Books.Where(book => book.Genre.ToLower().Equals(userInput.ToLower()));
+                        ShowBooks(books);
 
                         break;
                     }
@@ -210,11 +182,19 @@ namespace _42_Task
             }
         }
 
-        private int ReadInputNumber()
+        private string ReadInput(string message)
+        {
+            string userInput;
+            Display.Print(message);
+ 
+            return Console.ReadLine();
+        }
+
+        private int ReadInputNumber(string message)
         {
             int result;
 
-            while (int.TryParse(Console.ReadLine(), out result) == false)
+            while (int.TryParse(ReadInput(message), out result) == false)
             {
                 Display.Print($"\nВы ввели не число:!\nПопробуйте снова: ");
             }
