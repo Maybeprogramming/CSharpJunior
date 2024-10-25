@@ -18,7 +18,7 @@
             Console.WindowWidth = 90;
             Console.BufferHeight = 500;
 
-            while (isRun == true)
+            while (isRun)
             {
                 Console.Clear();
 
@@ -121,7 +121,7 @@
             Print("\nНачать битву?\nДля продолжения нажмите любую клавишу...\n\n");
             Console.ReadKey();
 
-            while (_fighter1.IsAlive == true && _fighter2.IsAlive == true)
+            while (_fighter1.IsAlive && _fighter2.IsAlive)
             {
                 _fighter1.ToAttack(_fighter2);
                 _fighter2.ToAttack(_fighter1);
@@ -187,15 +187,15 @@
             Name = GenerateRandomName();
         }
 
-        public string ClassName { get; protected set; }
+        public string ClassName { get; private protected set; }
         public int Health
         {
             get => _health;
             protected set => SetHealth(value);
         }
-        public int Damage { get; protected set; }
+        public int Damage { get; private protected set; }
         public bool IsAlive => Health > 0;
-        public string Name { get; protected set; }
+        public string Name { get; private protected set; }
 
         public virtual void ToAttack(Fighter target)
         {
@@ -212,10 +212,8 @@
             Print($"\n{ClassName} ({Name}) подлечил здоровье на ({healingPoint}) ед. Здоровье : ({Health})", ConsoleColor.Green);
         }
 
-        public virtual string GetInfo()
-        {
-            return $"{ClassName}";
-        }
+        public virtual string GetInfo() =>
+            $"{ClassName}";
 
         public virtual bool TryTakeDamage(int damage)
         {
@@ -229,10 +227,8 @@
             return false;
         }
 
-        public virtual IClone Clone()
-        {
-            return new Fighter();
-        }
+        public virtual IClone Clone() => new Fighter();
+
 
         private void SetHealth(int value)
         {
@@ -272,19 +268,17 @@
             return base.TryTakeDamage(damage);
         }
 
-        public override IClone Clone()
-        {
-            return new Warrior();
-        }
+        public override IClone Clone() => new Warrior();
     }
 
     public class Assasign : Fighter
     {
-        public Assasign() => ClassName = "Разбойник";
+        public Assasign() => 
+            ClassName = "Разбойник";
 
         public override void ToAttack(Fighter target)
         {
-            if (IsAlive == true || target.IsAlive == true)
+            if (IsAlive || target.IsAlive)
             {
                 Print($"\n{ClassName} ({Name}) произвёл удар в сторону {target.ClassName} ({target.Name})");
 
@@ -297,10 +291,7 @@
             }
         }
 
-        public override IClone Clone()
-        {
-            return new Assasign();
-        }
+        public override IClone Clone() => new Assasign();
     }
 
     public class Hunter : Fighter
@@ -319,11 +310,11 @@
 
         public override void ToAttack(Fighter target)
         {
-            if (IsAlive == true && target.IsAlive == true)
+            if (IsAlive && target.IsAlive)
             {
                 int currentDamage = CalculateCriteDamage(out bool isCritacalDamage);
 
-                if (isCritacalDamage == true)
+                if (isCritacalDamage)
                 {
                     Print($"\n{ClassName} ({Name}) произвёл критический удар в сторону {target.ClassName} ({target.Name})", ConsoleColor.DarkCyan);
                 }
@@ -336,10 +327,7 @@
             }
         }
 
-        public override IClone Clone()
-        {
-            return new Hunter();
-        }
+        public override IClone Clone() => new Hunter();
 
         private int CalculateCriteDamage(out bool isCriticalDamage)
         {
@@ -374,7 +362,7 @@
             ClassName = "Волшебник";
         }
 
-        public int Mana { get => _mana; }
+        public int Mana => _mana;
 
         public override void ToAttack(Fighter target)
         {
@@ -390,10 +378,7 @@
             }
         }
 
-        public override IClone Clone()
-        {
-            return new Wizzard();
-        }
+        public override IClone Clone() => new Wizzard();
 
         public override bool TryTakeDamage(int damage)
         {
@@ -415,7 +400,7 @@
         static Randomaizer()
         {
             s_random = new();
-            s_names = new []
+            s_names = new[]
             {
                 "Варвар",
                 "Космонафт",
