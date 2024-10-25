@@ -5,7 +5,7 @@
         public static void Main()
         {
             Console.Title = "ДЗ: Конфигуратор пассажирских поездов";
-            Station station = new ();
+            Station station = new();
             station.Work();
         }
     }
@@ -17,7 +17,7 @@
             const string SetupTrainCommand = "1";
             const string ExitCommand = "2";
 
-            Board board = new ();
+            Board board = new();
             string setupTrainMenuText = "Конфигурировать пассажирский поезд";
             string exitMenuText = "Выйти из конфигуратора";
             string menu = $"Меню:" +
@@ -52,15 +52,14 @@
 
         private void SetupTrain(Board board)
         {
-            Random random = new ();
-            TicketOffice ticketOffice = new (random);
-            Train train = new (random);
-            Route route = new ();
+            Random random = new();
+            TicketOffice ticketOffice = new(random);
+            Train train = new(random);
 
             Console.Clear();
             Console.WriteLine("Начинаем конфигурировать поезд и маршрут следования!\n");
+            Route route = CreateRoute();
 
-            route.AssignTo();
             ticketOffice.SellTickets();
             train.Configure(ticketOffice.TiketsSoldCount);
             board.AddInfo(route, ticketOffice);
@@ -69,6 +68,17 @@
                               $"{route.ShowInfo()}\n" +
                               $"Состав поезда насчитывает {train.GetCarriageCount()} вагонов.");
             Console.WriteLine("\nПоезд отправлен!");
+        }
+
+        public Route CreateRoute()
+        {
+            Console.Write("Введите станцию отправления: ");
+            string From = Console.ReadLine();
+
+            Console.Write("Введите станцию прибытия: ");
+            string To = Console.ReadLine();
+
+            return new Route(From, To);
         }
     }
 
@@ -122,22 +132,17 @@
 
     public class Route
     {
-        public string From { get; private set; }
-        public string To { get; private set; }
-
-        public void AssignTo()
+        public Route(string from, string to)
         {
-            Console.Write("Введите станцию отправления: ");
-            From = Console.ReadLine();
-
-            Console.Write("Введите станцию прибытия: ");
-            To = Console.ReadLine();
+            From = from;
+            To = to;
         }
 
-        public string ShowInfo()
-        {
-            return $"Станция отправления: {From}, станция прибытия: {To}";
-        }
+        public string From { get; }
+        public string To { get; }
+
+        public string ShowInfo() =>
+            $"Станция отправления: {From}, станция прибытия: {To}";
     }
 
     public class TicketOffice
