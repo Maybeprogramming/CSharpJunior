@@ -123,7 +123,7 @@
             Capacity = random.Next(_minCapacity, _maxCapacity + 1);
         }
 
-        public int Capacity { get; private set; }
+        public int Capacity { get; }
     }
 
     public class Route
