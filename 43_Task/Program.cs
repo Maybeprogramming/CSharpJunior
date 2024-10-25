@@ -59,11 +59,9 @@
             while (isWork)
             {
                 Console.Clear();
-
                 buyer.ShowInfo();
                 seller.ShowInfo();
                 Display.Print(menu);
-
                 Display.Print(requestMessage, ConsoleColor.Green);
                 userInput = Console.ReadLine();
 
@@ -114,14 +112,14 @@
     public class Person
     {
         private protected List<Product> Products;
-        private protected ShowInfoConfig ShowInfoConfig;
+        private ShowInfoConfig _showInfoConfig;
 
         public Person(string name, int money, ShowInfoConfig showInfoConfig)
         {
             Name = name;
             Money = money;
             Products = new();
-            ShowInfoConfig = showInfoConfig;
+            _showInfoConfig = showInfoConfig;
         }
 
         public string Name { get; }
@@ -149,15 +147,15 @@
         {
             int currentPositionLeft = Console.CursorLeft;
             int currentPositionTop = Console.CursorTop;
-            int positionLeft = ShowInfoConfig.PositionLeft;
-            int positionTop = ShowInfoConfig.PositionTop;
+            int positionLeft = _showInfoConfig.PositionLeft;
+            int positionTop = _showInfoConfig.PositionTop;
 
             Console.SetCursorPosition(positionLeft, positionTop++);
-            Display.Print($"# {ShowInfoConfig.NameText} [{Name}]", ConsoleColor.Green);
+            Display.Print($"# {_showInfoConfig.NameText} [{Name}]", ConsoleColor.Green);
             Console.SetCursorPosition(positionLeft, positionTop++);
-            Display.Print($"# {ShowInfoConfig.BalanceText} [{Money}] рублей.", ConsoleColor.Green);
+            Display.Print($"# {_showInfoConfig.BalanceText} [{Money}] рублей.", ConsoleColor.Green);
             Console.SetCursorPosition(positionLeft, positionTop);
-            Display.Print($"# {ShowInfoConfig.ProductAmountText} [{Products.Count}].", ConsoleColor.Green);
+            Display.Print($"# {_showInfoConfig.ProductAmountText} [{Products.Count}].", ConsoleColor.Green);
 
             Console.SetCursorPosition(currentPositionLeft, currentPositionTop);
         }
