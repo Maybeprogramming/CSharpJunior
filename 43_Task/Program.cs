@@ -227,14 +227,24 @@
 
         public bool TryBuyProduct(Product product)
         {
-            if (Money >= product.Price)
+            if (IsEnoughMoney(product.Price) == false)
             {
-                Money -= product.Price;
-                Products.Add(product);
-                return true;
+                return false;
             }
 
-            return false;
+            Products.Add(product);
+            return true;
+        }
+
+        private bool IsEnoughMoney(int productCost)
+        {
+            if (Money < productCost)
+            {
+                return false;
+            }
+
+            Money -= productCost;
+            return true;
         }
     }
 
