@@ -24,9 +24,9 @@
                           $"\n{SetupTrainCommand} - {setupTrainMenuText}" +
                           $"\n{ExitCommand} - {exitMenuText}" +
                           $"\nВведите команду: ";
-            bool isWorkStation = true;
+            bool isWork = true;
 
-            while (isWorkStation)
+            while (isWork)
             {
                 Console.Clear();
                 board.ShowInfo();
@@ -38,7 +38,7 @@
                         SetupTrain(board);
                         break;
                     case ExitCommand:
-                        isWorkStation = false;
+                        isWork = false;
                         break;
                     default:
                         Console.WriteLine("Такой команды нет, попробуйте снова");
@@ -60,7 +60,7 @@
             Console.WriteLine("Начинаем конфигурировать поезд и маршрут следования!\n");
             Route route = CreateRoute();
 
-            ticketOffice.SellTickets();
+            ticketOffice.Sell();
             train.Configure(ticketOffice.TiketsSoldCount);
             board.AddInfo(route, ticketOffice);
 
@@ -152,7 +152,7 @@
 
         public int TiketsSoldCount { get; private set; }
 
-        public void SellTickets()
+        public void Sell()
         {
             int minPassangers = 10;
             int maxPassangers = 1000;
