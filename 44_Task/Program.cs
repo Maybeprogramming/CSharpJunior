@@ -26,7 +26,7 @@
                           $"\nВведите команду: ";
             bool isWorkStation = true;
 
-            while (isWorkStation == true)
+            while (isWorkStation)
             {
                 Console.Clear();
                 board.ShowInfo();
@@ -66,7 +66,7 @@
 
             Console.WriteLine($"\nКонфигурирование завершено! Создан маршрут: \n" +
                               $"{route.ShowInfo()}\n" +
-                              $"Состав поезда насчитывает {train.GetCarriageCount()} вагонов.");
+                              $"Состав поезда насчитывает {train.CarriagesCount} вагонов.");
             Console.WriteLine("\nПоезд отправлен!");
         }
 
@@ -95,11 +95,7 @@
         }
 
         public int Capacity { get; private set; }
-
-        public int GetCarriageCount()
-        {
-            return _carriages.Count;
-        }
+        public int CarriagesCount => _carriages.Count;
 
         public void Configure(int tiketsSoldCount)
         {
