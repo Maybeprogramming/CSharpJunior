@@ -28,14 +28,14 @@
             int topPositionBuyerInfo = 0;
             int topPositionSellerInfo = 4;
 
-            ShowInfoConfig buyerInfoConfig = new ShowInfoConfig(
+            PersonInfoConfig buyerInfoConfig = new PersonInfoConfig(
                 "Имя покупателя:",
                 "Баланс покупателя:",
                 "Количество товаров у покупателя:",
                 leftPositionInfo,
                 topPositionBuyerInfo);
 
-            ShowInfoConfig sellerInfoConfig = new ShowInfoConfig(
+            PersonInfoConfig sellerInfoConfig = new PersonInfoConfig(
                 "Имя продавца:",
                 "Баланс продавца:",
                 "Количество товаров у продавца:",
@@ -112,9 +112,9 @@
     public class Person
     {
         private protected List<Product> Products;
-        private ShowInfoConfig _showInfoConfig;
+        private PersonInfoConfig _showInfoConfig;
 
-        public Person(string name, int money, ShowInfoConfig showInfoConfig)
+        public Person(string name, int money, PersonInfoConfig showInfoConfig)
         {
             Name = name;
             Money = money;
@@ -163,7 +163,7 @@
 
     public class Seller : Person
     {
-        public Seller(string name, int money, ShowInfoConfig showInfoConfig) : base(name, money, showInfoConfig)
+        public Seller(string name, int money, PersonInfoConfig showInfoConfig) : base(name, money, showInfoConfig)
         {
             Products = new()
             {
@@ -196,7 +196,7 @@
 
             Product product = Products[--inputIndex];
 
-            if (buyer.TruBuyProduct(product))
+            if (buyer.TryBuyProduct(product))
             {
                 Money += product.Price;
                 Products.Remove(product);
@@ -223,9 +223,9 @@
 
     public class Buyer : Person
     {
-        public Buyer(string name, int money, ShowInfoConfig showInfoConfig) : base(name, money, showInfoConfig) { }
+        public Buyer(string name, int money, PersonInfoConfig showInfoConfig) : base(name, money, showInfoConfig) { }
 
-        public bool TruBuyProduct(Product product)
+        public bool TryBuyProduct(Product product)
         {
             if (Money >= product.Price)
             {
@@ -238,9 +238,9 @@
         }
     }
 
-    public class ShowInfoConfig
+    public class PersonInfoConfig
     {
-        public ShowInfoConfig(string name, string balance, string productAmount, int positionLeft, int positionTop)
+        public PersonInfoConfig(string name, string balance, string productAmount, int positionLeft, int positionTop)
         {
             NameText = name;
             BalanceText = balance;
