@@ -5,6 +5,7 @@
         public static void Main()
         {
             Console.Title = "ДЗ: Магазин";
+            Console.WindowWidth = 110;
             Shop shop = new();
             shop.Work();
         }
@@ -19,13 +20,30 @@
             const string BuyProductCommand = "3";
             const string ExitCommand = "4";
 
-            Random random = new();
-            int maxBuyerMoney = 1000;
+            int buyerMoney = 1000;
             int sellerMoney = 0;
-            string sellerName = "[NPC]";
-            string buyerName = "[Игрок]";
-            Seller seller = new(sellerName, sellerMoney);
-            Buyer buyer = new(buyerName, random.Next(maxBuyerMoney));
+            string sellerName = "NPC";
+            string buyerName = "Игрок";
+            int leftPositionInfo = 60;
+            int topPositionBuyerInfo = 0;
+            int topPositionSellerInfo = 4;
+
+            ShowInfoConfig buyerInfoConfig = new ShowInfoConfig(
+                "Имя покупателя:",
+                "Баланс покупателя:",
+                "Количество товаров у покупателя:",
+                leftPositionInfo,
+                topPositionBuyerInfo);
+
+            ShowInfoConfig sellerInfoConfig = new ShowInfoConfig(
+                "Имя продавца:",
+                "Баланс продавца:",
+                "Количество товаров у продавца:",
+                leftPositionInfo,
+                topPositionSellerInfo);
+
+            Seller seller = new(sellerName, sellerMoney, sellerInfoConfig);
+            Buyer buyer = new(buyerName, buyerMoney, buyerInfoConfig);
             bool isWork = true;
 
             string menu = $"Меню:" +
@@ -38,7 +56,7 @@
             string errorCommandMessage = "Такой команды нет! Попробуйте снова.";
             string userInput;
 
-            while (isWork == true)
+            while (isWork)
             {
                 Console.Clear();
 
@@ -89,22 +107,24 @@
         public string Name { get; }
         public int Price { get; }
 
-        public override string ToString() => 
+        public override string ToString() =>
             $"Товар: {Name}, цена: {Price}";
     }
 
     public class Person
     {
-        protected List<Product> Products;
+        private protected List<Product> Products;
+        private protected ShowInfoConfig ShowInfoConfig;
 
-        public Person(string name, int money = 0)
+        public Person(string name, int money, ShowInfoConfig showInfoConfig)
         {
             Name = name;
             Money = money;
             Products = new();
+            ShowInfoConfig = showInfoConfig;
         }
 
-        public string Name { get;}
+        public string Name { get; }
         public int Money { get; private protected set; }
 
         public void ShowProducts()
@@ -117,18 +137,35 @@
                 return;
             }
 
-            Display.Print($"Список продуктов у {Name}:", ConsoleColor.Green);
+            Display.Print($"\nСписок продуктов у {Name}:", ConsoleColor.Green);
 
             foreach (Product product in Products)
             {
                 Display.Print($"\n{++index}. {product}");
             }
         }
+
+        public void ShowInfo()
+        {
+            int currentPositionLeft = Console.CursorLeft;
+            int currentPositionTop = Console.CursorTop;
+            int positionLeft = ShowInfoConfig.PositionLeft;
+            int positionTop = ShowInfoConfig.PositionTop;
+
+            Console.SetCursorPosition(positionLeft, positionTop++);
+            Display.Print($"# {ShowInfoConfig.NameText} [{Name}]", ConsoleColor.Green);
+            Console.SetCursorPosition(positionLeft, positionTop++);
+            Display.Print($"# {ShowInfoConfig.BalanceText} [{Money}] рублей.", ConsoleColor.Green);
+            Console.SetCursorPosition(positionLeft, positionTop);
+            Display.Print($"# {ShowInfoConfig.ProductAmountText} [{Products.Count}].", ConsoleColor.Green);
+
+            Console.SetCursorPosition(currentPositionLeft, currentPositionTop);
+        }
     }
 
     public class Seller : Person
     {
-        public Seller(string name, int money) : base(name, money)
+        public Seller(string name, int money, ShowInfoConfig showInfoConfig) : base(name, money, showInfoConfig)
         {
             Products = new()
             {
@@ -146,17 +183,22 @@
 
         public void SellProduct(Buyer buyer)
         {
+            int inputIndex;
             Console.Clear();
             ShowProducts();
             buyer.ShowInfo();
             ShowInfo();
 
-            Display.Print($"\nВведите номер желаемого продукта для покупки: ");
+            do
+            {
+                Display.Print($"\nВведите номер товара из списка для покупки: ");
+                inputIndex = ReadInputNumber();
 
-            int inputProductIndex = CheckProductIndex(Products.Count);
-            Product product = Products[inputProductIndex];
+            } while (inputIndex <= 0 || inputIndex > Products.Count);
 
-            if (buyer.TruBuyProduct(product) == true)
+            Product product = Products[--inputIndex];
+
+            if (buyer.TruBuyProduct(product))
             {
                 Money += product.Price;
                 Products.Remove(product);
@@ -168,60 +210,22 @@
             }
         }
 
-        private int CheckProductIndex(int collectionCount)
+        private int ReadInputNumber()
         {
-            bool isTryParse = false;
-            string userInput;
-            int productIndex = 0;
+            int result;
 
-            while (isTryParse == false)
+            while (int.TryParse(Console.ReadLine(), out result) == false)
             {
-                userInput = Console.ReadLine();
-
-                if (int.TryParse(userInput, out int result) == true)
-                {
-                    if (result > 0 && result <= collectionCount)
-                    {
-                        productIndex = result;
-                        isTryParse = true;
-                    }
-                    else
-                    {
-                        Display.Print($"\nОшибка! Такого товара нет!\nпопробуйте снова: ", ConsoleColor.DarkRed);
-                    }
-                }
-                else
-                {
-                    Display.Print($"\nОшибка! Вы ввели не число: {userInput}!\nПопробуйте снова: ", ConsoleColor.DarkRed);
-                }
+                Display.Print($"\nВы ввели не число!\nПопробуйте снова: ", ConsoleColor.DarkRed);
             }
 
-            return productIndex - 1;
-        }
-
-        public void ShowInfo()
-        {
-            int currentPositionLeft = Console.CursorLeft;
-            int currentPositionTop = Console.CursorTop;
-            int positionLeft = 60;
-            int positionTopName = 4;
-            int positionTopBalance = 5;
-            int positionTopCountProducts = 6;
-
-            Console.SetCursorPosition(positionLeft, positionTopName);
-            Display.Print($"# Имя продавца: {Name}", ConsoleColor.Green);
-            Console.SetCursorPosition(positionLeft, positionTopBalance);
-            Display.Print($"# Баланс продавца: {Money} рублей.", ConsoleColor.Green);
-            Console.SetCursorPosition(positionLeft, positionTopCountProducts);
-            Display.Print($"# Количество товаров у продавца: {Products.Count}.", ConsoleColor.Green);
-
-            Console.SetCursorPosition(currentPositionLeft, currentPositionTop);
+            return result;
         }
     }
 
     public class Buyer : Person
     {
-        public Buyer(string name, int money) : base(name, money) { }
+        public Buyer(string name, int money, ShowInfoConfig showInfoConfig) : base(name, money, showInfoConfig) { }
 
         public bool TruBuyProduct(Product product)
         {
@@ -234,25 +238,24 @@
 
             return false;
         }
+    }
 
-        public void ShowInfo()
+    public class ShowInfoConfig
+    {
+        public ShowInfoConfig(string name, string balance, string productAmount, int positionLeft, int positionTop)
         {
-            int currentPositionLeft = Console.CursorLeft;
-            int currentPositionTop = Console.CursorTop;
-            int positionLeft = 60;
-            int positionTopName = 0;
-            int positionTopBalance = 1;
-            int positionTopCountProducts = 2;
-
-            Console.SetCursorPosition(positionLeft, positionTopName);
-            Display.Print($"# Имя покупателя: {Name}", ConsoleColor.Green);
-            Console.SetCursorPosition(positionLeft, positionTopBalance);
-            Display.Print($"# Баланс покупателя: {Money} рублей.", ConsoleColor.Green);
-            Console.SetCursorPosition(positionLeft, positionTopCountProducts);
-            Display.Print($"# Количество товаров у покупателя: {Products.Count}.", ConsoleColor.Green);
-
-            Console.SetCursorPosition(currentPositionLeft, currentPositionTop);
+            NameText = name;
+            BalanceText = balance;
+            ProductAmountText = productAmount;
+            PositionLeft = positionLeft;
+            PositionTop = positionTop;
         }
+
+        public string NameText { get; }
+        public string BalanceText { get; }
+        public string ProductAmountText { get; }
+        public int PositionLeft { get; }
+        public int PositionTop { get; }
     }
 
     public static class Display
