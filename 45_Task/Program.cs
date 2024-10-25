@@ -78,7 +78,7 @@
 
                 ShowAllFighters();
 
-                ChooseFighter(ReadNumber("Введите номер бойца: "));
+                ChooseFighter(ReadNumber("Введите номер бойца: ") - 1);
             }
 
             AnnouncingFightersReadyForFight();
@@ -97,7 +97,7 @@
 
             for (int i = 0; i < _fightersCatalog.Count; i++)
             {
-                Print($"{i} - {_fightersCatalog[i].GetInfo()}\n");
+                Print($"{i + 1} - {_fightersCatalog[i].GetInfo()}\n");
             }
         }
 
@@ -273,7 +273,7 @@
 
     public class Assasign : Fighter
     {
-        public Assasign() => 
+        public Assasign() =>
             ClassName = "Разбойник";
 
         public override void ToAttack(Fighter target)
