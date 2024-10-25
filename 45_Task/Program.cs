@@ -16,7 +16,6 @@
             BattleField battleField = new();
 
             Console.WindowWidth = 90;
-            Console.BufferHeight = 500;
 
             while (isRun)
             {
