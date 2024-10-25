@@ -21,7 +21,7 @@
             string setupTrainMenuText = "Конфигурировать пассажирский поезд";
             string exitMenuText = "Выйти из конфигуратора";
             string menu = $"Меню:" +
-                          $"{SetupTrainCommand} - {setupTrainMenuText}" +
+                          $"\n{SetupTrainCommand} - {setupTrainMenuText}" +
                           $"\n{ExitCommand} - {exitMenuText}" +
                           $"\nВведите команду: ";
             bool isWorkStation = true;
