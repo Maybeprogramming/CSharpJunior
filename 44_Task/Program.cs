@@ -52,9 +52,8 @@
 
         private void SetupTrain(Board board)
         {
-            Random random = new();
-            TicketOffice ticketOffice = new(random);
-            Train train = new(random);
+            TicketOffice ticketOffice = new();
+            Train train = new();
 
             Console.Clear();
             Console.WriteLine("Начинаем конфигурировать поезд и маршрут следования!\n");
@@ -74,9 +73,19 @@
         {
             Console.Write("Введите станцию отправления: ");
             string From = Console.ReadLine();
+            string To;
 
-            Console.Write("Введите станцию прибытия: ");
-            string To = Console.ReadLine();
+            do
+            {
+                Console.Write("Введите станцию прибытия: ");
+                To = Console.ReadLine();
+
+                if (To == From)
+                {
+                    Console.WriteLine($"Станция прибытия должна отличаться от станции отправления");
+                }
+            }
+            while (To == string.Empty || To.Equals(From));
 
             return new Route(From, To);
         }
@@ -85,12 +94,10 @@
     public class Train
     {
         private List<Carriage> _carriages;
-        private Random _random;
 
-        public Train(Random random)
+        public Train()
         {
             _carriages = new();
-            _random = random;
             AddCarriege();
         }
 
@@ -107,7 +114,7 @@
 
         private void AddCarriege()
         {
-            Carriage carriage = new(_random);
+            Carriage carriage = new();
             Capacity += carriage.Capacity;
             _carriages.Add(carriage);
         }
@@ -118,9 +125,9 @@
         private int _minCapacity = 20;
         private int _maxCapacity = 50;
 
-        public Carriage(Random random)
+        public Carriage()
         {
-            Capacity = random.Next(_minCapacity, _maxCapacity + 1);
+            Capacity = UserUtils.GenerateRandomNumber(_minCapacity, _maxCapacity);
         }
 
         public int Capacity { get; }
@@ -143,20 +150,13 @@
 
     public class TicketOffice
     {
-        private Random _random;
-
-        public TicketOffice(Random random)
-        {
-            _random = random;
-        }
-
         public int TiketsSoldCount { get; private set; }
 
         public void Sell()
         {
             int minPassangers = 10;
             int maxPassangers = 1000;
-            TiketsSoldCount = _random.Next(minPassangers, maxPassangers + 1);
+            TiketsSoldCount = UserUtils.GenerateRandomNumber(minPassangers, maxPassangers);
 
             Console.Write($"Количество проданных билетов: {TiketsSoldCount}");
         }
@@ -203,5 +203,13 @@
             topCursorPosition += _trainsInfo.Count + 1;
             Console.SetCursorPosition(leftCursorPosition, topCursorPosition);
         }
+    }
+
+    public static class UserUtils
+    {
+        private static Random s_random = new Random();
+
+        public static int GenerateRandomNumber(int minNumber, int maxNumber) => 
+            s_random.Next(minNumber, ++maxNumber);
     }
 }
