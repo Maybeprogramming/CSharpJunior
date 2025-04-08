@@ -60,7 +60,7 @@
             Route route = CreateRoute();
 
             ticketOffice.Sell();
-            train.Configure(ticketOffice.TiketsSoldCount);
+            ConfigureTrain(train,ticketOffice.TiketsSoldCount);
             board.AddInfo(route, ticketOffice);
 
             Console.WriteLine($"\nКонфигурирование завершено! Создан маршрут: \n" +
@@ -89,6 +89,19 @@
 
             return new Route(From, To);
         }
+
+        private void ConfigureTrain(Train train,int tiketsSoldCount)
+        {
+            Carriage carriage;
+            int capacity = 0;
+
+            while (capacity < tiketsSoldCount)
+            {
+                carriage = new();
+                capacity += carriage.Capacity;
+                train.AddCarriege(carriage);
+            }
+        }
     }
 
     public class Train
@@ -98,26 +111,11 @@
         public Train()
         {
             _carriages = new();
-            AddCarriege();
         }
 
-        public int Capacity { get; private set; }
         public int CarriagesCount => _carriages.Count;
 
-        public void Configure(int tiketsSoldCount)
-        {
-            while (Capacity < tiketsSoldCount)
-            {
-                AddCarriege();
-            }
-        }
-
-        private void AddCarriege()
-        {
-            Carriage carriage = new();
-            Capacity += carriage.Capacity;
-            _carriages.Add(carriage);
-        }
+        public void AddCarriege(Carriage carriage) => _carriages.Add(carriage);
     }
 
     public class Carriage
