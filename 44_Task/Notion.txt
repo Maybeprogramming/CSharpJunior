@@ -11,5 +11,5 @@
 Это касается и ситуации, когда рандом создается в одном методе, но сам метод вызывается часто (например, в цикле). 
 Но если Random используется в нескольких классах - сделайте класс UserUtils, в нем public static int GenerateRandomNumber(int min, int max). 
 И обращайтесь к этому методу напрямую без объявления объекта класса. Например: int index = UserUtils.GenerateRandomNumber(_products.Count)
-6 - AddCarriege - аналогично второму пункту 
++6 - AddCarriege - аналогично второму пункту 
 +7 - GetCarriageCount - не нужен метод, это свойство -  public int CarriageCount => _carriages.Count;
