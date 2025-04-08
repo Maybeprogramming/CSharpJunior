@@ -53,20 +53,22 @@
         private void SetupTrain(Board board)
         {
             TicketOffice ticketOffice = new();
-            Train train = new();
+            Train train;
+            Route route;
+            List<Carriage> carriages;
 
             Console.Clear();
             Console.WriteLine("Начинаем конфигурировать поезд и маршрут следования!\n");
-            Route route = CreateRoute();
 
+            route = CreateRoute();
             ticketOffice.Sell();
-            ConfigureTrain(train,ticketOffice.TiketsSoldCount);
-            board.AddInfo(route, ticketOffice);
+            carriages = new(CreateCarieges(ticketOffice.TiketsSoldCount));
+            train = new Train(route, carriages);
+            board.AddInfo(train.Route, ticketOffice.TiketsSoldCount);
 
-            Console.WriteLine($"\nКонфигурирование завершено! Создан маршрут: \n" +
-                              $"{route.ShowInfo()}\n" +
-                              $"Состав поезда насчитывает {train.CarriagesCount} вагонов.");
-            Console.WriteLine("\nПоезд отправлен!");
+            Console.WriteLine($"Создан маршрут: \n" +
+                              $"{train.GetInfo()}\n" +
+                              $"\nПоезд отправлен!");
         }
 
         public Route CreateRoute()
@@ -90,8 +92,9 @@
             return new Route(From, To);
         }
 
-        private void ConfigureTrain(Train train,int tiketsSoldCount)
+        private List<Carriage> CreateCarieges(int tiketsSoldCount)
         {
+            List<Carriage> carriages = new List<Carriage>();
             Carriage carriage;
             int capacity = 0;
 
@@ -99,23 +102,33 @@
             {
                 carriage = new();
                 capacity += carriage.Capacity;
-                train.AddCarriege(carriage);
+                carriages.Add(carriage);
             }
+
+            return carriages;
         }
     }
 
     public class Train
     {
+        private Route _route;
         private List<Carriage> _carriages;
 
-        public Train()
+        public Train(Route route, List<Carriage> carriages)
         {
             _carriages = new();
+            _route = route;
+            _carriages = carriages;
         }
 
-        public int CarriagesCount => _carriages.Count;
+        public Route Route => 
+            _route;
 
-        public void AddCarriege(Carriage carriage) => _carriages.Add(carriage);
+        public string GetInfo()
+        {
+            return $"{_route.GetInfo()}\n" +
+                   $"Состав поезда состоит из {_carriages.Count} вагонов.";
+        }
     }
 
     public class Carriage
@@ -142,7 +155,7 @@
         public string From { get; }
         public string To { get; }
 
-        public string ShowInfo() =>
+        public string GetInfo() =>
             $"Станция отправления: {From}, станция прибытия: {To}";
     }
 
@@ -156,7 +169,7 @@
             int maxPassangers = 1000;
             TiketsSoldCount = UserUtils.GenerateRandomNumber(minPassangers, maxPassangers);
 
-            Console.Write($"Количество проданных билетов: {TiketsSoldCount}");
+            Console.Write($"Количество проданных билетов: {TiketsSoldCount}\n");
         }
     }
 
@@ -169,9 +182,9 @@
             _trainsInfo = new();
         }
 
-        public void AddInfo(Route route, TicketOffice ticketOffice)
+        public void AddInfo(Route route, int TiketsSoldCount)
         {
-            _trainsInfo.Add($"Выезд из: {route.From} по направлению в: {route.To} (Продано: {ticketOffice.TiketsSoldCount} билетов)");
+            _trainsInfo.Add($"Выезд из: {route.From} по направлению в: {route.To} (Продано: {TiketsSoldCount} билетов)");
         }
 
         public void ShowInfo()
