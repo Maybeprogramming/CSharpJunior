@@ -9,17 +9,40 @@
     {
         public static void Main()
         {
-            FighterSpecification specification = new("Воин", 10, 1, 2, "Яростный воин");
+            FighterSpecification warriorSpec = new("Воин", 100, 10, 10, "Благородный воин");
+            FighterSpecification mageSpec = new("Маг", 80, 2, 20, "Призыватель огня");
+            FighterSpecification druidSpec = new("Друид", 80, 4, 12, "Повелитель стихий");
+            FighterSpecification assasignSpec = new("Разбойник", 85, 5, 14, "Ночная тень");
+            FighterSpecification berserkSpec = new("Берсерк", 90, 5, 15, "Воин ярости");
 
-            Warrior mage = new Warrior(specification);
-            Warrior warrior = new Warrior(specification);
+            List<Fighter> fighters = new List<Fighter>()
+            {
+                new Warrior(warriorSpec),
+                new Mage(mageSpec),
+                new Druid(druidSpec),
+                new Assasign(assasignSpec),
+                new Berserk(berserkSpec)
+            };
 
-            Warrior mage2 = (Warrior)mage.Clone();
-            Warrior warrior2 = (Warrior)warrior.Clone();
+            //foreach (Fighter fighter in fighters)
+            //{
+            //    Console.WriteLine(fighter.GetInfo());
+            //    Console.WriteLine($"Описание: \"{fighter.Description}\"");
+            //    Console.WriteLine(new string('-', 70));
+            //}
 
-            mage.Attack(warrior);
-            Console.WriteLine(warrior.Health);
-            Console.WriteLine(IsPositiveChanceCalculated(30));
+            Warrior warrior = new(warriorSpec);
+            Mage mage = new(mageSpec);
+
+            while (warrior.IsAlive && mage.IsAlive)
+            {
+                warrior.Attack(mage);
+                mage.Attack(warrior);
+                Console.WriteLine(warrior.GetInfo());
+                Console.WriteLine(mage.GetInfo());
+                Console.ReadLine();
+            }
+
             Console.ReadLine();
         }
     }
@@ -32,7 +55,6 @@
         }
     }
 
-    //Базовый класс бойцов
     abstract class Fighter : IDamageProvider, IDamageable, IHealable, IClone
     {
         private protected FighterSpecification _baseSpecification;
@@ -49,6 +71,7 @@
         }
 
         public string Name { get; private set; }
+
         public int Health
         {
             get =>
@@ -65,8 +88,14 @@
         public virtual void Attack(IDamageable target) =>
             target.TryTakeDamage(Damage);
 
-        public virtual bool TryHealing(int health)
+        public virtual bool TryHealing(int healthPoint)
         {
+            if (IsAlive == false || healthPoint < 0)
+            {
+                return false;
+            }
+
+            Health += healthPoint;
             return true;
         }
 
@@ -74,19 +103,21 @@
         {
             if (IsAlive)
             {
-                _health -= damage - Armor;
+                Health -= damage - Armor;
                 return true;
             }
 
             return false;
         }
 
-        public abstract Fighter Clone();
+        public virtual string GetInfo()
+        {
+            return $"<{Name}> | Жизни [{Health}] Урон [{Damage}] Броня [{Armor}]";
+        }
 
-        public abstract string GetInfo();
+        public abstract Fighter Clone();
     }
 
-    //Шанс нанести двойной урон
     class Warrior : Fighter
     {
         private int _critChancePercent = 40;
@@ -96,7 +127,7 @@
 
         public override void Attack(IDamageable target)
         {
-            if (IsPositiveChanceCalculated(_critChancePercent))
+            if (IsPositiveChanceCalculate(_critChancePercent))
             {
                 target.TryTakeDamage(Damage * _critDamageMultiplier);
             }
@@ -104,15 +135,6 @@
             base.Attack(target);
         }
 
-        public override bool TryHealing(int health)
-        {
-            return base.TryHealing(health);
-        }
-
-        public override bool TryTakeDamage(int damage)
-        {
-            return base.TryTakeDamage(damage);
-        }
         public override Fighter Clone()
         {
             return new Warrior(_baseSpecification);
@@ -120,30 +142,39 @@
 
         public override string GetInfo()
         {
-            return _baseSpecification.Name;
+            return base.GetInfo() + $" Крит [{_critChancePercent}]";
         }
     }
 
-    //Пока есть мана использует огненный шар, который имеет урон выше базового
     class Mage : Fighter
     {
+        private int _mana;
+        private int _damageMultiplier;
+        private int _manaCostFireBall;
+
         public Mage(FighterSpecification specification) : base(specification)
         {
+            _mana = 90;
+            _damageMultiplier = 2;
+            _manaCostFireBall = 30;
         }
 
         public override void Attack(IDamageable target)
         {
+            if (_mana - _manaCostFireBall >= 0)
+            {
+                target.TryTakeDamage(ApplyFireBall());
+                _mana -= _manaCostFireBall;
+            }
+
+            base.Attack(target);
         }
 
-        public override bool TryHealing(int health)
+        public int ApplyFireBall()
         {
-            return base.TryHealing(health);
+            return Damage * _damageMultiplier;
         }
 
-        public override bool TryTakeDamage(int damage)
-        {
-            return base.TryTakeDamage(damage);
-        }
         public override Fighter Clone()
         {
             return new Mage(_baseSpecification);
@@ -151,19 +182,34 @@
 
         public override string GetInfo()
         {
-            return _baseSpecification.Name;
+            return base.GetInfo() + $" Мана [{_mana}]";
         }
     }
 
-    //Каждую третью атаку наносит двойной урон
-    class Druid : Fighter, IHealProvider
+    class Druid : Fighter
     {
+        private int _attackCount;
+        private int _attackCountForDoubleAttack;
+
         public Druid(FighterSpecification specification) : base(specification)
         {
+            _attackCount = 0;
+            _attackCountForDoubleAttack = 2;
         }
 
         public override void Attack(IDamageable target)
         {
+            if (_attackCount < _attackCountForDoubleAttack)
+            {
+                base.Attack(target);
+                _attackCount++;
+            }
+            else
+            {
+                base.Attack(target);
+                base.Attack(target);
+                _attackCount = 0;
+            }
         }
 
         public override Fighter Clone()
@@ -173,33 +219,17 @@
 
         public override string GetInfo()
         {
-            return _baseSpecification.Name;
-        }
-
-        public void Heal(IHealable target)
-        {
-        }
-
-        public override bool TryHealing(int health)
-        {
-            return base.TryHealing(health);
-        }
-
-        public override bool TryTakeDamage(int damage)
-        {
-            return base.TryTakeDamage(damage);
+            return base.GetInfo() + $" Двойная атака, шаги [{_attackCount}/{_attackCountForDoubleAttack}]";
         }
     }
 
-    //Шанс уклониться от атаки
     class Assasign : Fighter
     {
+        private int _dodgeChancePercent;
+
         public Assasign(FighterSpecification specification) : base(specification)
         {
-        }
-
-        public override void Attack(IDamageable target)
-        {
+            _dodgeChancePercent = 35;
         }
 
         public override Fighter Clone()
@@ -209,29 +239,35 @@
 
         public override string GetInfo()
         {
-            return _baseSpecification.Name;
-        }
-
-        public override bool TryHealing(int health)
-        {
-            return base.TryHealing(health);
+            return base.GetInfo() + $" Уклонение [{_dodgeChancePercent}%]";
         }
 
         public override bool TryTakeDamage(int damage)
         {
+            if (IsPositiveChanceCalculate(_dodgeChancePercent))
+            {
+                return false;
+            }
+
             return base.TryTakeDamage(damage);
         }
     }
 
-    //При получении урона накапливает ярость, при достижении максимума лечится
     class Berserk : Fighter
     {
+        private int _rageLevel;
+        private int _maxRageLevel;
+        private int _rageDamageValue;
+        private int _healingPoint;
+        private int _healthDivider;
+
         public Berserk(FighterSpecification specification) : base(specification)
         {
-        }
-
-        public override void Attack(IDamageable target)
-        {
+            _rageLevel = 0;
+            _maxRageLevel = 90;
+            _rageDamageValue = 30;
+            _healthDivider = 3;
+            _healingPoint = specification.Health / _healthDivider;
         }
 
         public override Fighter Clone()
@@ -241,16 +277,18 @@
 
         public override string GetInfo()
         {
-            return _baseSpecification.Name;
-        }
-
-        public override bool TryHealing(int health)
-        {
-            return base.TryHealing(health);
+            return base.GetInfo() + $" Ярость [{_rageLevel}/{_maxRageLevel}]";
         }
 
         public override bool TryTakeDamage(int damage)
         {
+            if (_rageLevel >= _maxRageLevel)
+            {
+                base.TryHealing(_healingPoint);
+                _rageLevel = 0;
+            }
+
+            _rageLevel += _rageDamageValue;
             return base.TryTakeDamage(damage);
         }
     }
@@ -274,42 +312,42 @@
 
         public string Name
         {
-            get => 
+            get =>
                 _name;
-            private set => 
-                _name = ApplyNotEmptyString(value, "Ошибка! Имя не может быть пустым");
+            private set =>
+                _name = GetNotEmptyString(value, "Ошибка! Имя не может быть пустым");
         }
 
         public int Health
         {
-            get => 
+            get =>
                 _health;
-            private set => 
-                _health = ApplyPositiveValue(value, "Ошибка! Значение здоровья не может быть меньше 0");
+            private set =>
+                _health = GetPositiveValue(value, "Ошибка! Значение здоровья не может быть меньше 0");
         }
 
         public int Armor
         {
-            get => 
+            get =>
                 _armor;
-            private set => 
-                _armor = ApplyPositiveValue(value, "Ошибка! Значение брони не может быть меньше 0");
+            private set =>
+                _armor = GetPositiveValue(value, "Ошибка! Значение брони не может быть меньше 0");
         }
 
         public int Damage
         {
-            get => 
+            get =>
                 _damage;
-            private set => 
-                _damage = ApplyPositiveValue(value, "Ошибка! Значение урона не может быть меньше 0");
+            private set =>
+                _damage = GetPositiveValue(value, "Ошибка! Значение урона не может быть меньше 0");
         }
 
         public string Description
         {
-            get => 
+            get =>
                 _description;
-            private set => 
-                _description = ApplyNotEmptyString(value, "Ошибка! Описание не может быть пустым");
+            private set =>
+                _description = GetNotEmptyString(value, "Ошибка! Описание не может быть пустым");
         }
     }
 
@@ -831,14 +869,14 @@
         public static int GenerateRandomNumber(int minNumber, int maxNumber) =>
             s_random.Next(minNumber, ++maxNumber);
 
-        public static bool IsPositiveChanceCalculated(int currentChancePercent, int minChancePercent = 0, int maxChancePercent = 100)
+        public static bool IsPositiveChanceCalculate(int currentChancePercent, int minChancePercent = 0, int maxChancePercent = 100)
         {
             int generatedChancePercent = GenerateRandomNumber(minChancePercent, maxChancePercent);
 
             return generatedChancePercent <= currentChancePercent;
         }
 
-        public static int ApplyPositiveValue(int value, string errorMessage)
+        public static int GetPositiveValue(int value, string errorMessage)
         {
             if (value < 0)
                 throw new Exception(errorMessage);
@@ -846,7 +884,7 @@
                 return value;
         }
 
-        public static string ApplyNotEmptyString(string value, string errorMessage)
+        public static string GetNotEmptyString(string value, string errorMessage)
         {
             if (value.Length <= 0)
                 throw new Exception(errorMessage);
