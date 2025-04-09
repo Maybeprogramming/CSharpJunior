@@ -3,80 +3,180 @@
     using static UserInput;
     using static Randomaizer;
     using static Display;
+    using static UserUtils;
 
     public class Program
     {
         public static void Main()
         {
-            Mage mage = new Mage("Маг 1");
-            Warrior warrior = new Warrior("Воин 1");
+            FighterSpecification specification = new("Маг", 10, 1, 2, "Повелитель огня");
 
-            Mage mage2 = (Mage)mage.Clone();
+            Warrior mage = new Warrior(specification);
+            Warrior warrior = new Warrior(specification);
+
+            Warrior mage2 = (Warrior)mage.Clone();
             Warrior warrior2 = (Warrior)warrior.Clone();
 
             mage.Attack(warrior);
-            mage.Heal(warrior2);
 
-            Console.WriteLine(mage.Equals(mage2));
-            Console.WriteLine(warrior.Equals(warrior2));
-            
+            Console.WriteLine(warrior.Healht);
+
+            for (int i = 0; i < 30; i++)
+            {
+                Console.WriteLine(IsPositiveChanceCalculated(30));
+            }
+
             Console.ReadLine();
         }
     }
 
-    abstract class BaseFighter : IAttacker, IDamageable, IHealable, IClone
+    public class Arena
     {
-        protected BaseFighter(string name)
+        public void Work()
         {
-            Name = name;
+
+        }
+    }
+
+    //Базовый класс бойцов
+    abstract class Fighter : IDamageProvider, IDamageable, IHealable, IClone
+    {
+        private protected FighterSpecification _baseSpecification;
+        private int _healht;
+
+        protected Fighter(FighterSpecification baseSpecification)
+        {
+            _baseSpecification = baseSpecification;
+            Name = _baseSpecification.Name;
+            _healht = _baseSpecification.Healht;
+            Armor = _baseSpecification.Armor;
+            Damage = _baseSpecification.Damage;
+            Description = _baseSpecification.Description;
         }
 
         public string Name { get; private set; }
-        public abstract void Attack(IDamageable target);
+        public int Healht
+        {
+            get => _healht;
+
+            private set
+            {
+                _healht = value < 0 ? 0 : value;
+            }
+        }
+
+        public int Armor { get; private set; }
+        public int Damage { get; private set; }
+        public string Description { get; private set; }
+        public bool IsAlive => _healht > 0;
+
+        public virtual void Attack(IDamageable target) =>
+            target.TryTakeDamage(Damage);
+
         public abstract void TryHealing(int health);
-        public abstract void TryTakeDamage(int damage);
-        public abstract BaseFighter Clone();
+        public virtual bool TryTakeDamage(int damage)
+        {
+            if (IsAlive)
+            {
+                _healht -= damage - Armor;
+                return true;
+            }
+
+            return false;
+        }
+
+        public abstract Fighter Clone();
 
         public abstract string GetInfo();
     }
 
-    class Fighter : BaseFighter
+    //Шанс нанести двойной урон
+    class Warrior : Fighter
     {
-        public Fighter(string name) : base(name)
+        private int _critChancePercent = 40;
+        private int _critDamageMultiplier = 2;
+
+        public Warrior(FighterSpecification specification) : base(specification) { }
+
+        public override void Attack(IDamageable target)
+        {
+            if (IsPositiveChanceCalculated(_critChancePercent))
+            {
+                target.TryTakeDamage(Damage * _critDamageMultiplier);
+            }
+
+            base.Attack(target);
+        }
+
+        public override void TryHealing(int health)
+        {
+
+        }
+
+        public override bool TryTakeDamage(int damage)
+        {
+            return base.TryTakeDamage(damage);
+        }
+        public override Fighter Clone()
+        {
+            return new Warrior(_baseSpecification);
+        }
+
+        public override string GetInfo()
+        {
+            return _baseSpecification.Name;
+        }
+    }
+
+    //Пока есть мана использует огненный шар, который имеет урон выше базового
+    class Mage : Fighter
+    {
+        public Mage(FighterSpecification specification) : base(specification)
         {
         }
 
         public override void Attack(IDamageable target)
         {
         }
-
 
         public override void TryHealing(int health)
         {
         }
 
-        public override void TryTakeDamage(int damage)
+        public override bool TryTakeDamage(int damage)
         {
+            return base.TryTakeDamage(damage);
         }
-        public override BaseFighter Clone()
+        public override Fighter Clone()
         {
-            return new Fighter(Name);
+            return new Mage(_baseSpecification);
         }
 
         public override string GetInfo()
         {
-            return Name;
+            return _baseSpecification.Name;
         }
     }
 
-    class Mage : BaseFighter, IHealer
+    //Каждую третью атаку наносит двойной урон
+    class Druid : Fighter, IHealProvider
     {
-        public Mage(string name) : base(name)
+        public Druid(FighterSpecification specification) : base(specification)
         {
         }
 
         public override void Attack(IDamageable target)
         {
+        }
+
+        public override Fighter Clone()
+        {
+            return new Druid(_baseSpecification);
+        }
+
+        public override string GetInfo()
+        {
+            return _baseSpecification.Name;
         }
 
         public void Heal(IHealable target)
@@ -87,23 +187,16 @@
         {
         }
 
-        public override void TryTakeDamage(int damage)
+        public override bool TryTakeDamage(int damage)
         {
-        }
-        public override BaseFighter Clone()
-        {
-            return new Mage(Name);
-        }
-
-        public override string GetInfo()
-        {
-            return Name;
+            return base.TryTakeDamage(damage);
         }
     }
 
-    class Warrior : BaseFighter
+    //Шанс уклониться от атаки
+    class Assasign : Fighter
     {
-        public Warrior(string name) : base(name)
+        public Assasign(FighterSpecification specification) : base(specification)
         {
         }
 
@@ -111,28 +204,78 @@
         {
         }
 
-        public override void TryHealing(int health)
+        public override Fighter Clone()
         {
-
-        }
-
-        public override void TryTakeDamage(int damage)
-        {
-        }
-        public override BaseFighter Clone()
-        {
-            return new Warrior(Name);
+            return new Assasign(_baseSpecification);
         }
 
         public override string GetInfo()
         {
-            return Name;
+            return _baseSpecification.Name;
         }
+
+        public override void TryHealing(int health)
+        {
+        }
+
+        public override bool TryTakeDamage(int damage)
+        {
+            return base.TryTakeDamage(damage);
+        }
+    }
+
+    //При получении урона накапливает ярость, при достижении максимума лечится
+    class Berserk : Fighter
+    {
+        public Berserk(FighterSpecification specification) : base(specification)
+        {
+        }
+
+        public override void Attack(IDamageable target)
+        {
+        }
+
+        public override Fighter Clone()
+        {
+            return new Berserk(_baseSpecification);
+        }
+
+        public override string GetInfo()
+        {
+            return _baseSpecification.Name;
+        }
+
+        public override void TryHealing(int health)
+        {
+        }
+
+        public override bool TryTakeDamage(int damage)
+        {
+            return base.TryTakeDamage(damage);
+        }
+    }
+
+    class FighterSpecification
+    {
+        public FighterSpecification(string name, int healht, int armor, int damage, string description)
+        {
+            Name = name;
+            Healht = healht;
+            Armor = armor;
+            Damage = damage;
+            Description = description;
+        }
+
+        public string Name { get; private set; }
+        public int Healht { get; private set; }
+        public int Armor { get; private set; }
+        public int Damage { get; private set; }
+        public string Description { get; private set; }
     }
 
     interface IDamageable
     {
-        void TryTakeDamage(int damage);
+        bool TryTakeDamage(int damage);
     }
 
     interface IHealable
@@ -140,19 +283,19 @@
         void TryHealing(int health);
     }
 
-    interface IAttacker
+    interface IDamageProvider
     {
         void Attack(IDamageable target);
     }
 
-    interface IHealer
+    interface IHealProvider
     {
         void Heal(IHealable target);
     }
 
     interface IClone
     {
-        BaseFighter Clone();
+        Fighter Clone();
     }
 
     //public class Program
@@ -638,6 +781,21 @@
             Console.ForegroundColor = consoleColor;
             Console.Write(message);
             Console.ForegroundColor = defaultColor;
+        }
+    }
+
+    public static class UserUtils
+    {
+        private static Random s_random = new Random();
+
+        public static int GenerateRandomNumber(int minNumber, int maxNumber) =>
+            s_random.Next(minNumber, ++maxNumber);
+
+        public static bool IsPositiveChanceCalculated(int currentChancePercent, int minChancePercent = 0, int maxChancePercent = 100)
+        {
+            int generatedChancePercent = GenerateRandomNumber(minChancePercent, maxChancePercent);
+
+            return generatedChancePercent <= currentChancePercent;
         }
     }
 }
