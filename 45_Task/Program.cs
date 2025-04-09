@@ -6,6 +6,8 @@
     {
         public static void Main()
         {
+            Console.Title = "ДЗ: Гладиаторские бои";
+
             FighterSpecification warriorSpec = new("Воин", 100, 10, 10, "Благородный воин");
             FighterSpecification mageSpec = new("Маг", 80, 2, 20, "Призыватель огня");
             FighterSpecification druidSpec = new("Друид", 80, 4, 12, "Повелитель стихий");
@@ -43,8 +45,7 @@
         {
             const string BeginFightMenu = "1";
             const string ExitMenu = "2";
-
-            Console.Title = "ДЗ: Гладиаторские бои";
+            
             bool isRun = true;
             //BattleField battleField = new();
 
@@ -395,49 +396,6 @@
     {
         Fighter Clone();
     }
-
-    //public class Program
-    //{
-    //    static void Main()
-    //    {
-    //        const string BeginFightMenu = "1";
-    //        const string ExitMenu = "2";
-
-    //        Console.Title = "ДЗ: Гладиаторские бои";
-    //        bool isRun = true;
-    //        BattleField battleField = new();
-
-    //        while (isRun)
-    //        {
-    //            Console.Clear();
-
-    //            Print(
-    //                $"Меню:\n" +
-    //                $"{BeginFightMenu} - Начать подготовку битвы\n" +
-    //                $"{ExitMenu} - Покинуть поле битвы.\n" +
-    //                $"Введите команду для продолжения: ");
-
-    //            switch (Console.ReadLine())
-    //            {
-    //                case BeginFightMenu:
-    //                    battleField.Work();
-    //                    break;
-
-    //                case ExitMenu:
-    //                    isRun = false;
-    //                    break;
-
-    //                default:
-    //                    Console.WriteLine("Такой команды нет!!!");
-    //                    Console.ReadKey();
-    //                    break;
-    //            }
-    //        }
-
-    //        Print("\nРабота программы завершена!");
-    //        Console.ReadKey();
-    //    }
-    //}
 
     //public class BattleField
     //{
