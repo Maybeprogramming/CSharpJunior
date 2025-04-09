@@ -391,11 +391,6 @@
         void Attack(IDamageable target);
     }
 
-    interface IHealProvider
-    {
-        void Heal(IHealable target);
-    }
-
     interface IClone
     {
         Fighter Clone();
