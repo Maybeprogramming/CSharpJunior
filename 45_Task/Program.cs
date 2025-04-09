@@ -9,7 +9,7 @@
     {
         public static void Main()
         {
-            FighterSpecification specification = new("Маг", 10, 1, 2, "Повелитель огня");
+            FighterSpecification specification = new("Воин", 10, 1, 2, "Яростный воин");
 
             Warrior mage = new Warrior(specification);
             Warrior warrior = new Warrior(specification);
@@ -18,14 +18,8 @@
             Warrior warrior2 = (Warrior)warrior.Clone();
 
             mage.Attack(warrior);
-
-            Console.WriteLine(warrior.Healht);
-
-            for (int i = 0; i < 30; i++)
-            {
-                Console.WriteLine(IsPositiveChanceCalculated(30));
-            }
-
+            Console.WriteLine(warrior.Health);
+            Console.WriteLine(IsPositiveChanceCalculated(30));
             Console.ReadLine();
         }
     }
@@ -42,43 +36,45 @@
     abstract class Fighter : IDamageProvider, IDamageable, IHealable, IClone
     {
         private protected FighterSpecification _baseSpecification;
-        private int _healht;
+        private int _health;
 
         protected Fighter(FighterSpecification baseSpecification)
         {
             _baseSpecification = baseSpecification;
             Name = _baseSpecification.Name;
-            _healht = _baseSpecification.Healht;
+            _health = _baseSpecification.Health;
             Armor = _baseSpecification.Armor;
             Damage = _baseSpecification.Damage;
             Description = _baseSpecification.Description;
         }
 
         public string Name { get; private set; }
-        public int Healht
+        public int Health
         {
-            get => _healht;
-
-            private set
-            {
-                _healht = value < 0 ? 0 : value;
-            }
+            get =>
+                _health;
+            private set =>
+                _health = value < 0 ? 0 : value;
         }
 
         public int Armor { get; private set; }
         public int Damage { get; private set; }
         public string Description { get; private set; }
-        public bool IsAlive => _healht > 0;
+        public bool IsAlive => _health > 0;
 
         public virtual void Attack(IDamageable target) =>
             target.TryTakeDamage(Damage);
 
-        public abstract void TryHealing(int health);
+        public virtual bool TryHealing(int health)
+        {
+            return true;
+        }
+
         public virtual bool TryTakeDamage(int damage)
         {
             if (IsAlive)
             {
-                _healht -= damage - Armor;
+                _health -= damage - Armor;
                 return true;
             }
 
@@ -108,9 +104,9 @@
             base.Attack(target);
         }
 
-        public override void TryHealing(int health)
+        public override bool TryHealing(int health)
         {
-
+            return base.TryHealing(health);
         }
 
         public override bool TryTakeDamage(int damage)
@@ -139,8 +135,9 @@
         {
         }
 
-        public override void TryHealing(int health)
+        public override bool TryHealing(int health)
         {
+            return base.TryHealing(health);
         }
 
         public override bool TryTakeDamage(int damage)
@@ -183,8 +180,9 @@
         {
         }
 
-        public override void TryHealing(int health)
+        public override bool TryHealing(int health)
         {
+            return base.TryHealing(health);
         }
 
         public override bool TryTakeDamage(int damage)
@@ -214,8 +212,9 @@
             return _baseSpecification.Name;
         }
 
-        public override void TryHealing(int health)
+        public override bool TryHealing(int health)
         {
+            return base.TryHealing(health);
         }
 
         public override bool TryTakeDamage(int damage)
@@ -245,8 +244,9 @@
             return _baseSpecification.Name;
         }
 
-        public override void TryHealing(int health)
+        public override bool TryHealing(int health)
         {
+            return base.TryHealing(health);
         }
 
         public override bool TryTakeDamage(int damage)
@@ -257,20 +257,60 @@
 
     class FighterSpecification
     {
-        public FighterSpecification(string name, int healht, int armor, int damage, string description)
+        private int _health;
+        private int _damage;
+        private int _armor;
+        private string _name;
+        private string _description;
+
+        public FighterSpecification(string name, int health, int armor, int damage, string description)
         {
             Name = name;
-            Healht = healht;
+            Health = health;
             Armor = armor;
             Damage = damage;
             Description = description;
         }
 
-        public string Name { get; private set; }
-        public int Healht { get; private set; }
-        public int Armor { get; private set; }
-        public int Damage { get; private set; }
-        public string Description { get; private set; }
+        public string Name
+        {
+            get => 
+                _name;
+            private set => 
+                _name = ApplyNotEmptyString(value, "Ошибка! Имя не может быть пустым");
+        }
+
+        public int Health
+        {
+            get => 
+                _health;
+            private set => 
+                _health = ApplyPositiveValue(value, "Ошибка! Значение здоровья не может быть меньше 0");
+        }
+
+        public int Armor
+        {
+            get => 
+                _armor;
+            private set => 
+                _armor = ApplyPositiveValue(value, "Ошибка! Значение брони не может быть меньше 0");
+        }
+
+        public int Damage
+        {
+            get => 
+                _damage;
+            private set => 
+                _damage = ApplyPositiveValue(value, "Ошибка! Значение урона не может быть меньше 0");
+        }
+
+        public string Description
+        {
+            get => 
+                _description;
+            private set => 
+                _description = ApplyNotEmptyString(value, "Ошибка! Описание не может быть пустым");
+        }
     }
 
     interface IDamageable
@@ -280,7 +320,7 @@
 
     interface IHealable
     {
-        void TryHealing(int health);
+        bool TryHealing(int health);
     }
 
     interface IDamageProvider
@@ -796,6 +836,22 @@
             int generatedChancePercent = GenerateRandomNumber(minChancePercent, maxChancePercent);
 
             return generatedChancePercent <= currentChancePercent;
+        }
+
+        public static int ApplyPositiveValue(int value, string errorMessage)
+        {
+            if (value < 0)
+                throw new Exception(errorMessage);
+            else
+                return value;
+        }
+
+        public static string ApplyNotEmptyString(string value, string errorMessage)
+        {
+            if (value.Length <= 0)
+                throw new Exception(errorMessage);
+            else
+                return value;
         }
     }
 }
