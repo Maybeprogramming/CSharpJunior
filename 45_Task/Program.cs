@@ -8,32 +8,14 @@
         {
             Console.Title = "ДЗ: Гладиаторские бои";
 
-            FighterSpecification warriorSpec = new("Воин", 100, 10, 10, "Благородный воин");
-            FighterSpecification mageSpec = new("Маг", 80, 2, 20, "Призыватель огня");
-            FighterSpecification druidSpec = new("Друид", 80, 4, 12, "Повелитель стихий");
-            FighterSpecification assasignSpec = new("Разбойник", 85, 5, 14, "Ночная тень");
-            FighterSpecification berserkSpec = new("Берсерк", 90, 5, 15, "Воин ярости");
+            FightersFactory fightersFactory = new FightersFactory();
+            List<Fighter> fighters = fightersFactory.GetFighters();
 
-            List<Fighter> fighters = new List<Fighter>()
+            foreach (Fighter fighter in fighters)
             {
-                new Warrior(warriorSpec),
-                new Mage(mageSpec),
-                new Druid(druidSpec),
-                new Assasign(assasignSpec),
-                new Berserk(berserkSpec)
-            };
-
-            Warrior warrior = new(warriorSpec);
-            Mage mage = new(mageSpec);
-
-            while (warrior.IsAlive && mage.IsAlive)
-            {
-                warrior.Attack(mage);
-                mage.Attack(warrior);
-                Console.WriteLine(warrior.GetInfo());
-                Console.WriteLine(mage.GetInfo());
-                Console.ReadLine();
+                Console.WriteLine(fighter.GetInfo());
             }
+
 
             Console.ReadLine();
         }
@@ -41,11 +23,18 @@
 
     public class Arena
     {
+        private FightersFactory _fightersFactory;
+
+        public Arena()
+        {
+            _fightersFactory = new FightersFactory();
+        }
+
         public void Work()
         {
             const string BeginFightMenu = "1";
             const string ExitMenu = "2";
-            
+
             bool isRun = true;
             //BattleField battleField = new();
 
@@ -55,7 +44,7 @@
 
                 Print(
                     $"Меню:\n" +
-                    $"{BeginFightMenu} - Начать подготовку битвы\n" +
+                    $"{BeginFightMenu} - Начать подготовку к битве\n" +
                     $"{ExitMenu} - Покинуть поле битвы.\n" +
                     $"Введите команду для продолжения: ");
 
@@ -78,6 +67,111 @@
 
             Print("\nРабота программы завершена!");
             Console.ReadKey();
+        }
+    }
+
+    class FightersFactory
+    {
+        private List<Fighter> _fighters;
+
+        private int _minHealth;
+        private int _maxHealth;
+        private int _minArmor;
+        private int _maxArmor;
+        private int _minDamage;
+        private int _maxDamage;
+
+        private string _nameWarrior;
+        private string _nameMage;
+        private string _nameDruid;
+        private string _nameAssasign;
+        private string _nameBerserk;
+
+        private string _descriptionWarrior;
+        private string _descriptionMage;
+        private string _descriptionDruid;
+        private string _descriptionAssasign;
+        private string _descriptionBerserk;
+
+        private FighterSpecification _warriorSpecification;
+        private FighterSpecification _mageSpecification;
+        private FighterSpecification _druidSpecification;
+        private FighterSpecification _assasignSpecification;
+        private FighterSpecification _berserkSpecification;
+
+        public FightersFactory()
+        {
+            ConfigurateFightersSpecification();
+            FillFighters();
+        }
+
+        private void ConfigurateFightersSpecification()
+        {
+            _minHealth = 80;
+            _maxHealth = 120;
+            _minArmor = 2;
+            _maxArmor = 10;
+            _minDamage = 12;
+            _maxDamage = 20;
+
+            _nameWarrior = "Воин";
+            _nameMage = "Маг";
+            _nameDruid = "Друид";
+            _nameAssasign = "Разбойник";
+            _nameBerserk = "Берсерк";
+
+            _descriptionWarrior = "Имеет шанс нанести удвоенный урон";
+            _descriptionMage = "Использует огненный шар пока есть мана";
+            _descriptionDruid = "Каждую третью атаку наносит урон дважды";
+            _descriptionAssasign = "Имеет шанс уклониться от атаки";
+            _descriptionBerserk = "При получении урона накапливает ярость, достигнув максимума использует лечение";
+
+            _warriorSpecification = new FighterSpecification(_nameWarrior,
+                                                             GenerateRandomNumber(_minHealth, _maxHealth),
+                                                             GenerateRandomNumber(_minArmor, _maxArmor),
+                                                             GenerateRandomNumber(_minDamage, _maxDamage),
+                                                             _descriptionWarrior);
+
+            _mageSpecification = new FighterSpecification(_nameMage,
+                                                             GenerateRandomNumber(_minHealth, _maxHealth),
+                                                             GenerateRandomNumber(_minArmor, _maxArmor),
+                                                             GenerateRandomNumber(_minDamage, _maxDamage),
+                                                             _descriptionMage);
+
+            _druidSpecification = new FighterSpecification(_nameDruid,
+                                                             GenerateRandomNumber(_minHealth, _maxHealth),
+                                                             GenerateRandomNumber(_minArmor, _maxArmor),
+                                                             GenerateRandomNumber(_minDamage, _maxDamage),
+                                                             _descriptionDruid);
+
+            _assasignSpecification = new FighterSpecification(_nameAssasign,
+                                                             GenerateRandomNumber(_minHealth, _maxHealth),
+                                                             GenerateRandomNumber(_minArmor, _maxArmor),
+                                                             GenerateRandomNumber(_minDamage, _maxDamage),
+                                                             _descriptionAssasign);
+
+            _berserkSpecification = new FighterSpecification(_nameBerserk,
+                                                             GenerateRandomNumber(_minHealth, _maxHealth),
+                                                             GenerateRandomNumber(_minArmor, _maxArmor),
+                                                             GenerateRandomNumber(_minDamage, _maxDamage),
+                                                             _descriptionBerserk);
+        }
+
+        private void FillFighters()
+        {
+            _fighters = new List<Fighter>()
+            {
+                new Warrior(_warriorSpecification),
+                new Mage(_mageSpecification),
+                new Druid(_druidSpecification),
+                new Assasign(_assasignSpecification),
+                new Berserk(_berserkSpecification)
+            };
+        }
+
+        public List<Fighter> GetFighters()
+        {
+            return new List<Fighter>(_fighters);
         }
     }
 
@@ -138,7 +232,7 @@
 
         public virtual string GetInfo()
         {
-            return $"<{Name}> | Жизни [{Health}] Урон [{Damage}] Броня [{Armor}]";
+            return $"<{Name}> | СТАТЫ - Жизни [{Health}] Урон [{Damage}] Броня [{Armor}]";
         }
 
         public abstract Fighter Clone();
@@ -168,7 +262,7 @@
 
         public override string GetInfo()
         {
-            return base.GetInfo() + $" Крит [{_critChancePercent}]";
+            return base.GetInfo() + $" Крит [{_critChancePercent}] |";
         }
     }
 
@@ -208,7 +302,7 @@
 
         public override string GetInfo()
         {
-            return base.GetInfo() + $" Мана [{_mana}]";
+            return base.GetInfo() + $" Мана [{_mana}] |";
         }
     }
 
@@ -245,7 +339,7 @@
 
         public override string GetInfo()
         {
-            return base.GetInfo() + $" Двойная атака, шаги [{_attackCount}/{_attackCountForDoubleAttack}]";
+            return base.GetInfo() + $"Счётчик атак [{_attackCount}/{_attackCountForDoubleAttack}] |";
         }
     }
 
@@ -265,7 +359,7 @@
 
         public override string GetInfo()
         {
-            return base.GetInfo() + $" Уклонение [{_dodgeChancePercent}%]";
+            return base.GetInfo() + $" Уклонение [{_dodgeChancePercent}%] |";
         }
 
         public override bool TryTakeDamage(int damage)
@@ -303,7 +397,7 @@
 
         public override string GetInfo()
         {
-            return base.GetInfo() + $" Ярость [{_rageLevel}/{_maxRageLevel}]";
+            return base.GetInfo() + $" Ярость [{_rageLevel}/{_maxRageLevel}] |";
         }
 
         public override bool TryTakeDamage(int damage)
@@ -536,18 +630,18 @@
             return generatedChancePercent <= currentChancePercent;
         }
 
-        public static int GetPositiveValue(int value, string errorMessage)
+        public static int GetPositiveValue(int value, string message)
         {
             if (value < 0)
-                throw new Exception(errorMessage);
+                throw new Exception(message);
             else
                 return value;
         }
 
-        public static string GetNotEmptyString(string value, string errorMessage)
+        public static string GetNotEmptyString(string value, string message)
         {
             if (value.Length <= 0)
-                throw new Exception(errorMessage);
+                throw new Exception(message);
             else
                 return value;
         }
