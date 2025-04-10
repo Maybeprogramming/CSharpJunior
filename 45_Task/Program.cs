@@ -288,7 +288,7 @@
         private protected FighterSpecification _baseSpecification;
         private int _health;
 
-        protected Fighter(FighterSpecification baseSpecification)
+        public Fighter(FighterSpecification baseSpecification)
         {
             _baseSpecification = baseSpecification;
             Name = _baseSpecification.Name;
@@ -421,19 +421,19 @@
             }
         }
 
-        public int ApplyFireBall()
+        public override Fighter Clone() => 
+            new Mage(_baseSpecification);
+
+        public override string GetInfo() => 
+            base.GetInfo() + $", Мана [{_mana}] |";
+
+        private int ApplyFireBall()
         {
             int totalDamage = Damage * _damageMultiplier;
             Print($"\n[{Name}] нанёс удар огненным шаром, нанеся противнику [{totalDamage}] урона.");
 
             return totalDamage;
         }
-
-        public override Fighter Clone() => 
-            new Mage(_baseSpecification);
-
-        public override string GetInfo() => 
-            base.GetInfo() + $", Мана [{_mana}] |";
     }
 
     class Druid : Fighter
