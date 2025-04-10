@@ -16,6 +16,8 @@
                 Console.WriteLine(fighter.GetInfo());
             }
 
+            Arena arena = new Arena();
+            arena.Work();
 
             Console.ReadLine();
         }
@@ -23,22 +25,25 @@
 
     public class Arena
     {
+        private List<Fighter> _fightersCatalog;
         private FightersFactory _fightersFactory;
+        private Fighter _gladiatorOne;
+        private Fighter _gladiatorTwo;
 
         public Arena()
         {
             _fightersFactory = new FightersFactory();
+            _fightersCatalog = _fightersFactory.GetFighters();
         }
 
         public void Work()
         {
-            const string BeginFightMenu = "1";
-            const string ExitMenu = "2";
+            const int BeginFightMenu = 1;
+            const int ExitMenu = 2;
 
-            bool isRun = true;
-            //BattleField battleField = new();
+            bool isWork = true;
 
-            while (isRun)
+            while (isWork)
             {
                 Console.Clear();
 
@@ -48,25 +53,137 @@
                     $"{ExitMenu} - Покинуть поле битвы.\n" +
                     $"Введите команду для продолжения: ");
 
-                switch (Console.ReadLine())
+                switch (ReadInputNumber())
                 {
                     case BeginFightMenu:
-                        //battleField.Work();
+                        RunToFight();
                         break;
 
                     case ExitMenu:
-                        isRun = false;
+                        isWork = false;
                         break;
 
                     default:
-                        Console.WriteLine("Такой команды нет!!!");
+                        Console.WriteLine("Такой команды нет! Попробуйте снова!");
                         Console.ReadKey();
                         break;
                 }
             }
 
             Print("\nРабота программы завершена!");
-            Console.ReadKey();
+            Console.ReadLine();
+        }
+
+        private void RunToFight()
+        {
+            ShowAllFighters();
+            BeginFighters();
+            DrowLots();
+            Fight();
+            AnnouncingFightResults();
+
+            Print("\nЧтобы продолжить нажмите любую клавишу", ConsoleColor.Green);
+            Console.ReadLine();
+        }
+
+        private void ShowAllFighters()
+        {
+            int index = 0;
+
+            Print($"\n Список доступных гладиаторов:", ConsoleColor.Green);
+            Print($"\n{new string('-', 90)}", ConsoleColor.Green);
+
+            foreach (Fighter fighter in _fightersCatalog)
+            {
+                Print($"\n{++index}. {fighter.GetInfo()} " +
+                      $"\nОписание: [{fighter.Description}]");
+                Print($"\n{new string('-', 90)}", ConsoleColor.DarkRed);
+            }
+        }
+        private void BeginFighters()
+        {
+            _gladiatorOne = ChooseFighter($"\nВведите номер, для выбора первого гладиатора: ");
+            Print($"\nВы выбрали в качестве первого гладиатора:");
+            Print($"\n{_gladiatorOne.GetInfo()}\n", ConsoleColor.Green);
+
+            _gladiatorTwo = ChooseFighter($"\nВведите номер, для выбора второго гладиатора: ");
+            Print($"\nВы выбрали в качестве второго гладиатора:");
+            Print($"\n{_gladiatorTwo.GetInfo()}", ConsoleColor.Green);
+        }
+
+        private Fighter ChooseFighter(string message)
+        {
+            int indexGlagiator;
+            int minIndex = 1;
+            int maxIndex = _fightersCatalog.Count;
+
+            do
+            {
+                Print($"{message}");
+                indexGlagiator = ReadInputNumber();
+            } while (indexGlagiator < minIndex || indexGlagiator > maxIndex);
+
+            return _fightersCatalog[--indexGlagiator].Clone();
+        }
+
+        private void DrowLots()
+        {
+            Fighter tempFighter;
+            int minNumber = 0;
+            int maxNumber = 9;
+            int lotsNumber = 5;
+            int randomNumber = GenerateRandomNumber(minNumber, maxNumber);
+
+            Print($"\n\nПроводится жеребьевка");
+
+            if (randomNumber >= 5)
+            {
+                tempFighter = _gladiatorOne;
+                _gladiatorOne = _gladiatorTwo;
+                _gladiatorTwo = tempFighter;
+            }
+
+            Print($"\nПервым начнёт атаку гладиатор:");
+            Print($"\n{_gladiatorOne.GetInfo()}", ConsoleColor.Green);
+        }
+
+        private void Fight()
+        {
+            int fightStepCount = 0;
+            Print($"\n\nНачинается битва!", ConsoleColor.Red);
+
+            while (_gladiatorOne.IsAlive && _gladiatorTwo.IsAlive)
+            {
+                Print($"\n# {++fightStepCount} #\n{new string('-', 90)}", ConsoleColor.Red);
+                _gladiatorOne.Attack(_gladiatorTwo);
+                _gladiatorTwo.Attack(_gladiatorOne);
+
+                Print($"\n{new string('-', 90)}", ConsoleColor.Red);
+                Print($"\n{_gladiatorOne.GetInfo()}", ConsoleColor.Yellow);
+                Print($"\n{_gladiatorTwo.GetInfo()}", ConsoleColor.DarkYellow);
+
+                Print($"\nДля следующего хода нажмите любую клавишу", ConsoleColor.Green);
+                Console.ReadLine();
+            }
+        }
+
+        private void AnnouncingFightResults()
+        {
+            Print($"\n{new string('-', 90)}", ConsoleColor.Green);
+            Print($"\nПодведём итоги боя гладиаторов", ConsoleColor.Green);
+
+            if (_gladiatorOne.IsAlive && _gladiatorTwo.IsAlive == false)
+            {
+                Print($"\n{_gladiatorOne.Name} одержал победу над своим противником", ConsoleColor.DarkYellow);
+            }
+            else if (_gladiatorOne.IsAlive == false && _gladiatorTwo.IsAlive)
+            {
+                Print($"\n{_gladiatorTwo.Name} одержал победу над своим противником", ConsoleColor.DarkYellow);
+            }
+            else
+            {
+                Print($"\nВ этой битве нет победителей", ConsoleColor.Red);
+            }
         }
     }
 
@@ -205,34 +322,51 @@
         public string Description { get; private set; }
         public bool IsAlive => _health > 0;
 
-        public virtual void Attack(IDamageable target) =>
-            target.TryTakeDamage(Damage);
+        public virtual void Attack(IDamageable target)
+        {
+            if (IsAlive)
+            {
+                Print($"\n[{Name}] ударил противника, нанеся ему [{Damage}] урона.");
+                target.TryTakeDamage(Damage);
+            }
+            else
+            {
+                Print($"\n[{Name}] побежденный не может атаковать.");
+            }
+        }
 
         public virtual bool TryHealing(int healthPoint)
         {
             if (IsAlive == false || healthPoint < 0)
             {
+                Print($"\n[{Name}] не смог вылечить здоровье на [{healthPoint}] единиц.");
                 return false;
             }
 
             Health += healthPoint;
+            Print($"\n[{Name}] вылечил здоровье на [{healthPoint}] единиц.");
             return true;
         }
 
         public virtual bool TryTakeDamage(int damage)
         {
+            int totalDamage;
+
             if (IsAlive)
             {
-                Health -= damage - Armor;
+                totalDamage = damage - Armor;
+                Health -= totalDamage;
+                Print($"\n[{Name}] получил урон [{totalDamage}], заблокировав своей броней [{Armor}] урона.");
                 return true;
             }
 
+            Print($"\n[{Name}] не получил урона.");
             return false;
         }
 
         public virtual string GetInfo()
         {
-            return $"<{Name}> | СТАТЫ - Жизни [{Health}] Урон [{Damage}] Броня [{Armor}]";
+            return $"<{Name}> | СТАТЫ: Жизни [{Health}], Урон [{Damage}], Броня [{Armor}]";
         }
 
         public abstract Fighter Clone();
@@ -247,12 +381,18 @@
 
         public override void Attack(IDamageable target)
         {
-            if (IsPositiveChance(_critChancePercent))
-            {
-                target.TryTakeDamage(Damage * _critDamageMultiplier);
-            }
+            int totalDamage;
 
-            base.Attack(target);
+            if (IsPositiveChance(_critChancePercent) && IsAlive)
+            {
+                totalDamage = Damage * _critDamageMultiplier;
+                Print($"\n[{Name}] нанёс критический удар, нанеся противнику [{totalDamage}] урона.");
+                target.TryTakeDamage(totalDamage);
+            }
+            else
+            {
+                base.Attack(target);
+            }
         }
 
         public override Fighter Clone()
@@ -262,7 +402,7 @@
 
         public override string GetInfo()
         {
-            return base.GetInfo() + $" Крит [{_critChancePercent}] |";
+            return base.GetInfo() + $", Крит [{_critChancePercent}] |";
         }
     }
 
@@ -281,18 +421,23 @@
 
         public override void Attack(IDamageable target)
         {
-            if (_mana - _manaCostFireBall >= 0)
+            if (_mana - _manaCostFireBall >= 0 && IsAlive)
             {
                 target.TryTakeDamage(ApplyFireBall());
                 _mana -= _manaCostFireBall;
             }
-
-            base.Attack(target);
+            else
+            {
+                base.Attack(target);
+            }
         }
 
         public int ApplyFireBall()
         {
-            return Damage * _damageMultiplier;
+            int totalDamage = Damage * _damageMultiplier;
+            Print($"\n[{Name}] нанёс удар огненным шаром, нанеся противнику [{totalDamage}] урона.");
+
+            return totalDamage;
         }
 
         public override Fighter Clone()
@@ -302,7 +447,7 @@
 
         public override string GetInfo()
         {
-            return base.GetInfo() + $" Мана [{_mana}] |";
+            return base.GetInfo() + $", Мана [{_mana}] |";
         }
     }
 
@@ -326,6 +471,7 @@
             }
             else
             {
+                Print($"\n[{Name}] изловчается для нанесения двух ударов");
                 base.Attack(target);
                 base.Attack(target);
                 _attackCount = 0;
@@ -339,7 +485,7 @@
 
         public override string GetInfo()
         {
-            return base.GetInfo() + $"Счётчик атак [{_attackCount}/{_attackCountForDoubleAttack}] |";
+            return base.GetInfo() + $", Счётчик атак [{_attackCount}/{_attackCountForDoubleAttack}] |";
         }
     }
 
@@ -359,13 +505,14 @@
 
         public override string GetInfo()
         {
-            return base.GetInfo() + $" Уклонение [{_dodgeChancePercent}%] |";
+            return base.GetInfo() + $", Уклонение [{_dodgeChancePercent}%] |";
         }
 
         public override bool TryTakeDamage(int damage)
         {
             if (IsPositiveChance(_dodgeChancePercent))
             {
+                Print($"\n[{Name}] уклонился от удара своего противника.");
                 return false;
             }
 
@@ -386,7 +533,7 @@
             _rageLevel = 0;
             _maxRageLevel = 90;
             _rageDamageValue = 30;
-            _healthDivider = 3;
+            _healthDivider = 5;
             _healingPoint = specification.Health / _healthDivider;
         }
 
@@ -397,7 +544,7 @@
 
         public override string GetInfo()
         {
-            return base.GetInfo() + $" Ярость [{_rageLevel}/{_maxRageLevel}] |";
+            return base.GetInfo() + $", Ярость [{_rageLevel}/{_maxRageLevel}] |";
         }
 
         public override bool TryTakeDamage(int damage)
@@ -473,6 +620,7 @@
 
     interface IDamageable
     {
+        bool IsAlive { get; }
         bool TryTakeDamage(int damage);
     }
 
@@ -491,131 +639,6 @@
         Fighter Clone();
     }
 
-    //public class BattleField
-    //{
-    //    private List<Fighter>? _fightersCatalog;
-    //    private Fighter? _fighter1;
-    //    private Fighter? _fighter2;
-
-    //    public BattleField()
-    //    {
-    //        _fightersCatalog = new()
-    //        {
-    //            new Fighter(),
-    //            new Warrior(),
-    //            new Assasign(),
-    //            new Hunter(),
-    //            new Wizzard()
-    //        };
-    //    }
-
-    //    public void Work()
-    //    {
-    //        ClearFighters();
-
-    //        while (IsChoosedFigters() == false)
-    //        {
-    //            Console.Clear();
-
-    //            ShowAllFighters();
-
-    //            ChooseFighter(ReadNumber("Введите номер бойца: ") - 1);
-    //        }
-
-    //        AnnouncingFightersReadyForFight();
-    //        Fight();
-    //        AnnouncingWinner();
-    //    }
-
-    //    private bool IsChoosedFigters()
-    //    {
-    //        return _fighter1 != null && _fighter2 != null;
-    //    }
-
-    //    private void ShowAllFighters()
-    //    {
-    //        Print($"Список доступных бойцов для выбора:\n");
-
-    //        for (int i = 0; i < _fightersCatalog.Count; i++)
-    //        {
-    //            Print($"{i + 1} - {_fightersCatalog[i].GetInfo()}\n");
-    //        }
-    //    }
-
-    //    private void ClearFighters()
-    //    {
-    //        _fighter1 = null;
-    //        _fighter2 = null;
-    //    }
-
-    //    private void AnnouncingFightersReadyForFight()
-    //    {
-    //        Print("\n\nГотовые к бою отважные герои:\n");
-    //        Print($"1. {_fighter1.ClassName} ({_fighter1.Name}): DMG: {_fighter1.Damage}, HP: {_fighter1.Health}\n");
-    //        Print($"2. {_fighter2.ClassName} ({_fighter2.Name}): DMG: {_fighter2.Damage}, HP: {_fighter2.Health}\n");
-    //    }
-
-    //    private void Fight()
-    //    {
-    //        int delayMiliseconds = 1000;
-
-    //        Print("\nНачать битву?\nДля продолжения нажмите любую клавишу...\n\n");
-    //        Console.ReadKey();
-
-    //        while (_fighter1.IsAlive && _fighter2.IsAlive)
-    //        {
-    //            _fighter1.ToAttack(_fighter2);
-    //            _fighter2.ToAttack(_fighter1);
-
-    //            Print("\n " + new string('-', 70));
-    //            Task.Delay(delayMiliseconds).Wait();
-    //        }
-    //    }
-
-    //    private void AnnouncingWinner()
-    //    {
-    //        if (_fighter1.IsAlive == false && _fighter2.IsAlive == false)
-    //        {
-    //            Print("\nНичья! Оба героя пали на поле боя!");
-    //        }
-    //        else if (_fighter1.IsAlive == true && _fighter2.IsAlive == false)
-    //        {
-    //            Print($"\nПобедитель - {_fighter1.ClassName} ({_fighter1.Name})!");
-    //        }
-    //        else
-    //        {
-    //            Print($"\nПобедитель - {_fighter2.ClassName} ({_fighter2.Name})!");
-    //        }
-
-    //        Console.ReadKey();
-    //    }
-
-    //    private void ChooseFighter(int number)
-    //    {
-    //        if (number >= _fightersCatalog.Count || number < 0)
-    //        {
-    //            Print("\nНет такого бойца в каталоге!");
-    //            Print("\nДля продолжения нажмите любую клавишу...");
-    //            Console.ReadKey();
-    //            return;
-    //        }
-
-    //        if (_fighter1 == null)
-    //        {
-    //            _fighter1 = (Fighter?)_fightersCatalog[number].Clone();
-    //            Print($"\nВы выбрали: {_fighter1.GetInfo()}");
-    //        }
-    //        else if (_fighter2 == null)
-    //        {
-    //            _fighter2 = (Fighter?)_fightersCatalog[number].Clone();
-    //            Print($"\nВы выбрали: {_fighter2.GetInfo()}");
-    //        }
-
-    //        Print($"\nДля продолжения нажмите любую клавишу...");
-    //        Console.ReadKey();
-    //    }
-    //}
-
     public static class UserUtils
     {
         private static Random s_random = new Random();
@@ -625,31 +648,19 @@
 
         public static bool IsPositiveChance(int currentChancePercent, int minChancePercent = 0, int maxChancePercent = 100)
         {
-            int generatedChancePercent = GenerateRandomNumber(minChancePercent, maxChancePercent);
+            int randomNumber = GenerateRandomNumber(minChancePercent, maxChancePercent);
 
-            return generatedChancePercent <= currentChancePercent;
+            return randomNumber <= currentChancePercent;
         }
 
-        public static int GetPositiveValue(int value, string message)
-        {
-            if (value < 0)
-                throw new Exception(message);
-            else
-                return value;
-        }
+        public static int GetPositiveValue(int value, string message) =>
+            value = value < 0 ? throw new Exception(message) : value;
 
-        public static string GetNotEmptyString(string value, string message)
-        {
-            if (value.Length <= 0)
-                throw new Exception(message);
-            else
-                return value;
-        }
+        public static string GetNotEmptyString(string value, string message) =>
+            value = value.Length <= 0 ? throw new Exception(message) : value;
 
-        public static void Print<T>(T message)
-        {
+        public static void Print<T>(T message) =>
             Console.Write(message.ToString());
-        }
 
         public static void Print<T>(T message, ConsoleColor consoleColor = ConsoleColor.White)
         {
