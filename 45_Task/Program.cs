@@ -7,18 +7,8 @@
         public static void Main()
         {
             Console.Title = "ДЗ: Гладиаторские бои";
-
-            FightersFactory fightersFactory = new FightersFactory();
-            List<Fighter> fighters = fightersFactory.GetFighters();
-
-            foreach (Fighter fighter in fighters)
-            {
-                Console.WriteLine(fighter.GetInfo());
-            }
-
             Arena arena = new Arena();
             arena.Work();
-
             Console.ReadLine();
         }
     }
@@ -100,6 +90,7 @@
                 Print($"\n{new string('-', 90)}", ConsoleColor.DarkRed);
             }
         }
+
         private void BeginFighters()
         {
             _gladiatorOne = ChooseFighter($"\nВведите номер, для выбора первого гладиатора: ");
@@ -364,20 +355,22 @@
             return false;
         }
 
-        public virtual string GetInfo()
-        {
-            return $"<{Name}> | СТАТЫ: Жизни [{Health}], Урон [{Damage}], Броня [{Armor}]";
-        }
+        public virtual string GetInfo() => 
+            $"<{Name}> | СТАТЫ: Жизни [{Health}], Урон [{Damage}], Броня [{Armor}]";
 
         public abstract Fighter Clone();
     }
 
     class Warrior : Fighter
     {
-        private int _critChancePercent = 40;
-        private int _critDamageMultiplier = 2;
+        private int _critChancePercent;
+        private int _critDamageMultiplier;
 
-        public Warrior(FighterSpecification specification) : base(specification) { }
+        public Warrior(FighterSpecification specification) : base(specification) 
+        {
+            _critChancePercent = 40;
+            _critDamageMultiplier = 2;
+        }
 
         public override void Attack(IDamageable target)
         {
@@ -395,15 +388,11 @@
             }
         }
 
-        public override Fighter Clone()
-        {
-            return new Warrior(_baseSpecification);
-        }
+        public override Fighter Clone() => 
+            new Warrior(_baseSpecification);
 
-        public override string GetInfo()
-        {
-            return base.GetInfo() + $", Крит [{_critChancePercent}] |";
-        }
+        public override string GetInfo() => 
+            base.GetInfo() + $", Крит [{_critChancePercent}] |";
     }
 
     class Mage : Fighter
@@ -440,15 +429,11 @@
             return totalDamage;
         }
 
-        public override Fighter Clone()
-        {
-            return new Mage(_baseSpecification);
-        }
+        public override Fighter Clone() => 
+            new Mage(_baseSpecification);
 
-        public override string GetInfo()
-        {
-            return base.GetInfo() + $", Мана [{_mana}] |";
-        }
+        public override string GetInfo() => 
+            base.GetInfo() + $", Мана [{_mana}] |";
     }
 
     class Druid : Fighter
@@ -478,15 +463,11 @@
             }
         }
 
-        public override Fighter Clone()
-        {
-            return new Druid(_baseSpecification);
-        }
+        public override Fighter Clone() => 
+            new Druid(_baseSpecification);
 
-        public override string GetInfo()
-        {
-            return base.GetInfo() + $", Счётчик атак [{_attackCount}/{_attackCountForDoubleAttack}] |";
-        }
+        public override string GetInfo() => 
+            base.GetInfo() + $", Счётчик атак [{_attackCount}/{_attackCountForDoubleAttack}] |";
     }
 
     class Assasign : Fighter
@@ -498,15 +479,11 @@
             _dodgeChancePercent = 35;
         }
 
-        public override Fighter Clone()
-        {
-            return new Assasign(_baseSpecification);
-        }
+        public override Fighter Clone() => 
+            new Assasign(_baseSpecification);
 
-        public override string GetInfo()
-        {
-            return base.GetInfo() + $", Уклонение [{_dodgeChancePercent}%] |";
-        }
+        public override string GetInfo() => 
+            base.GetInfo() + $", Уклонение [{_dodgeChancePercent}%] |";
 
         public override bool TryTakeDamage(int damage)
         {
@@ -537,15 +514,11 @@
             _healingPoint = specification.Health / _healthDivider;
         }
 
-        public override Fighter Clone()
-        {
-            return new Berserk(_baseSpecification);
-        }
+        public override Fighter Clone() => 
+            new Berserk(_baseSpecification);
 
-        public override string GetInfo()
-        {
-            return base.GetInfo() + $", Ярость [{_rageLevel}/{_maxRageLevel}] |";
-        }
+        public override string GetInfo() => 
+            base.GetInfo() + $", Ярость [{_rageLevel}/{_maxRageLevel}] |";
 
         public override bool TryTakeDamage(int damage)
         {
