@@ -249,12 +249,10 @@
 
     abstract class Fighter : IDamageable
     {
-        private protected FighterSpecification _baseSpecification;
         private int _health;
 
         public Fighter(FighterSpecification baseSpecification)
         {
-            _baseSpecification = baseSpecification;
             Name = "Безымянный";
             Health = baseSpecification.Health;
             Armor = baseSpecification.Armor;
@@ -342,7 +340,7 @@
         }
 
         public override Fighter Clone() =>
-            new Warrior(_baseSpecification);
+            new Warrior(new FighterSpecification(Health, Armor, Damage));
 
         public override string GetInfo() =>
             base.GetInfo() + $", Крит [{_critChancePercent}] |";
@@ -377,7 +375,7 @@
         }
 
         public override Fighter Clone() =>
-            new Mage(_baseSpecification);
+            new Mage(new FighterSpecification(Health, Armor, Damage));
 
         public override string GetInfo() =>
             base.GetInfo() + $", Мана [{_mana}] |";
@@ -418,7 +416,7 @@
         }
 
         public override Fighter Clone() =>
-            new Druid(_baseSpecification);
+            new Druid(new FighterSpecification(Health, Armor, Damage));
 
         public override string GetInfo() =>
             base.GetInfo() + $", Счётчик атак [{_attackCount}/{_attackCountForDoubleAttack}] |";
@@ -436,7 +434,7 @@
         }
 
         public override Fighter Clone() =>
-            new Assasign(_baseSpecification);
+            new Assasign(new FighterSpecification(Health, Armor, Damage));
 
         public override string GetInfo() =>
             base.GetInfo() + $", Уклонение [{_dodgeChancePercent}%] |";
@@ -474,7 +472,7 @@
         }
 
         public override Fighter Clone() =>
-            new Berserk(_baseSpecification);
+            new Berserk(new FighterSpecification(Health, Armor, Damage));
 
         public override string GetInfo() =>
             base.GetInfo() + $", Ярость [{_rageLevel}/{_maxRageLevel}] |";
