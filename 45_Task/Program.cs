@@ -178,8 +178,6 @@
 
     class FightersFactory
     {
-        private List<Fighter> _fighters;
-
         private int _minHealth;
         private int _maxHealth;
         private int _minArmor;
@@ -195,25 +193,11 @@
             _maxArmor = 10;
             _minDamage = 12;
             _maxDamage = 20;
-
-            FillFighters();
         }
 
         public List<Fighter> GetFighters()
         {
-            return new List<Fighter>(_fighters);
-        }
-
-        private FighterSpecification CreateRandomSpecification()
-        {
-            return new FighterSpecification(GenerateRandomNumber(_minHealth, _maxHealth),
-                                            GenerateRandomNumber(_minArmor, _maxArmor),
-                                            GenerateRandomNumber(_minDamage, _maxDamage));
-        }
-
-        private void FillFighters()
-        {
-            _fighters = new List<Fighter>()
+            List<Fighter> _fighters = new List<Fighter>()
             {
                 new Warrior(CreateRandomSpecification()),
                 new Mage(CreateRandomSpecification()),
@@ -221,6 +205,15 @@
                 new Assasign(CreateRandomSpecification()),
                 new Berserk(CreateRandomSpecification())
             };
+
+            return _fighters;
+        }
+
+        private FighterSpecification CreateRandomSpecification()
+        {
+            return new FighterSpecification(GenerateRandomNumber(_minHealth, _maxHealth),
+                                            GenerateRandomNumber(_minArmor, _maxArmor),
+                                            GenerateRandomNumber(_minDamage, _maxDamage));
         }
     }
 
@@ -231,10 +224,10 @@
         public Fighter(FighterSpecification baseSpecification)
         {
             Name = "Безымянный";
+            Description = "Отсутствует";
             Health = baseSpecification.Health;
             Armor = baseSpecification.Armor;
             Damage = baseSpecification.Damage;
-            Description = "Отсутствует";
         }
 
         public string Name { get; private protected set; }
@@ -518,12 +511,6 @@
 
             return randomNumber <= currentChancePercent;
         }
-
-        //public static int GetPositiveValue(int value, string message) =>
-        //    value = value < 0 ? throw new Exception(message) : value;
-
-        //public static string GetNotEmptyString(string value, string message) =>
-        //    value = value.Length <= 0 ? throw new Exception(message) : value;
 
         public static void Print<T>(T message) =>
             Console.Write(message.ToString());
