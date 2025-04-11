@@ -197,7 +197,7 @@
 
         public List<Fighter> GetFighters()
         {
-            List<Fighter> _fighters = new List<Fighter>()
+            List<Fighter> fighters = new List<Fighter>()
             {
                 new Warrior(CreateRandomSpecification()),
                 new Mage(CreateRandomSpecification()),
@@ -206,7 +206,7 @@
                 new Berserk(CreateRandomSpecification())
             };
 
-            return _fighters;
+            return fighters;
         }
 
         private FighterSpecification CreateRandomSpecification()
@@ -428,7 +428,6 @@
         private int _maxRageLevel;
         private int _rageDamageValue;
         private int _healingPoint;
-        private int _healthDivider;
 
         public Berserk(FighterSpecification specification) : base(specification)
         {
@@ -437,8 +436,7 @@
             _rageLevel = 0;
             _maxRageLevel = 90;
             _rageDamageValue = 30;
-            _healthDivider = 5;
-            _healingPoint = specification.Health / _healthDivider;
+            _healingPoint = Health;
         }
 
         public override Fighter Clone() =>
@@ -451,7 +449,7 @@
         {
             if (_rageLevel >= _maxRageLevel)
             {
-                Healing(_healingPoint);
+                Healing();
                 _rageLevel = 0;
             }
             else
@@ -461,15 +459,18 @@
             }
         }
 
-        private void Healing(int healthPoint)
+        private void Healing()
         {
-            if (IsAlive == false || healthPoint < 0)
+            int healthDivider = 5;
+            int totalHealPoint = _healingPoint / healthDivider;
+
+            if (IsAlive == false)
             {
-                Print($"\n[{Name}] не смог вылечить здоровье на [{healthPoint}] единиц.");
+                Print($"\n[{Name}] не смог вылечить здоровье на [{totalHealPoint}] единиц.");
             }
             {
-                Health += healthPoint;
-                Print($"\n[{Name}] вылечил здоровье на [{healthPoint}] единиц.");
+                Health += totalHealPoint;
+                Print($"\n[{Name}] вылечил здоровье на [{totalHealPoint}] единиц.");
             }
         }
     }
