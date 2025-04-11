@@ -16,13 +16,13 @@
     public class Arena
     {
         private List<Fighter> _fightersCatalog;
-        private FightersCatalog _fightersFactory;
+        private FightersFactory _fightersFactory;
         private Fighter _gladiatorOne;
         private Fighter _gladiatorTwo;
 
         public Arena()
         {
-            _fightersFactory = new FightersCatalog();
+            _fightersFactory = new FightersFactory();
             _fightersCatalog = _fightersFactory.GetFighters();
         }
 
@@ -176,7 +176,7 @@
         }
     }
 
-    class FightersCatalog
+    class FightersFactory
     {
         private List<Fighter> _fighters;
 
@@ -187,7 +187,7 @@
         private int _minDamage;
         private int _maxDamage;
 
-        public FightersCatalog()
+        public FightersFactory()
         {
             _minHealth = 80;
             _maxHealth = 120;
