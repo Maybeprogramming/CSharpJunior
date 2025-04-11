@@ -72,5 +72,5 @@
 
 ?private protected - в контексте задачи можно использовать просто protected. 
 +В Berserk поле _healthDivider не нужно. Можешь использовать как локальную переменную. 
-В FighterSpecification поля не нужны. 
++В FighterSpecification поля не нужны. 
 +GetFighters - переменная List<Fighter> _fighters названа не по нотации 
