@@ -187,12 +187,6 @@
         private int _minDamage;
         private int _maxDamage;
 
-        private FighterSpecification _warriorSpecification;
-        private FighterSpecification _mageSpecification;
-        private FighterSpecification _druidSpecification;
-        private FighterSpecification _assasignSpecification;
-        private FighterSpecification _berserkSpecification;
-
         public FightersFactory()
         {
             _minHealth = 80;
