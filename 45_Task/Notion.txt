@@ -14,7 +14,7 @@
 +3 - Druid у друида - есть дубляж в виде вызова base.Attack(target); 
 	Просто вынесите один из за условие 
 
-4 - private protected FighterSpecification _baseSpecification; 
++4 - private protected FighterSpecification _baseSpecification; 
 	- а зачем поле?
 
 +5 - Методы, использующиеся не во всех дочерних классах, 

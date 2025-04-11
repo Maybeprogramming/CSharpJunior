@@ -110,9 +110,9 @@
             } while (indexGlagiator < minIndex || indexGlagiator > maxIndex);
 
             Print($"\nВы выбрали следующего гладиатора:");
-            Print($"\n{_fightersCatalog[--indexGlagiator].GetInfo()}\n", ConsoleColor.Green);
+            Print($"\n{_fightersCatalog[indexGlagiator - 1].GetInfo()}\n", ConsoleColor.Green);
 
-            return _fightersCatalog[--indexGlagiator].Clone();
+            return _fightersCatalog[indexGlagiator - 1].Clone();
         }
 
         private void DrowLots()
@@ -195,12 +195,6 @@
 
         public FightersFactory()
         {
-            ConfigurateFightersSpecification();
-            FillFighters();
-        }
-
-        private void ConfigurateFightersSpecification()
-        {
             _minHealth = 80;
             _maxHealth = 120;
             _minArmor = 2;
@@ -208,36 +202,25 @@
             _minDamage = 12;
             _maxDamage = 20;
 
-            _warriorSpecification = new FighterSpecification(GenerateRandomNumber(_minHealth, _maxHealth),
-                                                             GenerateRandomNumber(_minArmor, _maxArmor),
-                                                             GenerateRandomNumber(_minDamage, _maxDamage));
+            FillFighters();
+        }
 
-            _mageSpecification = new FighterSpecification(GenerateRandomNumber(_minHealth, _maxHealth),
-                                                          GenerateRandomNumber(_minArmor, _maxArmor),
-                                                          GenerateRandomNumber(_minDamage, _maxDamage));
-
-            _druidSpecification = new FighterSpecification(GenerateRandomNumber(_minHealth, _maxHealth),
-                                                           GenerateRandomNumber(_minArmor, _maxArmor),
-                                                           GenerateRandomNumber(_minDamage, _maxDamage));
-
-            _assasignSpecification = new FighterSpecification(GenerateRandomNumber(_minHealth, _maxHealth),
-                                                              GenerateRandomNumber(_minArmor, _maxArmor),
-                                                              GenerateRandomNumber(_minDamage, _maxDamage));
-
-            _berserkSpecification = new FighterSpecification(GenerateRandomNumber(_minHealth, _maxHealth),
-                                                             GenerateRandomNumber(_minArmor, _maxArmor),
-                                                             GenerateRandomNumber(_minDamage, _maxDamage));
+        private FighterSpecification CreateRandomSpecification()
+        {
+            return new FighterSpecification(GenerateRandomNumber(_minHealth, _maxHealth),
+                                            GenerateRandomNumber(_minArmor, _maxArmor),
+                                            GenerateRandomNumber(_minDamage, _maxDamage));
         }
 
         private void FillFighters()
         {
             _fighters = new List<Fighter>()
             {
-                new Warrior(_warriorSpecification),
-                new Mage(_mageSpecification),
-                new Druid(_druidSpecification),
-                new Assasign(_assasignSpecification),
-                new Berserk(_berserkSpecification)
+                new Warrior(CreateRandomSpecification()),
+                new Mage(CreateRandomSpecification()),
+                new Druid(CreateRandomSpecification()),
+                new Assasign(CreateRandomSpecification()),
+                new Berserk(CreateRandomSpecification())
             };
         }
 
