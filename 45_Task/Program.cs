@@ -477,10 +477,6 @@
 
     class FighterSpecification
     {
-        private int _health;
-        private int _damage;
-        private int _armor;
-
         public FighterSpecification(int health, int armor, int damage)
         {
             Health = health;
