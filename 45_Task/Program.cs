@@ -199,6 +199,11 @@
             FillFighters();
         }
 
+        public List<Fighter> GetFighters()
+        {
+            return new List<Fighter>(_fighters);
+        }
+
         private FighterSpecification CreateRandomSpecification()
         {
             return new FighterSpecification(GenerateRandomNumber(_minHealth, _maxHealth),
@@ -216,11 +221,6 @@
                 new Assasign(CreateRandomSpecification()),
                 new Berserk(CreateRandomSpecification())
             };
-        }
-
-        public List<Fighter> GetFighters()
-        {
-            return new List<Fighter>(_fighters);
         }
     }
 
