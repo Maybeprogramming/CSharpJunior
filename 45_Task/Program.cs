@@ -28,8 +28,8 @@
 
         public void Work()
         {
-            const int BeginFightMenu = 1;
-            const int ExitMenu = 2;
+            const int CommandBeginFight = 1;
+            const int CommandExit = 2;
 
             bool isWork = true;
 
@@ -39,17 +39,17 @@
 
                 Print(
                     $"Меню:\n" +
-                    $"{BeginFightMenu} - Начать подготовку к битве\n" +
-                    $"{ExitMenu} - Покинуть поле битвы.\n" +
+                    $"{CommandBeginFight} - Начать подготовку к битве\n" +
+                    $"{CommandExit} - Покинуть поле битвы.\n" +
                     $"Введите команду для продолжения: ");
 
                 switch (ReadInputNumber())
                 {
-                    case BeginFightMenu:
+                    case CommandBeginFight:
                         RunToFight();
                         break;
 
-                    case ExitMenu:
+                    case CommandExit:
                         isWork = false;
                         break;
 
@@ -94,12 +94,7 @@
         private void BeginFighters()
         {
             _gladiatorOne = ChooseFighter($"\nВведите номер, для выбора первого гладиатора: ");
-            Print($"\nВы выбрали в качестве первого гладиатора:");
-            Print($"\n{_gladiatorOne.GetInfo()}\n", ConsoleColor.Green);
-
             _gladiatorTwo = ChooseFighter($"\nВведите номер, для выбора второго гладиатора: ");
-            Print($"\nВы выбрали в качестве второго гладиатора:");
-            Print($"\n{_gladiatorTwo.GetInfo()}", ConsoleColor.Green);
         }
 
         private Fighter ChooseFighter(string message)
@@ -114,6 +109,9 @@
                 indexGlagiator = ReadInputNumber();
             } while (indexGlagiator < minIndex || indexGlagiator > maxIndex);
 
+            Print($"\nВы выбрали следующего гладиатора:");
+            Print($"\n{_fightersCatalog[--indexGlagiator].GetInfo()}\n", ConsoleColor.Green);
+
             return _fightersCatalog[--indexGlagiator].Clone();
         }
 
@@ -127,7 +125,7 @@
 
             Print($"\n\nПроводится жеребьевка");
 
-            if (randomNumber >= 5)
+            if (randomNumber >= lotsNumber)
             {
                 tempFighter = _gladiatorOne;
                 _gladiatorOne = _gladiatorTwo;
@@ -189,18 +187,6 @@
         private int _minDamage;
         private int _maxDamage;
 
-        private string _nameWarrior;
-        private string _nameMage;
-        private string _nameDruid;
-        private string _nameAssasign;
-        private string _nameBerserk;
-
-        private string _descriptionWarrior;
-        private string _descriptionMage;
-        private string _descriptionDruid;
-        private string _descriptionAssasign;
-        private string _descriptionBerserk;
-
         private FighterSpecification _warriorSpecification;
         private FighterSpecification _mageSpecification;
         private FighterSpecification _druidSpecification;
@@ -222,47 +208,25 @@
             _minDamage = 12;
             _maxDamage = 20;
 
-            _nameWarrior = "Воин";
-            _nameMage = "Маг";
-            _nameDruid = "Друид";
-            _nameAssasign = "Разбойник";
-            _nameBerserk = "Берсерк";
-
-            _descriptionWarrior = "Имеет шанс нанести удвоенный урон";
-            _descriptionMage = "Использует огненный шар пока есть мана";
-            _descriptionDruid = "Каждую третью атаку наносит урон дважды";
-            _descriptionAssasign = "Имеет шанс уклониться от атаки";
-            _descriptionBerserk = "При получении урона накапливает ярость, достигнув максимума использует лечение";
-
-            _warriorSpecification = new FighterSpecification(_nameWarrior,
-                                                             GenerateRandomNumber(_minHealth, _maxHealth),
+            _warriorSpecification = new FighterSpecification(GenerateRandomNumber(_minHealth, _maxHealth),
                                                              GenerateRandomNumber(_minArmor, _maxArmor),
-                                                             GenerateRandomNumber(_minDamage, _maxDamage),
-                                                             _descriptionWarrior);
+                                                             GenerateRandomNumber(_minDamage, _maxDamage));
 
-            _mageSpecification = new FighterSpecification(_nameMage,
-                                                             GenerateRandomNumber(_minHealth, _maxHealth),
-                                                             GenerateRandomNumber(_minArmor, _maxArmor),
-                                                             GenerateRandomNumber(_minDamage, _maxDamage),
-                                                             _descriptionMage);
+            _mageSpecification = new FighterSpecification(GenerateRandomNumber(_minHealth, _maxHealth),
+                                                          GenerateRandomNumber(_minArmor, _maxArmor),
+                                                          GenerateRandomNumber(_minDamage, _maxDamage));
 
-            _druidSpecification = new FighterSpecification(_nameDruid,
-                                                             GenerateRandomNumber(_minHealth, _maxHealth),
-                                                             GenerateRandomNumber(_minArmor, _maxArmor),
-                                                             GenerateRandomNumber(_minDamage, _maxDamage),
-                                                             _descriptionDruid);
+            _druidSpecification = new FighterSpecification(GenerateRandomNumber(_minHealth, _maxHealth),
+                                                           GenerateRandomNumber(_minArmor, _maxArmor),
+                                                           GenerateRandomNumber(_minDamage, _maxDamage));
 
-            _assasignSpecification = new FighterSpecification(_nameAssasign,
-                                                             GenerateRandomNumber(_minHealth, _maxHealth),
-                                                             GenerateRandomNumber(_minArmor, _maxArmor),
-                                                             GenerateRandomNumber(_minDamage, _maxDamage),
-                                                             _descriptionAssasign);
+            _assasignSpecification = new FighterSpecification(GenerateRandomNumber(_minHealth, _maxHealth),
+                                                              GenerateRandomNumber(_minArmor, _maxArmor),
+                                                              GenerateRandomNumber(_minDamage, _maxDamage));
 
-            _berserkSpecification = new FighterSpecification(_nameBerserk,
-                                                             GenerateRandomNumber(_minHealth, _maxHealth),
+            _berserkSpecification = new FighterSpecification(GenerateRandomNumber(_minHealth, _maxHealth),
                                                              GenerateRandomNumber(_minArmor, _maxArmor),
-                                                             GenerateRandomNumber(_minDamage, _maxDamage),
-                                                             _descriptionBerserk);
+                                                             GenerateRandomNumber(_minDamage, _maxDamage));
         }
 
         private void FillFighters()
@@ -283,7 +247,7 @@
         }
     }
 
-    abstract class Fighter : IDamageProvider, IDamageable, IHealable, IClone
+    abstract class Fighter : IDamageable
     {
         private protected FighterSpecification _baseSpecification;
         private int _health;
@@ -291,26 +255,26 @@
         public Fighter(FighterSpecification baseSpecification)
         {
             _baseSpecification = baseSpecification;
-            Name = _baseSpecification.Name;
-            _health = _baseSpecification.Health;
-            Armor = _baseSpecification.Armor;
-            Damage = _baseSpecification.Damage;
-            Description = _baseSpecification.Description;
+            Name = "Безымянный";
+            Health = baseSpecification.Health;
+            Armor = baseSpecification.Armor;
+            Damage = baseSpecification.Damage;
+            Description = "Отсутствует";
         }
 
-        public string Name { get; private set; }
+        public string Name { get; private protected set; }
 
         public int Health
         {
             get =>
                 _health;
-            private set =>
+            private protected set =>
                 _health = value < 0 ? 0 : value;
         }
 
         public int Armor { get; private set; }
         public int Damage { get; private set; }
-        public string Description { get; private set; }
+        public string Description { get; private protected set; }
         public bool IsAlive => _health > 0;
 
         public virtual void Attack(IDamageable target)
@@ -318,7 +282,7 @@
             if (IsAlive)
             {
                 Print($"\n[{Name}] ударил противника, нанеся ему [{Damage}] урона.");
-                target.TryTakeDamage(Damage);
+                target.TakeDamage(Damage);
             }
             else
             {
@@ -326,20 +290,7 @@
             }
         }
 
-        public virtual bool TryHealing(int healthPoint)
-        {
-            if (IsAlive == false || healthPoint < 0)
-            {
-                Print($"\n[{Name}] не смог вылечить здоровье на [{healthPoint}] единиц.");
-                return false;
-            }
-
-            Health += healthPoint;
-            Print($"\n[{Name}] вылечил здоровье на [{healthPoint}] единиц.");
-            return true;
-        }
-
-        public virtual bool TryTakeDamage(int damage)
+        public virtual void TakeDamage(int damage)
         {
             int totalDamage;
 
@@ -348,14 +299,14 @@
                 totalDamage = damage - Armor;
                 Health -= totalDamage;
                 Print($"\n[{Name}] получил урон [{totalDamage}], заблокировав своей броней [{Armor}] урона.");
-                return true;
             }
-
-            Print($"\n[{Name}] не получил урона.");
-            return false;
+            else
+            {
+                Print($"\n[{Name}] не получил урона.");
+            }
         }
 
-        public virtual string GetInfo() => 
+        public virtual string GetInfo() =>
             $"<{Name}> | СТАТЫ: Жизни [{Health}], Урон [{Damage}], Броня [{Armor}]";
 
         public abstract Fighter Clone();
@@ -366,8 +317,10 @@
         private int _critChancePercent;
         private int _critDamageMultiplier;
 
-        public Warrior(FighterSpecification specification) : base(specification) 
+        public Warrior(FighterSpecification specification) : base(specification)
         {
+            Name = "Воин";
+            Description = "Имеет шанс нанести удвоенный урон";
             _critChancePercent = 40;
             _critDamageMultiplier = 2;
         }
@@ -380,7 +333,7 @@
             {
                 totalDamage = Damage * _critDamageMultiplier;
                 Print($"\n[{Name}] нанёс критический удар, нанеся противнику [{totalDamage}] урона.");
-                target.TryTakeDamage(totalDamage);
+                target.TakeDamage(totalDamage);
             }
             else
             {
@@ -388,10 +341,10 @@
             }
         }
 
-        public override Fighter Clone() => 
+        public override Fighter Clone() =>
             new Warrior(_baseSpecification);
 
-        public override string GetInfo() => 
+        public override string GetInfo() =>
             base.GetInfo() + $", Крит [{_critChancePercent}] |";
     }
 
@@ -403,6 +356,8 @@
 
         public Mage(FighterSpecification specification) : base(specification)
         {
+            Name = "Маг";
+            Description = "Использует огненный шар пока есть мана";
             _mana = 90;
             _damageMultiplier = 2;
             _manaCostFireBall = 30;
@@ -412,7 +367,7 @@
         {
             if (_mana - _manaCostFireBall >= 0 && IsAlive)
             {
-                target.TryTakeDamage(ApplyFireBall());
+                target.TakeDamage(ApplyFireBall());
                 _mana -= _manaCostFireBall;
             }
             else
@@ -421,10 +376,10 @@
             }
         }
 
-        public override Fighter Clone() => 
+        public override Fighter Clone() =>
             new Mage(_baseSpecification);
 
-        public override string GetInfo() => 
+        public override string GetInfo() =>
             base.GetInfo() + $", Мана [{_mana}] |";
 
         private int ApplyFireBall()
@@ -443,30 +398,29 @@
 
         public Druid(FighterSpecification specification) : base(specification)
         {
+            Name = "Друид";
+            Description = "Каждую третью атаку наносит урон дважды";
             _attackCount = 0;
             _attackCountForDoubleAttack = 2;
         }
 
         public override void Attack(IDamageable target)
         {
-            if (_attackCount < _attackCountForDoubleAttack)
-            {
-                base.Attack(target);
-                _attackCount++;
-            }
-            else
+            if (_attackCount >= _attackCountForDoubleAttack)
             {
                 Print($"\n[{Name}] изловчается для нанесения двух ударов");
                 base.Attack(target);
-                base.Attack(target);
                 _attackCount = 0;
             }
+
+            base.Attack(target);
+            _attackCount++;
         }
 
-        public override Fighter Clone() => 
+        public override Fighter Clone() =>
             new Druid(_baseSpecification);
 
-        public override string GetInfo() => 
+        public override string GetInfo() =>
             base.GetInfo() + $", Счётчик атак [{_attackCount}/{_attackCountForDoubleAttack}] |";
     }
 
@@ -476,24 +430,27 @@
 
         public Assasign(FighterSpecification specification) : base(specification)
         {
+            Name = "Разбойник";
+            Description = "Имеет шанс уклониться от атаки";
             _dodgeChancePercent = 35;
         }
 
-        public override Fighter Clone() => 
+        public override Fighter Clone() =>
             new Assasign(_baseSpecification);
 
-        public override string GetInfo() => 
+        public override string GetInfo() =>
             base.GetInfo() + $", Уклонение [{_dodgeChancePercent}%] |";
 
-        public override bool TryTakeDamage(int damage)
+        public override void TakeDamage(int damage)
         {
             if (IsPositiveChance(_dodgeChancePercent))
             {
                 Print($"\n[{Name}] уклонился от удара своего противника.");
-                return false;
             }
-
-            return base.TryTakeDamage(damage);
+            else
+            {
+                base.TakeDamage(damage);
+            }
         }
     }
 
@@ -507,6 +464,8 @@
 
         public Berserk(FighterSpecification specification) : base(specification)
         {
+            Name = "Берсерк";
+            Description = "При получении урона накапливает ярость, достигнув максимума использует лечение";
             _rageLevel = 0;
             _maxRageLevel = 90;
             _rageDamageValue = 30;
@@ -514,22 +473,36 @@
             _healingPoint = specification.Health / _healthDivider;
         }
 
-        public override Fighter Clone() => 
+        public override Fighter Clone() =>
             new Berserk(_baseSpecification);
 
-        public override string GetInfo() => 
+        public override string GetInfo() =>
             base.GetInfo() + $", Ярость [{_rageLevel}/{_maxRageLevel}] |";
 
-        public override bool TryTakeDamage(int damage)
+        public override void TakeDamage(int damage)
         {
             if (_rageLevel >= _maxRageLevel)
             {
-                base.TryHealing(_healingPoint);
+                Healing(_healingPoint);
                 _rageLevel = 0;
             }
+            else
+            {
+                _rageLevel += _rageDamageValue;
+                base.TakeDamage(damage);
+            }
+        }
 
-            _rageLevel += _rageDamageValue;
-            return base.TryTakeDamage(damage);
+        private void Healing(int healthPoint)
+        {
+            if (IsAlive == false || healthPoint < 0)
+            {
+                Print($"\n[{Name}] не смог вылечить здоровье на [{healthPoint}] единиц.");
+            }
+            {
+                Health += healthPoint;
+                Print($"\n[{Name}] вылечил здоровье на [{healthPoint}] единиц.");
+            }
         }
     }
 
@@ -538,78 +511,23 @@
         private int _health;
         private int _damage;
         private int _armor;
-        private string _name;
-        private string _description;
 
-        public FighterSpecification(string name, int health, int armor, int damage, string description)
+        public FighterSpecification(int health, int armor, int damage)
         {
-            Name = name;
             Health = health;
             Armor = armor;
             Damage = damage;
-            Description = description;
         }
 
-        public string Name
-        {
-            get =>
-                _name;
-            private set =>
-                _name = GetNotEmptyString(value, "Ошибка! Имя не может быть пустым");
-        }
-
-        public int Health
-        {
-            get =>
-                _health;
-            private set =>
-                _health = GetPositiveValue(value, "Ошибка! Значение здоровья не может быть меньше 0");
-        }
-
-        public int Armor
-        {
-            get =>
-                _armor;
-            private set =>
-                _armor = GetPositiveValue(value, "Ошибка! Значение брони не может быть меньше 0");
-        }
-
-        public int Damage
-        {
-            get =>
-                _damage;
-            private set =>
-                _damage = GetPositiveValue(value, "Ошибка! Значение урона не может быть меньше 0");
-        }
-
-        public string Description
-        {
-            get =>
-                _description;
-            private set =>
-                _description = GetNotEmptyString(value, "Ошибка! Описание не может быть пустым");
-        }
+        public int Health { get; private set; }
+        public int Armor { get; private set; }
+        public int Damage { get; private set; }
     }
 
     interface IDamageable
     {
         bool IsAlive { get; }
-        bool TryTakeDamage(int damage);
-    }
-
-    interface IHealable
-    {
-        bool TryHealing(int health);
-    }
-
-    interface IDamageProvider
-    {
-        void Attack(IDamageable target);
-    }
-
-    interface IClone
-    {
-        Fighter Clone();
+        void TakeDamage(int damage);
     }
 
     public static class UserUtils
@@ -626,11 +544,11 @@
             return randomNumber <= currentChancePercent;
         }
 
-        public static int GetPositiveValue(int value, string message) =>
-            value = value < 0 ? throw new Exception(message) : value;
+        //public static int GetPositiveValue(int value, string message) =>
+        //    value = value < 0 ? throw new Exception(message) : value;
 
-        public static string GetNotEmptyString(string value, string message) =>
-            value = value.Length <= 0 ? throw new Exception(message) : value;
+        //public static string GetNotEmptyString(string value, string message) =>
+        //    value = value.Length <= 0 ? throw new Exception(message) : value;
 
         public static void Print<T>(T message) =>
             Console.Write(message.ToString());
