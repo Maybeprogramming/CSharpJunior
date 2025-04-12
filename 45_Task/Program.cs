@@ -16,13 +16,12 @@
     public class Arena
     {
         private List<Fighter> _fightersCatalog;
-        private FightersFactory _fightersFactory;
         private Fighter _gladiatorOne;
         private Fighter _gladiatorTwo;
 
         public Arena()
         {
-            _fightersFactory = new FightersFactory();
+            FightersFactory _fightersFactory = new FightersFactory();
             _fightersCatalog = _fightersFactory.GetFighters();
         }
 
@@ -68,7 +67,7 @@
         {
             ShowAllFighters();
             BeginFighters();
-            DrowLots();
+            ConductDrawFighters();
             Fight();
             AnnouncingFightResults();
 
@@ -99,6 +98,7 @@
 
         private Fighter ChooseFighter(string message)
         {
+            Fighter fighter;
             int indexGlagiator;
             int minIndex = 1;
             int maxIndex = _fightersCatalog.Count;
@@ -109,13 +109,15 @@
                 indexGlagiator = ReadInputNumber();
             } while (indexGlagiator < minIndex || indexGlagiator > maxIndex);
 
-            Print($"\nВы выбрали следующего гладиатора:");
-            Print($"\n{_fightersCatalog[indexGlagiator - 1].GetInfo()}\n", ConsoleColor.Green);
+            fighter = _fightersCatalog[indexGlagiator - 1].Clone();
 
-            return _fightersCatalog[indexGlagiator - 1].Clone();
+            Print($"\nВы выбрали следующего гладиатора:");
+            Print($"\n{fighter.GetInfo()}\n", ConsoleColor.Green);
+
+            return fighter;
         }
 
-        private void DrowLots()
+        private void ConductDrawFighters()
         {
             Fighter tempFighter;
             int minNumber = 0;
@@ -178,23 +180,6 @@
 
     class FightersFactory
     {
-        private int _minHealth;
-        private int _maxHealth;
-        private int _minArmor;
-        private int _maxArmor;
-        private int _minDamage;
-        private int _maxDamage;
-
-        public FightersFactory()
-        {
-            _minHealth = 80;
-            _maxHealth = 120;
-            _minArmor = 2;
-            _maxArmor = 10;
-            _minDamage = 12;
-            _maxDamage = 20;
-        }
-
         public List<Fighter> GetFighters()
         {
             List<Fighter> fighters = new List<Fighter>()
@@ -211,9 +196,33 @@
 
         private FighterSpecification CreateRandomSpecification()
         {
-            return new FighterSpecification(GenerateRandomNumber(_minHealth, _maxHealth),
-                                            GenerateRandomNumber(_minArmor, _maxArmor),
-                                            GenerateRandomNumber(_minDamage, _maxDamage));
+            return new FighterSpecification(GenerateHealth(),
+                                            GenerateArmor(),
+                                            GenerateDamage());
+        }
+
+        private int GenerateHealth()
+        {
+            int _minHealth = 80;
+            int _maxHealth = 120;
+
+            return GenerateRandomNumber(_minHealth, _maxHealth);
+        }
+
+        private int GenerateArmor()
+        {
+            int _minArmor = 80;
+            int _maxArmor = 120;
+
+            return GenerateRandomNumber(_minArmor, _maxArmor);
+        }
+
+        private int GenerateDamage()
+        {
+            int _minDamage = 12;
+            int _maxDamage = 20;
+
+            return GenerateRandomNumber(_minDamage, _maxDamage);
         }
     }
 
@@ -449,7 +458,7 @@
         {
             if (_rageLevel >= _maxRageLevel)
             {
-                Healing();
+                TreatHealth();
                 _rageLevel = 0;
             }
             else
@@ -459,7 +468,7 @@
             }
         }
 
-        private void Healing()
+        private void TreatHealth()
         {
             int healthDivider = 5;
             int totalHealPoint = _healingPoint / healthDivider;
@@ -491,7 +500,6 @@
 
     interface IDamageable
     {
-        bool IsAlive { get; }
         void TakeDamage(int damage);
     }
 
