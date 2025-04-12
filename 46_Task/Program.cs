@@ -24,6 +24,11 @@
         public int Price { get; private set; }
     }
 
+    public class Seller
+    {
+
+    }
+
     public class Client
     {
 
