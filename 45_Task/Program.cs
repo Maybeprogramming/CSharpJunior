@@ -203,26 +203,26 @@
 
         private int GenerateHealth()
         {
-            int _minHealth = 80;
-            int _maxHealth = 120;
+            int minHealth = 80;
+            int maxHealth = 120;
 
-            return GenerateRandomNumber(_minHealth, _maxHealth);
+            return GenerateRandomNumber(minHealth, maxHealth);
         }
 
         private int GenerateArmor()
         {
-            int _minArmor = 80;
-            int _maxArmor = 120;
+            int minArmor = 80;
+            int maxArmor = 120;
 
-            return GenerateRandomNumber(_minArmor, _maxArmor);
+            return GenerateRandomNumber(minArmor, maxArmor);
         }
 
         private int GenerateDamage()
         {
-            int _minDamage = 12;
-            int _maxDamage = 20;
+            int minDamage = 12;
+            int maxDamage = 20;
 
-            return GenerateRandomNumber(_minDamage, _maxDamage);
+            return GenerateRandomNumber(minDamage, maxDamage);
         }
     }
 
