@@ -97,4 +97,15 @@ https://app.pachca.com/chats/13800450?message=475034176
 
 +5 - bool IsAlive { get; } у IDamageable не используется
 
-+6 - FightersFactory fightersFactory = new FightersFactory(); - можно сразу так в конструкторе 
++6 - FightersFactory fightersFactory = new FightersFactory(); - можно сразу так в конструкторе
+
+
+-------------------------------------------------------------------------------------------------------------------------
+Оценено в	суббота, 12 апреля 2025, 12:17
+Оценено	Артемий Азаренков
+Отзыв в виде комментария	
+Да, комментарии все видны
+Принято
++FightersFactory _fightersFactory = new FightersFactory(); - только названа не по нотации
+
+using static UserUtils; - вот так лучше не делайте, пусть будет понятно, к кому мы обращаемся 

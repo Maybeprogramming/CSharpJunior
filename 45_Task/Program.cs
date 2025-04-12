@@ -1,7 +1,5 @@
 ﻿namespace _45_Task
 {
-    using static UserUtils;
-
     public class Program
     {
         public static void Main()
@@ -21,8 +19,8 @@
 
         public Arena()
         {
-            FightersFactory _fightersFactory = new FightersFactory();
-            _fightersCatalog = _fightersFactory.GetFighters();
+            FightersFactory fightersFactory = new FightersFactory();
+            _fightersCatalog = fightersFactory.GetFighters();
         }
 
         public void Work()
@@ -36,13 +34,13 @@
             {
                 Console.Clear();
 
-                Print(
+                UserUtils.Print(
                     $"Меню:\n" +
                     $"{CommandBeginFight} - Начать подготовку к битве\n" +
                     $"{CommandExit} - Покинуть поле битвы.\n" +
                     $"Введите команду для продолжения: ");
 
-                switch (ReadInputNumber())
+                switch (UserUtils.ReadInputNumber())
                 {
                     case CommandBeginFight:
                         RunToFight();
@@ -59,7 +57,7 @@
                 }
             }
 
-            Print("\nРабота программы завершена!");
+            UserUtils.Print("\nРабота программы завершена!");
             Console.ReadLine();
         }
 
@@ -71,7 +69,7 @@
             Fight();
             AnnouncingFightResults();
 
-            Print("\nЧтобы продолжить нажмите любую клавишу", ConsoleColor.Green);
+            UserUtils.Print("\nЧтобы продолжить нажмите любую клавишу", ConsoleColor.Green);
             Console.ReadLine();
         }
 
@@ -79,14 +77,14 @@
         {
             int index = 0;
 
-            Print($"\n Список доступных гладиаторов:", ConsoleColor.Green);
-            Print($"\n{new string('-', 90)}", ConsoleColor.Green);
+            UserUtils.Print($"\n Список доступных гладиаторов:", ConsoleColor.Green);
+            UserUtils.Print($"\n{new string('-', 90)}", ConsoleColor.Green);
 
             foreach (Fighter fighter in _fightersCatalog)
             {
-                Print($"\n{++index}. {fighter.GetInfo()} " +
+                UserUtils.Print($"\n{++index}. {fighter.GetInfo()} " +
                       $"\nОписание: [{fighter.Description}]");
-                Print($"\n{new string('-', 90)}", ConsoleColor.DarkRed);
+                UserUtils.Print($"\n{new string('-', 90)}", ConsoleColor.DarkRed);
             }
         }
 
@@ -105,14 +103,14 @@
 
             do
             {
-                Print($"{message}");
-                indexGlagiator = ReadInputNumber();
+                UserUtils.Print($"{message}");
+                indexGlagiator = UserUtils.ReadInputNumber();
             } while (indexGlagiator < minIndex || indexGlagiator > maxIndex);
 
             fighter = _fightersCatalog[indexGlagiator - 1].Clone();
 
-            Print($"\nВы выбрали следующего гладиатора:");
-            Print($"\n{fighter.GetInfo()}\n", ConsoleColor.Green);
+            UserUtils.Print($"\nВы выбрали следующего гладиатора:");
+            UserUtils.Print($"\n{fighter.GetInfo()}\n", ConsoleColor.Green);
 
             return fighter;
         }
@@ -123,9 +121,9 @@
             int minNumber = 0;
             int maxNumber = 9;
             int lotsNumber = 5;
-            int randomNumber = GenerateRandomNumber(minNumber, maxNumber);
+            int randomNumber = UserUtils.GenerateRandomNumber(minNumber, maxNumber);
 
-            Print($"\n\nПроводится жеребьевка");
+            UserUtils.Print($"\n\nПроводится жеребьевка");
 
             if (randomNumber >= lotsNumber)
             {
@@ -134,46 +132,46 @@
                 _gladiatorTwo = tempFighter;
             }
 
-            Print($"\nПервым начнёт атаку гладиатор:");
-            Print($"\n{_gladiatorOne.GetInfo()}", ConsoleColor.Green);
+            UserUtils.Print($"\nПервым начнёт атаку гладиатор:");
+            UserUtils.Print($"\n{_gladiatorOne.GetInfo()}", ConsoleColor.Green);
         }
 
         private void Fight()
         {
             int fightStepCount = 0;
-            Print($"\n\nНачинается битва!", ConsoleColor.Red);
+            UserUtils.Print($"\n\nНачинается битва!", ConsoleColor.Red);
 
             while (_gladiatorOne.IsAlive && _gladiatorTwo.IsAlive)
             {
-                Print($"\n# {++fightStepCount} #\n{new string('-', 90)}", ConsoleColor.Red);
+                UserUtils.Print($"\n# {++fightStepCount} #\n{new string('-', 90)}", ConsoleColor.Red);
                 _gladiatorOne.Attack(_gladiatorTwo);
                 _gladiatorTwo.Attack(_gladiatorOne);
 
-                Print($"\n{new string('-', 90)}", ConsoleColor.Red);
-                Print($"\n{_gladiatorOne.GetInfo()}", ConsoleColor.Yellow);
-                Print($"\n{_gladiatorTwo.GetInfo()}", ConsoleColor.DarkYellow);
+                UserUtils.Print($"\n{new string('-', 90)}", ConsoleColor.Red);
+                UserUtils.Print($"\n{_gladiatorOne.GetInfo()}", ConsoleColor.Yellow);
+                UserUtils.Print($"\n{_gladiatorTwo.GetInfo()}", ConsoleColor.DarkYellow);
 
-                Print($"\nДля следующего хода нажмите любую клавишу", ConsoleColor.Green);
+                UserUtils.Print($"\nДля следующего хода нажмите любую клавишу", ConsoleColor.Green);
                 Console.ReadLine();
             }
         }
 
         private void AnnouncingFightResults()
         {
-            Print($"\n{new string('-', 90)}", ConsoleColor.Green);
-            Print($"\nПодведём итоги боя гладиаторов", ConsoleColor.Green);
+            UserUtils.Print($"\n{new string('-', 90)}", ConsoleColor.Green);
+            UserUtils.Print($"\nПодведём итоги боя гладиаторов", ConsoleColor.Green);
 
             if (_gladiatorOne.IsAlive && _gladiatorTwo.IsAlive == false)
             {
-                Print($"\n{_gladiatorOne.Name} одержал победу над своим противником", ConsoleColor.DarkYellow);
+                UserUtils.Print($"\n{_gladiatorOne.Name} одержал победу над своим противником", ConsoleColor.DarkYellow);
             }
             else if (_gladiatorOne.IsAlive == false && _gladiatorTwo.IsAlive)
             {
-                Print($"\n{_gladiatorTwo.Name} одержал победу над своим противником", ConsoleColor.DarkYellow);
+                UserUtils.Print($"\n{_gladiatorTwo.Name} одержал победу над своим противником", ConsoleColor.DarkYellow);
             }
             else
             {
-                Print($"\nВ этой битве нет победителей", ConsoleColor.Red);
+                UserUtils.Print($"\nВ этой битве нет победителей", ConsoleColor.Red);
             }
         }
     }
@@ -206,7 +204,7 @@
             int minHealth = 80;
             int maxHealth = 120;
 
-            return GenerateRandomNumber(minHealth, maxHealth);
+            return UserUtils.GenerateRandomNumber(minHealth, maxHealth);
         }
 
         private int GenerateArmor()
@@ -214,7 +212,7 @@
             int minArmor = 80;
             int maxArmor = 120;
 
-            return GenerateRandomNumber(minArmor, maxArmor);
+            return UserUtils.GenerateRandomNumber(minArmor, maxArmor);
         }
 
         private int GenerateDamage()
@@ -222,7 +220,7 @@
             int minDamage = 12;
             int maxDamage = 20;
 
-            return GenerateRandomNumber(minDamage, maxDamage);
+            return UserUtils.GenerateRandomNumber(minDamage, maxDamage);
         }
     }
 
@@ -258,12 +256,12 @@
         {
             if (IsAlive)
             {
-                Print($"\n[{Name}] ударил противника, нанеся ему [{Damage}] урона.");
+                UserUtils.Print($"\n[{Name}] ударил противника, нанеся ему [{Damage}] урона.");
                 target.TakeDamage(Damage);
             }
             else
             {
-                Print($"\n[{Name}] побежденный не может атаковать.");
+                UserUtils.Print($"\n[{Name}] побежденный не может атаковать.");
             }
         }
 
@@ -275,11 +273,11 @@
             {
                 totalDamage = damage - Armor;
                 Health -= totalDamage;
-                Print($"\n[{Name}] получил урон [{totalDamage}], заблокировав своей броней [{Armor}] урона.");
+                UserUtils.Print($"\n[{Name}] получил урон [{totalDamage}], заблокировав своей броней [{Armor}] урона.");
             }
             else
             {
-                Print($"\n[{Name}] не получил урона.");
+                UserUtils.Print($"\n[{Name}] не получил урона.");
             }
         }
 
@@ -306,10 +304,10 @@
         {
             int totalDamage;
 
-            if (IsPositiveChance(_critChancePercent) && IsAlive)
+            if (UserUtils.IsPositiveChance(_critChancePercent) && IsAlive)
             {
                 totalDamage = Damage * _critDamageMultiplier;
-                Print($"\n[{Name}] нанёс критический удар, нанеся противнику [{totalDamage}] урона.");
+                UserUtils.Print($"\n[{Name}] нанёс критический удар, нанеся противнику [{totalDamage}] урона.");
                 target.TakeDamage(totalDamage);
             }
             else
@@ -362,7 +360,7 @@
         private int ApplyFireBall()
         {
             int totalDamage = Damage * _damageMultiplier;
-            Print($"\n[{Name}] нанёс удар огненным шаром, нанеся противнику [{totalDamage}] урона.");
+            UserUtils.Print($"\n[{Name}] нанёс удар огненным шаром, нанеся противнику [{totalDamage}] урона.");
 
             return totalDamage;
         }
@@ -385,7 +383,7 @@
         {
             if (_attackCount >= _attackCountForDoubleAttack)
             {
-                Print($"\n[{Name}] изловчается для нанесения двух ударов");
+                UserUtils.Print($"\n[{Name}] изловчается для нанесения двух ударов");
                 base.Attack(target);
                 _attackCount = 0;
             }
@@ -420,9 +418,9 @@
 
         public override void TakeDamage(int damage)
         {
-            if (IsPositiveChance(_dodgeChancePercent))
+            if (UserUtils.IsPositiveChance(_dodgeChancePercent))
             {
-                Print($"\n[{Name}] уклонился от удара своего противника.");
+                UserUtils.Print($"\n[{Name}] уклонился от удара своего противника.");
             }
             else
             {
@@ -475,11 +473,11 @@
 
             if (IsAlive == false)
             {
-                Print($"\n[{Name}] не смог вылечить здоровье на [{totalHealPoint}] единиц.");
+                UserUtils.Print($"\n[{Name}] не смог вылечить здоровье на [{totalHealPoint}] единиц.");
             }
             {
                 Health += totalHealPoint;
-                Print($"\n[{Name}] вылечил здоровье на [{totalHealPoint}] единиц.");
+                UserUtils.Print($"\n[{Name}] вылечил здоровье на [{totalHealPoint}] единиц.");
             }
         }
     }
