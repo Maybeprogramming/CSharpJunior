@@ -4,12 +4,38 @@
     {
         static void Main()
         {
+            Console.Title = "ДЗ: Супермаркет";
+
+            Shop shop = new Shop();
+            shop.Work();
+
+            Console.ReadLine();
         }
     }
 
     public class Shop
     {
-        public void Work() { }
+        private int _moneyBalance;
+        private Queue<Client> _clients;
+
+        public Shop()
+        {
+            _moneyBalance = 0;
+            ClientFactory clientFactory = new ClientFactory();
+            _clients = clientFactory.FillClients();
+        }
+
+        public void Work()
+        {
+        }
+    }
+
+    public class ClientFactory
+    {
+        public Queue<Client>? FillClients()
+        {
+            throw new NotImplementedException();
+        }
     }
 
     public class Product
@@ -22,6 +48,11 @@
 
         public string Name { get; private set; }
         public int Price { get; private set; }
+
+        public string GetInfo()
+        {
+            return $"<{Name}> - цена: [{Price}]";
+        }
     }
 
     public class Seller
@@ -31,22 +62,101 @@
 
     public class Client
     {
+        private Wallet _wallet;
+        private Bag _bag;
+        private Bag _cart;
 
-    }
+        public Client()
+        {
+            _wallet = new Wallet(1000);
+            _bag = new Bag("Сумка");
+            _cart = new Bag("Корзина");
+        }
 
-    public class Cart
-    {
+        public bool TryBuyProducts()
+        {
+            int totalCost = 0;
 
+            foreach (Product product in _cart.Products)
+            {
+                totalCost += product.Price;
+            }
+
+            if (_wallet.TryRemoveMoney(totalCost))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 
     public class Bag
     {
+        private List<Product> _products;
 
+        public Bag(string name)
+        {
+            _products = new List<Product>();
+            Name = name;
+        }
+
+        public string Name { get; }
+        public IEnumerable<Product> Products => _products;
+
+        public void PutProduct(Product product)
+        {
+            _products.Add(product);
+        }
+
+        public void ShowProducts()
+        {
+            int index = 0;
+
+            UserUtils.Print($"\nВ <{Name}> следующие продукты:", ConsoleColor.Green);
+
+            foreach (Product product in Products)
+            {
+                UserUtils.Print($"\n{++index}. {product.GetInfo()}");
+            }
+        }
     }
 
     public class Wallet
     {
+        private int _money;
 
+        public Wallet(int money)
+        {
+            _money = money;
+        }
+
+        public int Money => _money;
+
+        public void AddMoney(int value)
+        {
+            if (value > 0)
+            {
+                _money += value;
+            }
+            else
+            {
+                UserUtils.Print($"\nОшибка! Количество денег не может быть отрицательным значением!", ConsoleColor.Red);
+            }
+        }
+
+        public bool TryRemoveMoney(int value)
+        {
+            if (_money - value < 0)
+            {
+                return false;
+            }
+
+            _money -= value;
+            return true;
+        }
     }
 
     public static class UserUtils
