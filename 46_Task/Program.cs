@@ -16,6 +16,7 @@
     public class Shop
     {
         private int _moneyBalance;
+        private Seller _seller;
         private Queue<Client> _clients;
         private List<Product> _products;
 
@@ -37,7 +38,6 @@
             const int ShowProductsCommand = 3;
             const int ExitCommand = 4;
 
-            int userInput;
             bool isWork = true;
 
             while (isWork)
@@ -56,7 +56,7 @@
                 switch (UserUtils.ReadInputNumber())
                 {
                     case ShopOpenCommand:
-                        UserUtils.Print($"Тут будет открытие магазина", ConsoleColor.Green);
+                        OpenShop();
                         break;
                     case ShowClientsQueueCommand:
                         ShowClientQueue();
@@ -74,14 +74,62 @@
 
                 Console.ReadLine();
             }
+        }
 
-            //----------------------------- For Test
-            //ShowProducts();
+        private void OpenShop()
+        {
+            Client client = _clients.Dequeue();
+            FillClientCart(client);
+            TrySellProducts(client);
+        }
 
-            //Console.WriteLine();
+        private void FillClientCart(Client client)
+        {
+            int buyProductCommand = _products.Count + 1;
+            int userInput;
+            bool isRun = true;
 
-            //ShowClientQueue();
-            //----------------------------- End Test
+            while (isRun)
+            {
+                Console.Clear();
+                UserUtils.Print($"Покупатель: <{client.Name}> выбирает товары", ConsoleColor.DarkYellow);
+
+                ShowProducts();
+                UserUtils.Print($"\n{buyProductCommand}. - Завершить поход по магазину и идти на кассу", ConsoleColor.Green);
+
+                UserUtils.Print($"\nВведите номер желаемого продукта, чтобы положить его в корзину: ", ConsoleColor.DarkYellow);
+                userInput = UserUtils.ReadInputNumber();
+
+                if (userInput == buyProductCommand)
+                {
+                    UserUtils.Print($"Покупатель <{client.Name}> идёт на кассу", ConsoleColor.Green);
+                    isRun = false;
+                }
+                else if (userInput <= 0 || userInput > buyProductCommand)
+                {
+                    UserUtils.Print($"\nОшибка! Такой команды нет! Попробуйте снова", ConsoleColor.Red);
+                }
+                else
+                {
+                    Product product = _products[--userInput].Clone();
+                    client.AddToCart(product);
+                    UserUtils.Print($"\nПокупатель <{client.Name}> кладёт в корзину <{product.Name}>");
+                }
+
+                Console.ReadLine();
+            }
+        }
+
+        private void TrySellProducts(Client client)
+        {
+            if (_seller.TrySellProducts(client))
+            {
+                _moneyBalance += _seller.MoneyTransaction;
+            }
+            else
+            {
+                UserUtils.Print($"\nУ покупателя <{client.Name}> не хватило денег для оплаты товара.", ConsoleColor.Red);
+            }
         }
 
         private void ShowProducts()
@@ -106,6 +154,16 @@
             {
                 UserUtils.Print($"\n{++index}. {client.GetInfo()}");
             }
+        }
+
+        private Product GetProduct(int index)
+        {
+            if (index < 0 || index >= _products.Count)
+            {
+                throw new IndexOutOfRangeException("Индекс выходит за пределы массива товаров");
+            }
+
+            return _products[index];
         }
     }
 
@@ -159,7 +217,7 @@
             for (int i = 0; i < productName.Count; i++)
             {
                 products.Add(CreateProduct(productName[i]));
-            } 
+            }
 
             return products;
         }
@@ -188,11 +246,29 @@
         {
             return $"<{Name}> - цена: [{Price}] $";
         }
+
+        public Product Clone()
+        {
+            return new Product(Name, Price);
+        }
     }
 
     public class Seller
     {
+        public Seller()
+        {
+            Name = "Продавец";
+            MoneyTransaction = 0;
+        }
 
+        public string Name { get; }
+
+        public int MoneyTransaction { get; private set; }
+
+        public bool TrySellProducts(Client client)
+        {
+            return true;
+        }
     }
 
     public class Client
@@ -233,6 +309,11 @@
         public string GetInfo()
         {
             return $"<{Name}>, у меня есть наличные: {_wallet.Money} $";
+        }
+
+        internal void AddToCart(Product product)
+        {
+            _cart.PutProduct(product);
         }
     }
 
