@@ -25,6 +25,7 @@ namespace _46_Task
         public Shop()
         {
             _moneyBalance = 0;
+            _seller = new Seller();
 
             ClientFactory clientFactory = new();
             _clients = clientFactory.GetRandomClients();
@@ -329,7 +330,7 @@ namespace _46_Task
 
         internal void RemoveRandomProduct()
         {
-            int randomProductIndex = UserUtils.GenerateRandomNumber(0, _cart.Products.Count() + 1);
+            int randomProductIndex = UserUtils.GenerateRandomNumber(0, _cart.Products.Count());
             _cart.RemoveProduct(randomProductIndex);
         }
     }
@@ -372,7 +373,10 @@ namespace _46_Task
 
         internal void RemoveProduct(int randomProductIndex)
         {
-            _products.RemoveAt(randomProductIndex);
+            if (_products.Count > 0 && randomProductIndex < _products.Count)
+            {
+                _products.RemoveAt(randomProductIndex);
+            }
         }
     }
 
