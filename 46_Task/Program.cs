@@ -152,16 +152,6 @@
                 UserUtils.Print($"\n{++index}. {client.GetInfo()}");
             }
         }
-
-        private Product GetProduct(int index)
-        {
-            if (index < 0 || index >= _products.Count)
-            {
-                throw new IndexOutOfRangeException("Индекс выходит за пределы массива товаров");
-            }
-
-            return _products[index];
-        }
     }
 
     public class ClientFactory
