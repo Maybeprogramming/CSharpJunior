@@ -1,4 +1,6 @@
-﻿namespace _46_Task
+﻿using System.Numerics;
+
+namespace _46_Task
 {
     public class Program
     {
@@ -80,7 +82,7 @@
         {
             Client client = _clients.Dequeue();
             FillClientCart(client);
-            TrySellProducts(client);
+            SellProducts(client);
         }
 
         private void FillClientCart(Client client)
@@ -120,16 +122,10 @@
             }
         }
 
-        private void TrySellProducts(Client client)
+        private void SellProducts(Client client)
         {
-            if (_seller.TrySellProducts(client))
-            {
-                _moneyBalance += _seller.MoneyTransaction;
-            }
-            else
-            {
-                UserUtils.Print($"\nУ покупателя <{client.Name}> не хватило денег для оплаты товара.", ConsoleColor.Red);
-            }
+            _seller.SellProducts(client);
+            _moneyBalance += _seller.MoneyTransaction;
         }
 
         private void ShowProducts()
@@ -257,17 +253,39 @@
     {
         public Seller()
         {
-            Name = "Продавец";
             MoneyTransaction = 0;
         }
 
-        public string Name { get; }
-
         public int MoneyTransaction { get; private set; }
 
-        public bool TrySellProducts(Client client)
+        public void SellProducts(Client client)
         {
-            return true;
+            MoneyTransaction = 0;
+            int totalCost = CalculateProductsCost(client.Products.ToList());
+            bool CanBuyProducts = false;
+
+            while (CanBuyProducts == false)
+            {
+                if (client.TryBuyProducts(totalCost))
+                {
+                    MoneyTransaction += totalCost;
+                    CanBuyProducts = true;
+                }
+
+                client.RemoveRandomProduct();
+            }
+        }
+
+        private int CalculateProductsCost(List<Product> products)
+        {
+            int totalCost = 0;
+
+            foreach (Product product in products)
+            {
+                totalCost += product.Price;
+            }
+
+            return totalCost;
         }
     }
 
@@ -286,24 +304,17 @@
         }
 
         public string Name { get; }
+        public IEnumerable<Product> Products => _cart.Products;
 
-        public bool TryBuyProducts()
+        public bool TryBuyProducts(int costValue)
         {
-            int totalCost = 0;
-
-            foreach (Product product in _cart.Products)
-            {
-                totalCost += product.Price;
-            }
-
-            if (_wallet.TryRemoveMoney(totalCost))
-            {
-                return true;
-            }
-            else
+            if (_wallet.TryRemoveMoney(costValue) == false)
             {
                 return false;
             }
+
+            _bag = new Bag(_cart.Products);
+            return true;
         }
 
         public string GetInfo()
@@ -315,16 +326,28 @@
         {
             _cart.PutProduct(product);
         }
+
+        internal void RemoveRandomProduct()
+        {
+            int randomProductIndex = UserUtils.GenerateRandomNumber(0, _cart.Products.Count() + 1);
+            _cart.RemoveProduct(randomProductIndex);
+        }
     }
 
     public class Bag
     {
         private List<Product> _products;
+        private IEnumerable<Product> products;
 
         public Bag(string name)
         {
             _products = new List<Product>();
             Name = name;
+        }
+
+        public Bag(IEnumerable<Product> products)
+        {
+            this.products = products;
         }
 
         public string Name { get; }
@@ -345,6 +368,11 @@
             {
                 UserUtils.Print($"\n{++index}. {product.GetInfo()}");
             }
+        }
+
+        internal void RemoveProduct(int randomProductIndex)
+        {
+            _products.RemoveAt(randomProductIndex);
         }
     }
 
