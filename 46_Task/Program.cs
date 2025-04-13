@@ -306,7 +306,7 @@
                 return false;
             }
 
-            _bag = new Bag(_cart.Products);
+            _bag = new Bag(_cart.Products, _bag);
             return true;
         }
 
@@ -328,7 +328,7 @@
             _cart.RemoveProduct(product);
         }
 
-        internal void ShowProducts()
+        public void ShowProducts()
         {
             _bag.ShowProducts();
         }
@@ -344,9 +344,10 @@
             Name = name;
         }
 
-        public Bag(IEnumerable<Product> products)
+        public Bag(IEnumerable<Product> products, Bag bag)
         {
             _products = products.ToList();
+            Name = bag.Name;
         }
 
         public string Name { get; }
