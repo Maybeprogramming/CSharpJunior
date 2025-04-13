@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace _46_Task
+﻿namespace _46_Task
 {
     public class Program
     {
@@ -84,6 +82,8 @@ namespace _46_Task
             Client client = _clients.Dequeue();
             FillClientCart(client);
             SellProducts(client);
+
+            client.ShowProducts();
         }
 
         private void FillClientCart(Client client)
@@ -262,11 +262,13 @@ namespace _46_Task
         public void SellProducts(Client client)
         {
             MoneyTransaction = 0;
-            int totalCost = CalculateProductsCost(client.Products.ToList());
+            int totalCost;
             bool CanBuyProducts = false;
 
             while (CanBuyProducts == false)
             {
+                totalCost = CalculateProductsCost(client.Products.ToList());
+
                 if (client.TryBuyProducts(totalCost))
                 {
                     MoneyTransaction += totalCost;
@@ -323,22 +325,28 @@ namespace _46_Task
             return $"<{Name}>, у меня есть наличные: {_wallet.Money} $";
         }
 
-        internal void AddToCart(Product product)
+        public void AddToCart(Product product)
         {
             _cart.PutProduct(product);
         }
 
-        internal void RemoveRandomProduct()
+        public void RemoveRandomProduct()
         {
             int randomProductIndex = UserUtils.GenerateRandomNumber(0, _cart.Products.Count());
-            _cart.RemoveProduct(randomProductIndex);
+            Product product = _cart.Products.ToList()[randomProductIndex];
+
+            _cart.RemoveProduct(product);
+        }
+
+        internal void ShowProducts()
+        {
+            _bag.ShowProducts();
         }
     }
 
     public class Bag
     {
         private List<Product> _products;
-        private IEnumerable<Product> products;
 
         public Bag(string name)
         {
@@ -348,7 +356,7 @@ namespace _46_Task
 
         public Bag(IEnumerable<Product> products)
         {
-            this.products = products;
+            _products = products.ToList();
         }
 
         public string Name { get; }
@@ -371,12 +379,9 @@ namespace _46_Task
             }
         }
 
-        internal void RemoveProduct(int randomProductIndex)
+        internal void RemoveProduct(Product product)
         {
-            if (_products.Count > 0 && randomProductIndex < _products.Count)
-            {
-                _products.RemoveAt(randomProductIndex);
-            }
+            _products.Remove(product);
         }
     }
 
