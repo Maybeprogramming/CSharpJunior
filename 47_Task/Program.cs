@@ -1,6 +1,4 @@
-﻿using System.Net.Http.Headers;
-
-namespace _47_Task
+﻿namespace _47_Task
 {
     public class Program
     {
