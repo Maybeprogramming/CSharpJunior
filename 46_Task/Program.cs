@@ -47,7 +47,7 @@
                 UserUtils.Print($"Команды:" +
                     $"\n{ShopOpenCommand} - Открыть магазин" +
                     $"\n{ShowClientsQueueCommand} - Посмотреть очередь покупателей" +
-                    $"\n{ShowProductsCommand} - Посмотреть ассортимент продуктов" +
+                    $"\n{ShowProductsCommand} - Посмотреть ассортимент товаров" +
                     $"\n{ExitCommand} - Выйти из магазина");
 
                 UserUtils.Print($"\n\nВведите команду: ", ConsoleColor.Green);
