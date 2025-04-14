@@ -85,19 +85,6 @@ namespace _47_Task
 
         public void RemoveDeadFighters() =>
             _fighters.RemoveAll(fighter => fighter.IsAlive == false);
-
-        public bool IsAlive()
-        {
-            foreach (Fighter fighter in _fighters)
-            {
-                if (fighter.IsAlive)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
     }
 
     public abstract class Fighter : IDamageable
