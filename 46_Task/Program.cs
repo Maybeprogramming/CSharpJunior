@@ -55,7 +55,7 @@
                 switch (UserUtils.ReadInputNumber())
                 {
                     case ShopOpenCommand:
-                        OpenShop();
+                        Open();
                         break;
                     case ShowCustomersCommand:
                         ShowCustomersQueue();
@@ -75,13 +75,13 @@
             }
         }
 
-        private void OpenShop()
+        private void Open()
         {
             if (_customers.Count > 0)
             {
                 Customer customer = _customers.Dequeue();
                 FillCustomerCart(customer);
-                SellProducts(customer);
+                ServeCustomer(customer);
             }
             else
             {
@@ -89,12 +89,12 @@
             }
         }
 
-        private void SellProducts(Customer customer)
+        private void ServeCustomer(Customer customer)
         {
             int totalCost;
-            bool CanBuyProducts = false;
+            bool canBuyProducts = false;
 
-            while (CanBuyProducts == false)
+            while (canBuyProducts == false)
             {
                 totalCost = CalculateProductsCost(customer.ProductsInCart.ToList());
 
@@ -111,7 +111,7 @@
                         UserUtils.Print($"\nПокупатель <{customer.Name}> ничего не купил и вышел из магазина");
                     }
 
-                    CanBuyProducts = true;
+                    canBuyProducts = true;
                 }
                 else
                 {
