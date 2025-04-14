@@ -1,4 +1,6 @@
-﻿namespace _46_Task
+﻿using System.ComponentModel.Design;
+
+namespace _46_Task
 {
     public class Program
     {
@@ -16,15 +18,15 @@
     public class Shop
     {
         private int _moneyBalance;
-        private Queue<Client> _clients;
+        private Queue<Customer> _customers;
         private List<Product> _products;
 
         public Shop()
         {
             _moneyBalance = 0;
 
-            ClientFactory clientFactory = new();
-            _clients = clientFactory.GetRandomClients();
+            CustomerFactory customerFactory = new();
+            _customers = customerFactory.GetRandomCustomers();
 
             ProductFactory productFactory = new();
             _products = productFactory.GetProducts();
@@ -33,7 +35,7 @@
         public void Work()
         {
             const int ShopOpenCommand = 1;
-            const int ShowClientsQueueCommand = 2;
+            const int ShowCustomersCommand = 2;
             const int ShowProductsCommand = 3;
             const int ExitCommand = 4;
 
@@ -46,7 +48,7 @@
 
                 UserUtils.Print($"Команды:" +
                     $"\n{ShopOpenCommand} - Открыть магазин" +
-                    $"\n{ShowClientsQueueCommand} - Посмотреть очередь покупателей" +
+                    $"\n{ShowCustomersCommand} - Посмотреть очередь покупателей" +
                     $"\n{ShowProductsCommand} - Посмотреть ассортимент товаров" +
                     $"\n{ExitCommand} - Выйти из магазина");
 
@@ -57,8 +59,8 @@
                     case ShopOpenCommand:
                         OpenShop();
                         break;
-                    case ShowClientsQueueCommand:
-                        ShowClientQueue();
+                    case ShowCustomersCommand:
+                        ShowCustomersQueue();
                         break;
                     case ShowProductsCommand:
                         ShowProducts();
@@ -77,29 +79,46 @@
 
         private void OpenShop()
         {
-            Client client = _clients.Dequeue();
-            FillClientCart(client);
-            SellProducts(client);
-
-            client.ShowProducts();
+            if (_customers.Count > 0)
+            {
+                Customer customer = _customers.Dequeue();
+                FillCustomerCart(customer);
+                SellProducts(customer);
+            }
+            else
+            {
+                UserUtils.Print($"\nПокупателей нет!");
+            }
         }
 
-        private void SellProducts(Client client)
+        private void SellProducts(Customer customer)
         {
             int totalCost;
             bool CanBuyProducts = false;
 
             while (CanBuyProducts == false)
             {
-                totalCost = CalculateProductsCost(client.Products.ToList());
+                totalCost = CalculateProductsCost(customer.ProductsInCart.ToList());
 
-                if (client.TryBuyProducts(totalCost))
+                if (customer.TryBuyProducts(totalCost))
                 {
-                    _moneyBalance += totalCost;
+                    if (totalCost > 0)
+                    {
+                        UserUtils.Print($"\nПокупатель <{customer.Name}> купил товары на сумму [{totalCost}] $:");
+                        customer.ShowProducts();
+                        _moneyBalance += totalCost;
+                    }
+                    else
+                    {
+                        UserUtils.Print($"\nПокупатель <{customer.Name}> ничего не купил и вышел из магазина");
+                    }
+
                     CanBuyProducts = true;
                 }
-
-                client.RemoveRandomProduct();
+                else
+                {
+                    customer.RemoveRandomProduct();
+                }
             }
         }
 
@@ -115,7 +134,7 @@
             return totalCost;
         }
 
-        private void FillClientCart(Client client)
+        private void FillCustomerCart(Customer customer)
         {
             int buyProductCommand = _products.Count + 1;
             int userInput;
@@ -124,7 +143,7 @@
             while (isRun)
             {
                 Console.Clear();
-                UserUtils.Print($"Покупатель: <{client.Name}> выбирает товары", ConsoleColor.DarkYellow);
+                UserUtils.Print($"Покупатель: <{customer.Name}> выбирает товары", ConsoleColor.DarkYellow);
 
                 ShowProducts();
                 UserUtils.Print($"\n{buyProductCommand}. - Завершить поход по магазину и идти на кассу", ConsoleColor.Green);
@@ -134,7 +153,7 @@
 
                 if (userInput == buyProductCommand)
                 {
-                    UserUtils.Print($"Покупатель <{client.Name}> идёт на кассу", ConsoleColor.Green);
+                    UserUtils.Print($"Покупатель <{customer.Name}> идёт на кассу", ConsoleColor.Green);
                     isRun = false;
                 }
                 else if (userInput <= 0 || userInput > buyProductCommand)
@@ -144,8 +163,8 @@
                 else
                 {
                     Product product = _products[--userInput].Clone();
-                    client.AddToCart(product);
-                    UserUtils.Print($"\nПокупатель <{client.Name}> кладёт в корзину <{product.Name}>");
+                    customer.AddToCart(product);
+                    UserUtils.Print($"\nПокупатель <{customer.Name}> кладёт в корзину <{product.Name}>");
                 }
 
                 Console.ReadLine();
@@ -164,40 +183,40 @@
             }
         }
 
-        private void ShowClientQueue()
+        private void ShowCustomersQueue()
         {
             int index = 0;
 
             UserUtils.Print($"\nОчередь покупателей:", ConsoleColor.Green);
 
-            foreach (Client client in _clients)
+            foreach (Customer customer in _customers)
             {
-                UserUtils.Print($"\n{++index}. {client.GetInfo()}");
+                UserUtils.Print($"\n{++index}. {customer.GetInfo()}");
             }
         }
     }
 
-    public class ClientFactory
+    public class CustomerFactory
     {
-        public Queue<Client> GetRandomClients()
+        public Queue<Customer> GetRandomCustomers()
         {
-            int minClientCount = 3;
-            int maxClientCount = 9;
-            int clientCount = UserUtils.GenerateRandomNumber(minClientCount, ++maxClientCount);
+            int minCustomerCount = 3;
+            int maxCustomerCount = 9;
+            int customersCount = UserUtils.GenerateRandomNumber(minCustomerCount, ++maxCustomerCount);
 
-            Queue<Client> clients = new();
+            Queue<Customer> customers = new();
 
-            for (int i = 0; i < clientCount; i++)
+            for (int i = 0; i < customersCount; i++)
             {
-                clients.Enqueue(CreateClient());
+                customers.Enqueue(CreateCustomer());
             }
 
-            return clients;
+            return customers;
         }
 
-        private Client CreateClient()
+        private Customer CreateCustomer()
         {
-            return new Client(GetRandomName());
+            return new Customer(GetRandomName());
         }
 
         private string GetRandomName()
@@ -252,34 +271,30 @@
         public string Name { get; private set; }
         public int Price { get; private set; }
 
-        public string GetInfo()
-        {
-            return $"<{Name}> - цена: [{Price}] $";
-        }
+        public string GetInfo() =>
+            $"<{Name}> - цена: [{Price}] $";
 
-        public Product Clone()
-        {
-            return new Product(Name, Price);
-        }
+        public Product Clone() =>
+            new Product(Name, Price);
     }
 
-    public class Client
+    public class Customer
     {
         private int _money;
         private Bag _bag;
         private Bag _cart;
 
-        public Client(string name)
+        public Customer(string name)
         {
             Name = name;
             _money = UserUtils.GenerateRandomNumber(300, 701);
-            _bag = new Bag("Сумка");
-            _cart = new Bag("Корзина");
+            _bag = new Bag();
+            _cart = new Bag();
         }
 
         public string Name { get; }
         public int Money => _money;
-        public IEnumerable<Product> Products => _cart.Products;
+        public IEnumerable<Product> ProductsInCart => _cart.Products;
 
         public bool TryBuyProducts(int costValue)
         {
@@ -289,19 +304,16 @@
             }
 
             _money -= costValue;
-            _bag = new Bag(_cart.Products, _bag);
+            _bag = new Bag(_cart.Products);
+
             return true;
         }
 
-        public string GetInfo()
-        {
-            return $"<{Name}>, у меня есть наличные: {Money} $";
-        }
+        public string GetInfo() =>
+            $"<{Name}>, у меня есть наличные: {Money} $";
 
-        public void AddToCart(Product product)
-        {
+        public void AddToCart(Product product) =>
             _cart.PutProduct(product);
-        }
 
         public void RemoveRandomProduct()
         {
@@ -311,41 +323,27 @@
             _cart.RemoveProduct(product);
         }
 
-        public void ShowProducts()
-        {
+        public void ShowProducts() =>
             _bag.ShowProducts();
-        }
     }
 
     public class Bag
     {
         private List<Product> _products;
 
-        public Bag(string name)
-        {
+        public Bag() =>
             _products = new List<Product>();
-            Name = name;
-        }
 
-        public Bag(IEnumerable<Product> products, Bag bag)
-        {
+        public Bag(IEnumerable<Product> products) =>
             _products = products.ToList();
-            Name = bag.Name;
-        }
 
-        public string Name { get; }
         public IEnumerable<Product> Products => _products;
-
-        public void PutProduct(Product product)
-        {
-            _products.Add(product);
-        }
 
         public void ShowProducts()
         {
             int index = 0;
 
-            UserUtils.Print($"\nВ <{Name}> следующие продукты:", ConsoleColor.Green);
+            UserUtils.Print($"\nСписок товаров:", ConsoleColor.Green);
 
             foreach (Product product in Products)
             {
@@ -353,10 +351,11 @@
             }
         }
 
-        internal void RemoveProduct(Product product)
-        {
+        public void PutProduct(Product product) =>
+            _products.Add(product);
+
+        public void RemoveProduct(Product product) =>
             _products.Remove(product);
-        }
     }
 
     public static class UserUtils
