@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.Design;
-
-namespace _46_Task
+﻿namespace _46_Task
 {
     public class Program
     {
