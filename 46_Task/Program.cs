@@ -283,11 +283,12 @@
 
         public bool TryBuyProducts(int costValue)
         {
-            if (TryRemoveMoney(costValue) == false)
+            if (Money < costValue)
             {
                 return false;
             }
 
+            _money -= costValue;
             _bag = new Bag(_cart.Products, _bag);
             return true;
         }
@@ -313,17 +314,6 @@
         public void ShowProducts()
         {
             _bag.ShowProducts();
-        }
-
-        private bool TryRemoveMoney(int value)
-        {
-            if (_money - value < 0)
-            {
-                return false;
-            }
-
-            _money -= value;
-            return true;
         }
     }
 
@@ -391,7 +381,7 @@
         {
             int result;
 
-            while (int.TryParse(Console.ReadLine(), out result) == false) 
+            while (int.TryParse(Console.ReadLine(), out result) == false)
                 Print($"\nВы ввели не число!\nПопробуйте снова: ", ConsoleColor.DarkYellow);
 
             return result;
