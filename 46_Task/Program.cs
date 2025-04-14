@@ -16,14 +16,12 @@
     public class Shop
     {
         private int _moneyBalance;
-        private Seller _seller;
         private Queue<Client> _clients;
         private List<Product> _products;
 
         public Shop()
         {
             _moneyBalance = 0;
-            _seller = new Seller();
 
             ClientFactory clientFactory = new();
             _clients = clientFactory.GetRandomClients();
@@ -86,6 +84,37 @@
             client.ShowProducts();
         }
 
+        private void SellProducts(Client client)
+        {
+            int totalCost;
+            bool CanBuyProducts = false;
+
+            while (CanBuyProducts == false)
+            {
+                totalCost = CalculateProductsCost(client.Products.ToList());
+
+                if (client.TryBuyProducts(totalCost))
+                {
+                    _moneyBalance += totalCost;
+                    CanBuyProducts = true;
+                }
+
+                client.RemoveRandomProduct();
+            }
+        }
+
+        private int CalculateProductsCost(List<Product> products)
+        {
+            int totalCost = 0;
+
+            foreach (Product product in products)
+            {
+                totalCost += product.Price;
+            }
+
+            return totalCost;
+        }
+
         private void FillClientCart(Client client)
         {
             int buyProductCommand = _products.Count + 1;
@@ -121,12 +150,6 @@
 
                 Console.ReadLine();
             }
-        }
-
-        private void SellProducts(Client client)
-        {
-            _seller.SellProducts(client);
-            _moneyBalance += _seller.MoneyTransaction;
         }
 
         private void ShowProducts()
@@ -240,68 +263,27 @@
         }
     }
 
-    public class Seller
-    {
-        public Seller()
-        {
-            MoneyTransaction = 0;
-        }
-
-        public int MoneyTransaction { get; private set; }
-
-        public void SellProducts(Client client)
-        {
-            MoneyTransaction = 0;
-            int totalCost;
-            bool CanBuyProducts = false;
-
-            while (CanBuyProducts == false)
-            {
-                totalCost = CalculateProductsCost(client.Products.ToList());
-
-                if (client.TryBuyProducts(totalCost))
-                {
-                    MoneyTransaction += totalCost;
-                    CanBuyProducts = true;
-                }
-
-                client.RemoveRandomProduct();
-            }
-        }
-
-        private int CalculateProductsCost(List<Product> products)
-        {
-            int totalCost = 0;
-
-            foreach (Product product in products)
-            {
-                totalCost += product.Price;
-            }
-
-            return totalCost;
-        }
-    }
-
     public class Client
     {
-        private Wallet _wallet;
+        private int _money;
         private Bag _bag;
         private Bag _cart;
 
         public Client(string name)
         {
             Name = name;
-            _wallet = new Wallet(UserUtils.GenerateRandomNumber(300, 701));
+            _money = UserUtils.GenerateRandomNumber(300, 701);
             _bag = new Bag("Сумка");
             _cart = new Bag("Корзина");
         }
 
         public string Name { get; }
+        public int Money => _money;
         public IEnumerable<Product> Products => _cart.Products;
 
         public bool TryBuyProducts(int costValue)
         {
-            if (_wallet.TryRemoveMoney(costValue) == false)
+            if (TryRemoveMoney(costValue) == false)
             {
                 return false;
             }
@@ -312,7 +294,7 @@
 
         public string GetInfo()
         {
-            return $"<{Name}>, у меня есть наличные: {_wallet.Money} $";
+            return $"<{Name}>, у меня есть наличные: {Money} $";
         }
 
         public void AddToCart(Product product)
@@ -331,6 +313,17 @@
         public void ShowProducts()
         {
             _bag.ShowProducts();
+        }
+
+        private bool TryRemoveMoney(int value)
+        {
+            if (_money - value < 0)
+            {
+                return false;
+            }
+
+            _money -= value;
+            return true;
         }
     }
 
@@ -376,41 +369,6 @@
         }
     }
 
-    public class Wallet
-    {
-        private int _money;
-
-        public Wallet(int money)
-        {
-            _money = money;
-        }
-
-        public int Money => _money;
-
-        public void AddMoney(int value)
-        {
-            if (value > 0)
-            {
-                _money += value;
-            }
-            else
-            {
-                UserUtils.Print($"\nОшибка! Количество денег не может быть отрицательным значением!", ConsoleColor.Red);
-            }
-        }
-
-        public bool TryRemoveMoney(int value)
-        {
-            if (_money - value < 0)
-            {
-                return false;
-            }
-
-            _money -= value;
-            return true;
-        }
-    }
-
     public static class UserUtils
     {
         private static Random s_random = new Random();
@@ -433,10 +391,8 @@
         {
             int result;
 
-            while (int.TryParse(Console.ReadLine(), out result) == false)
-            {
+            while (int.TryParse(Console.ReadLine(), out result) == false) 
                 Print($"\nВы ввели не число!\nПопробуйте снова: ", ConsoleColor.DarkYellow);
-            }
 
             return result;
         }
