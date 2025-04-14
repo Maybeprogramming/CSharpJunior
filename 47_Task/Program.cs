@@ -1,4 +1,6 @@
-﻿namespace _47_Task
+﻿using System.Net.Http.Headers;
+
+namespace _47_Task
 {
     public class Program
     {
@@ -13,33 +15,28 @@
 
     public class Battlegraund
     {
-        public void Work() 
+        public void Work()
         {
             //For TEST -------------------------------------------------------------------------------
-            List<Fighter> fighters = new List<Fighter>()
-            {
-                new Soldier("Пехотинец", 10, 2, 3),
-                new Sniper("Снайпер", 10, 1, 4),
-                new Bomber("Гранатометчик", 10, 0, 5),
-                new MachineGunner("Пулеметчик", 10, 3, 3)
-            };
 
-            foreach (Fighter fighter in fighters)
+            Squad squad = new Squad("Альфа");
+            Squad squad2 = new Squad("Браво");
+
+            int index = 0;
+
+            while (squad.Fighters.Count() > 0 && squad2.Fighters.Count() > 0)
             {
-                UserUtils.Print($"\n{fighter.GetInfo()}");
+                UserUtils.Print($"\n#{++index} {new string('-', 70)}", ConsoleColor.Red);
+                squad.Attack(squad2);
+                UserUtils.Print($"\n{new string('-', 70)}");
+                squad2.Attack(squad);
+                UserUtils.Print($"\n{new string('-', 70)}");
+                squad.GetInfo();
+                UserUtils.Print($"\n{new string('-', 70)}");
+                squad2.GetInfo();
             }
 
-            Console.ReadKey();
 
-            Soldier soldier = new Soldier("Пехотинец", 10, 2, 3);
-            Sniper sniper = new Sniper("Снайпер", 10, 1, 4);
-            Bomber bomber = new Bomber("Гранатометчик", 10, 0, 5);
-            MachineGunner machineGunner = new MachineGunner("Пулеметчик", 10, 3, 3);
-
-            soldier.Attack(sniper);
-            sniper.Attack(bomber);
-            bomber.Attack(machineGunner);
-            machineGunner.Attack(soldier);
             //END TEST -------------------------------------------------------------------------------
 
             Console.ReadKey();
@@ -48,22 +45,76 @@
 
     public class Squad
     {
+        private List<Fighter> _fighters;
 
+        public Squad(string name)
+        {
+            Name = name;
+
+            _fighters = new List<Fighter>()
+            {
+                new Soldier("Пехотинец", 10, 2, 3, Name),
+                new Sniper("Снайпер", 10, 1, 4, Name),
+                new Bomber("Гранатометчик", 10, 0, 5, Name),
+                new MachineGunner("Пулеметчик", 10, 2, 3, Name)
+            };
+        }
+
+        public string Name { get; }
+        public IEnumerable<Fighter> Fighters => _fighters;
+
+        public void Attack(Squad targetSquad)
+        {
+            for (int i = 0; i < _fighters.Count; i++)
+            {
+                _fighters[i].Attack(targetSquad);
+            }
+
+            targetSquad.RemoveDeadFighters();
+        }
+
+        public void GetInfo()
+        {
+            UserUtils.Print($"\nБойцы в отряде <{Name}>:");
+
+            foreach (Fighter fighter in _fighters)
+            {
+                UserUtils.Print($"\n{fighter.GetInfo()}");
+            }
+        }
+
+        public void RemoveDeadFighters() =>
+            _fighters.RemoveAll(fighter => fighter.IsAlive == false);
+
+        public bool IsAlive()
+        {
+            foreach (Fighter fighter in _fighters)
+            {
+                if (fighter.IsAlive)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 
     public abstract class Fighter : IDamageable
     {
         private int _health;
 
-        protected Fighter(string name, int health, int armor, int damage)
+        protected Fighter(string name, int health, int armor, int damage, string squadName)
         {
             Name = name;
+            SquadName = squadName;
             Health = health;
             Armor = armor;
             Damage = damage;
         }
 
         public string Name { get; }
+
         public int Health
         {
             get => _health;
@@ -72,14 +123,15 @@
 
         public int Armor { get; private set; }
         public int Damage { get; private set; }
+        public string SquadName { get; }
 
-        public bool IsAlive => Health >= 0;
+        public bool IsAlive => Health > 0;
 
         public virtual void Attack(IDamageable target)
         {
             if (IsAlive && target.IsAlive)
             {
-                UserUtils.Print($"\n<{Name}> атакует <{target.Name}> и наносит [{Damage}] урона");
+                UserUtils.Print($"\n<{Name} ({SquadName})> атакует <{target.Name} ({target.SquadName})> и наносит [{Damage}] урона");
                 target.TakeDamage(Damage);
             }
             else
@@ -105,6 +157,14 @@
         public string GetInfo() =>
             $"<{Name}> ХП [{Health}], ARMOR [{Armor}], DMG [{Damage}]";
 
+
+        public virtual void Attack(Squad targetSquad)
+        {
+            int indexFighterTarget = UserUtils.GenerateRandomNumber(0, targetSquad.Fighters.Count());
+            Fighter target = targetSquad.Fighters.ToList()[indexFighterTarget];
+            Attack(target);
+        }
+
         private void SetHealth(int healthValue)
         {
             if (healthValue < 0)
@@ -117,7 +177,7 @@
     //Первый - обычный солдат, без особенностей.
     public class Soldier : Fighter
     {
-        public Soldier(string name, int health, int armor, int damage) : base(name, health, armor, damage)
+        public Soldier(string name, int health, int armor, int damage, string squadName) : base(name, health, armor, damage, squadName)
         {
         }
     }
@@ -125,7 +185,7 @@
     //Второй - атакует только одного, но с множителем урона.
     public class Sniper : Fighter
     {
-        public Sniper(string name, int health, int armor, int damage) : base(name, health, armor, damage)
+        public Sniper(string name, int health, int armor, int damage, string squadName) : base(name, health, armor, damage, squadName)
         {
         }
     }
@@ -133,7 +193,7 @@
     //Третий - атакует сразу нескольких, без повторения атакованного за свою атаку.
     public class Bomber : Fighter
     {
-        public Bomber(string name, int health, int armor, int damage) : base(name, health, armor, damage)
+        public Bomber(string name, int health, int armor, int damage, string squadName) : base(name, health, armor, damage, squadName)
         {
         }
     }
@@ -141,7 +201,7 @@
     //Четвертый - атакует сразу нескольких, атакованные солдаты могут повторяться.
     public class MachineGunner : Fighter
     {
-        public MachineGunner(string name, int health, int armor, int damage) : base(name, health, armor, damage)
+        public MachineGunner(string name, int health, int armor, int damage, string squadName) : base(name, health, armor, damage, squadName)
         {
         }
     }
@@ -150,6 +210,7 @@
     public interface IDamageable
     {
         string Name { get; }
+        string SquadName { get; }
         bool IsAlive { get; }
         void TakeDamage(int damage);
     }
