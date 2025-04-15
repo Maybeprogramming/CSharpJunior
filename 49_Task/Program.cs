@@ -9,7 +9,6 @@ namespace _49_Task
             Console.Title = "ДЗ: Зоопарк";
             Zoo zoo = new Zoo();
             zoo.Work();
-            Console.ReadKey();
         }
     }
 
