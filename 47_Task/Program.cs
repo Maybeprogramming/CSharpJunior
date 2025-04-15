@@ -22,7 +22,7 @@
 
             while (squadOne.Fighters.Count() > 0 && squadTwo.Fighters.Count() > 0)
             {
-                RunFight(squadOne, squadTwo);
+                GoFight(squadOne, squadTwo);
                 ShowSquadsInfo(squadOne, squadTwo);
             }
 
@@ -38,7 +38,7 @@
             squadTwo.GetInfo();
         }
 
-        private void RunFight(Squad squadOne, Squad squadTwo)
+        private void GoFight(Squad squadOne, Squad squadTwo)
         {
             squadOne.Attack(squadTwo);
             squadTwo.Attack(squadOne);
