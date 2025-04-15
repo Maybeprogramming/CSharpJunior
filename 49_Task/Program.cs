@@ -35,6 +35,10 @@
         }
     }
 
+    public class AviaryFactory { }
+
+    public class AnimalFactory { }
+
     public abstract class Animal { }
 
     public static class UserUtils
