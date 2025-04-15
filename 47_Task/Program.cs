@@ -128,9 +128,9 @@
         {
             Name = name;
             SquadName = squadName;
-            Health = 100;
-            Armor = 5;
-            Damage = 15;
+            Health = UserUtils.GenerateRandomNumber(100,200);
+            Armor = UserUtils.GenerateRandomNumber(0, 15);
+            Damage = UserUtils.GenerateRandomNumber(30,60);
         }
 
         public string Name { get; }
