@@ -16,6 +16,7 @@
         public void Work() { }
     }
 
+    //Минимум 4 вольера
     public class Aviary 
     {
         private List<Animal> _animals;
