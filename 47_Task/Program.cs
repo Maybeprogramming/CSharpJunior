@@ -15,29 +15,49 @@
     {
         public void Work()
         {
-            //For TEST -------------------------------------------------------------------------------
+            Squad squadOne = new Squad("Альфа");
+            Squad squadTwo = new Squad("Браво");
 
-            Squad squad = new Squad("Альфа");
-            Squad squad2 = new Squad("Браво");
+            UserUtils.Print($"Начинается бой между отрядами <{squadOne.Name}> и <{squadTwo.Name}>", ConsoleColor.DarkYellow);
 
-            int index = 0;
-
-            while (squad.Fighters.Count() > 0 && squad2.Fighters.Count() > 0)
+            while (squadOne.Fighters.Count() > 0 && squadTwo.Fighters.Count() > 0)
             {
-                UserUtils.Print($"\n#{++index} {new string('-', 70)}", ConsoleColor.Red);
-                squad.Attack(squad2);
-                UserUtils.Print($"\n{new string('-', 70)}");
-                squad2.Attack(squad);
-                UserUtils.Print($"\n{new string('-', 70)}");
-                squad.GetInfo();
-                UserUtils.Print($"\n{new string('-', 70)}");
-                squad2.GetInfo();
+                RunFight(squadOne, squadTwo);
+                ShowSquadsInfo(squadOne, squadTwo);
             }
 
+            AnnouncingFightResults(squadOne, squadTwo);
 
-            //END TEST -------------------------------------------------------------------------------
-
+            UserUtils.Print($"\n\nНажмите любую клавишу для продолжения");
             Console.ReadKey();
+        }
+
+        private void ShowSquadsInfo(Squad squadOne, Squad squadTwo)
+        {
+            squadOne.GetInfo();
+            squadTwo.GetInfo();
+        }
+
+        private void RunFight(Squad squadOne, Squad squadTwo)
+        {
+            squadOne.Attack(squadTwo);
+            squadTwo.Attack(squadOne);
+        }
+
+        private void AnnouncingFightResults(Squad squadOne, Squad squadTwo)
+        {
+            if (squadOne.Fighters.Count() > 0 && squadTwo.Fighters.Count() <= 0)
+            {
+                UserUtils.Print($"\n\nОтряд <{squadOne.Name}> одержал победу над отрядом <{squadTwo.Name}>", ConsoleColor.DarkYellow);
+            }
+            else if (squadOne.Fighters.Count() <= 0 && squadTwo.Fighters.Count() > 0)
+            {
+                UserUtils.Print($"\n\nОтряд <{squadTwo.Name}> одержал победу над отрядом <{squadOne.Name}>", ConsoleColor.DarkYellow);
+            }
+            else
+            {
+                UserUtils.Print($"\n\nНичья!", ConsoleColor.DarkYellow);
+            }
         }
     }
 
@@ -51,10 +71,10 @@
 
             _fighters = new List<Fighter>()
             {
-                new Soldier("Пехотинец", 10, 2, 3, Name),
-                new Sniper("Снайпер", 10, 1, 4, Name),
-                new Bomber("Гранатометчик", 10, 0, 5, Name),
-                new MachineGunner("Пулеметчик", 10, 2, 3, Name)
+                new Soldier("Пехотинец",Name),
+                new Sniper("Снайпер",Name),
+                new Bomber("Гранатометчик", Name),
+                new MachineGunner("Пулеметчик", Name)
             };
         }
 
@@ -63,39 +83,54 @@
 
         public void Attack(Squad targetSquad)
         {
-            for (int i = 0; i < _fighters.Count; i++)
+            if (targetSquad.Fighters.Count() > 0)
             {
-                _fighters[i].Attack(targetSquad);
-            }
+                UserUtils.Print($"\nАтаку начинает отряд <{Name}> {new string('-', 50)}", ConsoleColor.Red);
 
-            targetSquad.RemoveDeadFighters();
+                for (int i = 0; i < _fighters.Count; i++)
+                {
+                    _fighters[i].GoFight(targetSquad.Fighters);
+                    targetSquad.TakeDamage();
+                }
+            }
+            else
+            {
+                UserUtils.Print($"\nВ отряде противника нет живых бойцов");
+            }
         }
 
         public void GetInfo()
         {
-            UserUtils.Print($"\nБойцы в отряде <{Name}>:");
+            UserUtils.Print($"\nБойцы в отряде <{Name}> {new string('-', 56)}", ConsoleColor.Green);
 
-            foreach (Fighter fighter in _fighters)
+            if (_fighters.Count > 0)
             {
-                UserUtils.Print($"\n{fighter.GetInfo()}");
+                foreach (Fighter fighter in _fighters)
+                {
+                    UserUtils.Print($"\n{fighter.GetInfo()}");
+                }
+            }
+            else
+            {
+                UserUtils.Print($"\nВ отряде нет живых бойцов", ConsoleColor.Red);
             }
         }
 
-        public void RemoveDeadFighters() =>
+        public void TakeDamage() =>
             _fighters.RemoveAll(fighter => fighter.IsAlive == false);
     }
 
-    public abstract class Fighter : IDamageable
+    public abstract class Fighter
     {
         private int _health;
 
-        protected Fighter(string name, int health, int armor, int damage, string squadName)
+        protected Fighter(string name, string squadName)
         {
             Name = name;
             SquadName = squadName;
-            Health = health;
-            Armor = armor;
-            Damage = damage;
+            Health = 100;
+            Armor = 5;
+            Damage = 15;
         }
 
         public string Name { get; }
@@ -107,23 +142,9 @@
         }
 
         public int Armor { get; private set; }
-        public int Damage { get; private set; }
+        public int Damage { get; private protected set; }
         public string SquadName { get; }
-
         public bool IsAlive => Health > 0;
-
-        public virtual void Attack(IDamageable target)
-        {
-            if (IsAlive && target.IsAlive)
-            {
-                UserUtils.Print($"\n<{Name} ({SquadName})> атакует <{target.Name} ({target.SquadName})> и наносит [{Damage}] урона");
-                target.TakeDamage(Damage);
-            }
-            else
-            {
-                UserUtils.Print($"\n<{Name}> не может атаковать <{target.Name}>. Цель уже погибла.");
-            }
-        }
 
         public virtual void TakeDamage(int damage)
         {
@@ -143,61 +164,85 @@
             $"<{Name}> ХП [{Health}], ARMOR [{Armor}], DMG [{Damage}]";
 
 
-        public virtual void Attack(Squad targetSquad)
+        public virtual void GoFight(IEnumerable<Fighter> targetSquad)
         {
-            int indexFighterTarget = UserUtils.GenerateRandomNumber(0, targetSquad.Fighters.Count());
-            Fighter target = targetSquad.Fighters.ToList()[indexFighterTarget];
-            Attack(target);
+            if (targetSquad.Count() > 0)
+            {
+                Attack(SelectTarget(targetSquad));
+            }
+            else
+            {
+                UserUtils.Print($"\nОтряд противника уничтожен!");
+            }
         }
 
-        private void SetHealth(int healthValue)
+        private protected Fighter SelectTarget(IEnumerable<Fighter> targetSquad)
         {
-            if (healthValue < 0)
-                _health = 0;
-            else
-                _health = healthValue;
+            int indexFighterTarget = UserUtils.GenerateRandomNumber(0, targetSquad.Count());
+            Fighter target = targetSquad.ToList()[indexFighterTarget];
+            return target;
         }
+
+        private protected void Attack(Fighter target)
+        {
+            if (IsAlive && target.IsAlive)
+            {
+                UserUtils.Print($"\n<{Name} ({SquadName})> атакует <{target.Name} ({target.SquadName})> и наносит [{Damage}] урона");
+                target.TakeDamage(Damage);
+            }
+            else
+            {
+                UserUtils.Print($"\n<{Name}> не может атаковать <{target.Name}>. Цель уже погибла.");
+            }
+        }
+
+        private void SetHealth(int healthValue) => 
+            _health = healthValue < 0 ? 0 : healthValue;
     }
 
-    //Первый - обычный солдат, без особенностей.
     public class Soldier : Fighter
     {
-        public Soldier(string name, int health, int armor, int damage, string squadName) : base(name, health, armor, damage, squadName)
-        {
-        }
+        public Soldier(string name, string squadName) : base(name, squadName){ }
     }
 
-    //Второй - атакует только одного, но с множителем урона.
     public class Sniper : Fighter
     {
-        public Sniper(string name, int health, int armor, int damage, string squadName) : base(name, health, armor, damage, squadName)
+        private int _damageMultiplier;
+
+        public Sniper(string name, string squadName) : base(name, squadName)
         {
+            _damageMultiplier = 2;
+            Damage *= _damageMultiplier;
         }
+
+        public override void GoFight(IEnumerable<Fighter> targetSquad) =>
+            base.GoFight(targetSquad);
     }
 
-    //Третий - атакует сразу нескольких, без повторения атакованного за свою атаку.
     public class Bomber : Fighter
     {
-        public Bomber(string name, int health, int armor, int damage, string squadName) : base(name, health, armor, damage, squadName)
+        public Bomber(string name, string squadName) : base(name, squadName) { }
+
+        public override void GoFight(IEnumerable<Fighter> targetSquad)
         {
+            for (int i = 0; i < targetSquad.Count(); i++)
+            {
+                base.Attack(targetSquad.ToArray()[i]);
+            }
         }
     }
 
-    //Четвертый - атакует сразу нескольких, атакованные солдаты могут повторяться.
     public class MachineGunner : Fighter
     {
-        public MachineGunner(string name, int health, int armor, int damage, string squadName) : base(name, health, armor, damage, squadName)
+        public MachineGunner(string name, string squadName) : base(name, squadName) { }
+
+        public override void GoFight(IEnumerable<Fighter> targetSquad)
         {
+            for (int i = 0; i < targetSquad.Count(); i++)
+            {
+                base.Attack(base.SelectTarget(targetSquad));
+            }
         }
-    }
-
-
-    public interface IDamageable
-    {
-        string Name { get; }
-        string SquadName { get; }
-        bool IsAlive { get; }
-        void TakeDamage(int damage);
     }
 
     public static class UserUtils
