@@ -1,4 +1,6 @@
-﻿namespace _49_Task
+﻿using System.Collections.Generic;
+
+namespace _49_Task
 {
     public class Program
     {
@@ -13,10 +15,21 @@
 
     public class Zoo
     {
-        public void Work() { }
+        public void Work()
+        {
+            AnimalFactory animalFactory = new AnimalFactory();
+            List<Animal> animals = animalFactory.CreateAnimals(AnimalType.Rhinoceros, 10);
+
+            foreach (Animal animal in animals)
+            {
+                UserUtils.Print($"\n{animal.GetInfo()}");
+            }
+
+            Console.ReadKey();
+        }
     }
 
-    public class Aviary 
+    public class Aviary
     {
         private List<Animal> _animals;
 
@@ -25,8 +38,8 @@
             _animals = animals;
         }
 
-        public void ShowInfo() 
-        { 
+        public void ShowInfo()
+        {
             //Что за вольер
             //Количество животных в вольере
             //Показать пол животных
@@ -34,23 +47,53 @@
         }
     }
 
-    public class AviaryFactory 
-    { 
+    public class AviaryFactory
+    {
         public Aviary Create()
         {
             return new Aviary(new List<Animal>());
         }
     }
 
-    public class AnimalFactory 
-    { 
-        public List<Animal> CreateAnimals()
+    public class AnimalFactory
+    {
+        public List<Animal> CreateAnimals(AnimalType animalType, int animalCount)
         {
-            return new List<Animal>();
+            List<Animal> animals = new();
+
+            for (int i = 0; i < animalCount; i++)
+            {
+                animals.Add(CreateAnimal(animalType));
+            }
+
+            return animals;
+        }
+
+        private Animal CreateAnimal(AnimalType animalType)
+        {
+            Dictionary<AnimalType, Animal> animalsDictionary = new()
+            {
+                {AnimalType.Bear, new Bear("Медведь", GetRandomGender()) },
+                {AnimalType.Tiger, new Tiger("Тигр", GetRandomGender())},
+                {AnimalType.Rhinoceros, new Rhinoceros("Носорог", GetRandomGender())},
+                {AnimalType.Antiloup, new Antiloup("Антилопа", GetRandomGender()) }
+            };
+
+            animalsDictionary.TryGetValue(animalType, out Animal animal);
+
+            return animal;
+        }
+
+        private string GetRandomGender()
+        {
+            List<string> genders = new() { "Самец", "Самка" };
+            int newGenderIndex = UserUtils.GenerateRandomNumber(0, genders.Count - 1);
+
+            return genders[newGenderIndex];
         }
     }
 
-    public abstract class Animal 
+    public abstract class Animal
     {
         protected Animal(string name, string gender)
         {
@@ -63,8 +106,8 @@
 
         public abstract void MakeSound();
 
-        public virtual string GetInfo() => 
-            $"{Name}, пол животного: <{Gender}>";
+        public virtual string GetInfo() =>
+            $"{Name}, гендер: <{Gender}>";
     }
 
     public class Bear : Animal
@@ -113,6 +156,14 @@
         {
             UserUtils.Print($"");
         }
+    }
+
+    public enum AnimalType
+    {
+        Bear,
+        Tiger,
+        Rhinoceros,
+        Antiloup
     }
 
     public static class UserUtils
