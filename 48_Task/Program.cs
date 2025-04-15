@@ -17,15 +17,9 @@
 
         public Aquarium()
         {
-            _fishes = new List<Fish>() 
-            {
-                new Fish(),
-                new Fish(),
-                new Fish(),
-                new Fish(),
-                new Fish()
-            };
-
+            FishFactory fishFactory = new FishFactory();
+            int fishCount = UserUtils.GenerateRandomNumber(3, 10);
+            _fishes = fishFactory.GetFishes(fishCount);
             _maxFishCount = UserUtils.GenerateRandomNumber(7, 15);
         }
 
@@ -81,7 +75,7 @@
             UserUtils.Print($"\nПрошёл 1 цикл жизни");
         }
 
-        private void AddFish() 
+        private void AddFish()
         {
             if (_fishes.Count < _maxFishCount)
             {
@@ -97,12 +91,12 @@
             }
         }
 
-        private void RemoveDeadFish() => 
+        private void RemoveDeadFish() =>
             _fishes.RemoveAll(fishes => fishes.IsAlive == false);
 
         private void ShowFishes()
         {
-            if (_fishes.Count > 0) 
+            if (_fishes.Count > 0)
             {
                 int index = 0;
                 UserUtils.Print($"Список рыбок в аквариуме:", ConsoleColor.Green);
@@ -116,6 +110,21 @@
             {
                 UserUtils.Print($"Аквариум пуст", ConsoleColor.Green);
             }
+        }
+    }
+
+    public class FishFactory
+    {
+        public List<Fish> GetFishes(int fishCount)
+        {
+            List<Fish> fishes = new List<Fish>();
+
+            for (int i = 0; i < fishCount + 1; i++)
+            {
+                fishes.Add(new Fish());
+            }
+
+            return fishes;
         }
     }
 
@@ -136,16 +145,16 @@
             private set => _age = SetAge(value);
         }
 
-        public bool IsAlive => 
+        public bool IsAlive =>
             Age < _maxAge;
 
-        public string AliveStatus => 
+        public string AliveStatus =>
             IsAlive ? "жива" : "мертва";
 
-        public void IncreaseAge() => 
+        public void IncreaseAge() =>
             Age++;
 
-        public string GetInfo() => 
+        public string GetInfo() =>
             $"Рыбка возратом <{Age}>, статус: <{AliveStatus}>";
 
         private int SetAge(int value)
