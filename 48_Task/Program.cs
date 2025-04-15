@@ -62,7 +62,7 @@
                         isRun = false;
                         break;
                     default:
-                        Tick();
+                        IncreaseAge();
                         break;
                 }
 
@@ -71,11 +71,11 @@
             }
         }
 
-        private void Tick()
+        private void IncreaseAge()
         {
             foreach (Fish fish in _fishes)
             {
-                fish.Tick();
+                fish.IncreaseAge();
             }
 
             UserUtils.Print($"\nПрошёл 1 цикл жизни");
@@ -142,7 +142,8 @@
         public string AliveStatus => 
             IsAlive ? "жива" : "мертва";
 
-        public void Tick() => Age++;
+        public void IncreaseAge() => 
+            Age++;
 
         public string GetInfo() => 
             $"Рыбка возратом <{Age}>, статус: <{AliveStatus}>";
