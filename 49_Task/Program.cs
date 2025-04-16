@@ -46,7 +46,13 @@
 
     public class AviaryFactory
     {
-        public Aviary Create()
+        public List<Aviary> CreateAviaries()
+        {
+
+
+        }
+
+        private Aviary Create(AnimalType animalType)
         {
             return new Aviary(new List<Animal>());
         }
