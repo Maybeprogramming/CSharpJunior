@@ -1,0 +1,15 @@
+Заметки
+50 - ООП
+ДЗ: Автосервис
+
+Запчасти:
+Масляный фильтр			Oil filter
+Свечи зажигания			Spark plugs
+Воздушный фильтр		Air filter
+Аккумулятор				Battery
+Генератор				Generator
+ГРМ						Timing belt
+Колесо					Wheel
+Тормозные колодки		Brake pads
+Антифриз				Antifreeze
+Фара					Headlight
