@@ -1,12 +1,10 @@
-п»їnamespace _50_Task
-{
-    namespace AquariumTask
+namespace AquariumTask
     {
         public class Program
         {
             static void Main()
             {
-                Console.Title = "Р”Р—: РђРєРІР°СЂРёСѓРј";
+                Console.Title = "ДЗ: Аквариум";
                 new Aquarium().Work();
             }
         }
@@ -38,16 +36,16 @@
                     ShowFishes();
 
                     UserUtils.PrintMenu(
-                        $"\nР”РѕСЃС‚СѓРїРЅС‹Рµ РєРѕРјР°РЅРґС‹:",
-                        $"{AddFishCommand} - РґРѕР±Р°РІРёС‚СЊ СЂС‹Р±РєСѓ РІ Р°РєРІР°СЂРёСѓРј",
-                        $"{RemoveFishCommand} - СѓР±СЂР°С‚СЊ РјРµСЂС‚РІС‹С… СЂС‹Р±РѕРє",
-                        $"{ExitCommand} - Р·Р°РІРµСЂС€РёС‚СЊ РїСЂРѕРіСЂР°РјРјСѓ"
+                        $"\nДоступные команды:",
+                        $"{AddFishCommand} - добавить рыбку в аквариум",
+                        $"{RemoveFishCommand} - убрать мертвых рыбок",
+                        $"{ExitCommand} - завершить программу"
                     );
 
                     string input = Console.ReadLine();
                     ProcessCommand(input, ref isRunning);
 
-                    UserUtils.Print("\nРќР°Р¶РјРёС‚Рµ Р»СЋР±СѓСЋ РєР»Р°РІРёС€Сѓ С‡С‚РѕР±С‹ РїСЂРѕРґРѕР»Р¶РёС‚СЊ...", ConsoleColor.Green);
+                    UserUtils.Print("\nНажмите любую клавишу чтобы продолжить...", ConsoleColor.Green);
                     Console.ReadKey();
                 }
             }
@@ -73,21 +71,21 @@
 
             private void IncreaseAge()
             {
-                _fishes.ForEach(fish => fish.IncreaseAge()); //Р С‚СѓС‚ С„Рѕ РёС‡ СЃ Р»СЏРјР±РґР°!
-                UserUtils.Print("\nРџСЂРѕС€С‘Р» 1 С†РёРєР» Р¶РёР·РЅРё");
+                _fishes.ForEach(fish => fish.IncreaseAge()); //И тут фо ич с лямбда!
+                UserUtils.Print("\nПрошёл 1 цикл жизни");
             }
 
             private void AddFish()
             {
                 if (_fishes.Count >= _maxFishCount)
                 {
-                    UserUtils.Print("\nРђРєРІР°СЂРёСѓРј РїРѕР»РѕРЅ, РІС‹ РЅРµ РјРѕР¶РµС‚Рµ Р±РѕР»СЊС€Рµ РґРѕР±Р°РІРёС‚СЊ СЂС‹Р±РѕРє", ConsoleColor.Red);
+                    UserUtils.Print("\nАквариум полон, вы не можете больше добавить рыбок", ConsoleColor.Red);
                     return;
                 }
 
                 var fish = new Fish();
                 _fishes.Add(fish);
-                UserUtils.Print($"\nР’ Р°РєРІР°СЂРёСѓРј РґРѕР±Р°РІРёР»Рё СЂС‹Р±РєСѓ:\n{fish.GetInfo()}", ConsoleColor.Green);
+                UserUtils.Print($"\nВ аквариум добавили рыбку:\n{fish.GetInfo()}", ConsoleColor.Green);
             }
 
             private void RemoveDeadFish() => _fishes.RemoveAll(fish => !fish.IsAlive);
@@ -97,20 +95,20 @@
                 int index = 0;
                 if (_fishes.Count == 0)
                 {
-                    UserUtils.Print("РђРєРІР°СЂРёСѓРј РїСѓСЃС‚", ConsoleColor.Green);
+                    UserUtils.Print("Аквариум пуст", ConsoleColor.Green);
                     return;
                 }
 
-                UserUtils.Print("РЎРїРёСЃРѕРє СЂС‹Р±РѕРє РІ Р°РєРІР°СЂРёСѓРјРµ:", ConsoleColor.Green);
+                UserUtils.Print("Список рыбок в аквариуме:", ConsoleColor.Green);
                 _fishes.ForEach((fish) =>
-                    UserUtils.Print($"\n{index + 1}. {fish.GetInfo()}"));  //РљРѕРЅСЃС‚СЂСѓРєС†РёСЏ ForEach СЃ Action РёРЅС‚РµСЂРµСЃРЅР°!
+                    UserUtils.Print($"\n{index + 1}. {fish.GetInfo()}"));  //Конструкция ForEach с Action интересна!
             }
         }
 
         public class FishFactory
         {
             public List<Fish> GetFishes(int count) =>
-                Enumerable.Range(0, count).Select(_ => new Fish()).ToList(); //Р СЌС‚Рѕ РёРЅС‚РµСЂРµСЃРЅРѕ!
+                Enumerable.Range(0, count).Select(_ => new Fish()).ToList(); //И это интересно!
         }
 
         public class Fish
@@ -127,14 +125,14 @@
             public int Age
             {
                 get => _age;
-                private set => _age = Math.Clamp(value, 0, _maxAge); //!!! Р’РѕС‚ СЌС‚Рѕ РёРЅС‚РµСЂРµСЃРЅРѕ
+                private set => _age = Math.Clamp(value, 0, _maxAge); //!!! Вот это интересно
             }
 
             public bool IsAlive => Age < _maxAge;
-            public string AliveStatus => IsAlive ? "Р¶РёРІР°" : "РјРµСЂС‚РІР°";
+            public string AliveStatus => IsAlive ? "жива" : "мертва";
 
             public void IncreaseAge() => Age++;
-            public string GetInfo() => $"Р С‹Р±РєР° РІРѕР·СЂР°СЃС‚РѕРј {Age}, СЃС‚Р°С‚СѓСЃ: {AliveStatus}";
+            public string GetInfo() => $"Рыбка возрастом {Age}, статус: {AliveStatus}";
         }
 
         public static class UserUtils
@@ -147,7 +145,7 @@
             {
                 Console.ForegroundColor = color;
                 Console.Write(message);
-                Console.ResetColor(); // Р­С‚Рѕ РЅРѕСЂРј!
+                Console.ResetColor(); // Это норм!
             }
 
             public static void PrintMenu(params string[] menuItems)
@@ -156,8 +154,7 @@
                 {
                     Print(item + "\n", ConsoleColor.Green);
                 }
-                Print("\nР’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ РєРѕРјР°РЅРґС‹: ", ConsoleColor.Green);
+                Print("\nВведите номер команды: ", ConsoleColor.Green);
             }
         }
     }
-}
