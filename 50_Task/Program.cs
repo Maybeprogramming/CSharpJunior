@@ -24,7 +24,7 @@ namespace _50_Task
             #region For Test #########################################################################################
 
             Cell cell = new Cell(new Detail(DetailType.Wheel), 10);
-            UserUtils.Print($"{cell}");
+            UserUtils.Print($"{cell}", ConsoleColor.Green);
             UserUtils.Print($"\n{cell.Detail}");
 
             #endregion ###############################################################################################
@@ -128,7 +128,7 @@ namespace _50_Task
 
         public static void Print<T>(T message, ConsoleColor consoleColor = ConsoleColor.White)
         {
-            ConsoleColor defaultColor = Console.ForegroundColor;
+            Console.ForegroundColor = consoleColor;
             Print(message);
             Console.ResetColor();
         }
