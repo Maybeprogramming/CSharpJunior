@@ -21,7 +21,15 @@ namespace _50_Task
 
         internal void Work()
         {
-            Cell cell = new Cell(new Detail("двигатель"), 10);
+            #region For Test #########################################################################################
+
+            Cell cell = new Cell(new Detail(DetailType.Wheel), 10);
+            UserUtils.Print($"{cell}");
+            UserUtils.Print($"\n{cell.Detail}");
+
+            #endregion ###############################################################################################
+
+            Console.ReadKey();
         }
     }
 
@@ -36,7 +44,7 @@ namespace _50_Task
             DetailsData.GetNameByType(DetailType);
 
         public override string ToString() => 
-            $"{DetailType}";
+            $"{Name}";
     }
 
     public class Cell
@@ -58,7 +66,16 @@ namespace _50_Task
         {
             get => _amount;
             private set => _amount = Math.Clamp(value, 0, _maxCapacity);
-        }        
+        }
+        
+        public Detail GetDetail()
+        {
+            Amount--;
+            return new Detail(_detail.DetailType);
+        }
+
+        public override string ToString() =>
+            $"<{_detail.Name}> количество: <{Amount}>";
     }
 
     public enum DetailType
