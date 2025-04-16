@@ -14,12 +14,22 @@
     {
         public void Work()
         {
-            AnimalFactory animalFactory = new AnimalFactory();
-            List<Animal> animals = animalFactory.CreateAnimals(AnimalType.Rhinoceros, 10);
+            //AnimalFactory animalFactory = new AnimalFactory();
+            //List<Animal> animals = animalFactory.CreateAnimals(AnimalType.Rhinoceros, 10);
 
-            foreach (Animal animal in animals)
+            //foreach (Animal animal in animals)
+            //{
+            //    UserUtils.Print($"\n{animal.GetInfo()}");
+            //}
+
+            List<Aviary> aviaries = new List<Aviary>();
+            AviaryFactory aviaryFactory = new AviaryFactory();
+            aviaries = aviaryFactory.CreateAviaries();
+
+            foreach (Aviary aviary in aviaries)
             {
-                UserUtils.Print($"\n{animal.GetInfo()}");
+                aviary.ShowInfo();
+                UserUtils.Print($"\n {new string('#', 70)}");
             }
 
             Console.ReadKey();
@@ -37,6 +47,11 @@
 
         public void ShowInfo()
         {
+            UserUtils.Print($"\n");
+            UserUtils.Print($"\n{_animals.Count}");
+            UserUtils.Print($"\n{_animals.First().Name}");
+            _animals.First().MakeSound();
+
             //Что за вольер
             //Количество животных в вольере
             //Показать пол животных
@@ -48,13 +63,30 @@
     {
         public List<Aviary> CreateAviaries()
         {
+            List<Aviary> aviaries = new();
 
+            List<AnimalType> animalTypes = new() 
+            {
+                AnimalType.Bear,
+                AnimalType.Rhinoceros,
+                AnimalType.Tiger,
+                AnimalType.Antiloup
+            };
 
+            for (int i = 0; i < animalTypes.Count; i++)
+            {
+                aviaries.Add(CreateAviary(animalTypes[i]));
+            }
+
+            return aviaries;
         }
 
-        private Aviary Create(AnimalType animalType)
+        private Aviary CreateAviary(AnimalType animalType)
         {
-            return new Aviary(new List<Animal>());
+            AnimalFactory animalFactory = new();
+            List<Animal> animals = animalFactory.CreateAnimals(animalType, UserUtils.GenerateRandomNumber(5, 15));
+
+            return new Aviary(animals);
         }
     }
 
