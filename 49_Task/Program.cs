@@ -14,8 +14,7 @@
     {
         public void Work()
         {
-            List<Aviary> aviaries = new();
-            aviaries = new AviaryFactory().CreateAviaries();
+            List<Aviary> aviaries = new AviaryFactory().CreateAviaries();
             bool isWork = true;
             int userInput;
             int exitCommand = aviaries.Count + 1;
