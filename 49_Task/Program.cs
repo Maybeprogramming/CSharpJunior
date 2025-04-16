@@ -14,25 +14,52 @@
     {
         public void Work()
         {
-            //AnimalFactory animalFactory = new AnimalFactory();
-            //List<Animal> animals = animalFactory.CreateAnimals(AnimalType.Rhinoceros, 10);
+            List<Aviary> aviaries = new();
+            aviaries = new AviaryFactory().CreateAviaries();
+            bool isWork = true;
+            int userInput;
+            int exitCommand = aviaries.Count + 1;
 
-            //foreach (Animal animal in animals)
-            //{
-            //    UserUtils.Print($"\n{animal.GetInfo()}");
-            //}
-
-            List<Aviary> aviaries = new List<Aviary>();
-            AviaryFactory aviaryFactory = new AviaryFactory();
-            aviaries = aviaryFactory.CreateAviaries();
-
-            foreach (Aviary aviary in aviaries)
+            while (isWork)
             {
-                aviary.ShowInfo();
-                UserUtils.Print($"\n {new string('#', 70)}");
+                Console.Clear();
+                UserUtils.Print($"Добро пожаловать в зоопарк!");
+
+                ShowAviariesName(aviaries);
+
+                UserUtils.Print($"\n{exitCommand}. Для выхода из зоопарка");
+                UserUtils.Print($"\n\nВведите номер вальера, который хотите посетить: ", ConsoleColor.Green);
+
+                userInput = UserUtils.ReadInputNumber();
+
+                if (userInput > 0 && userInput <= aviaries.Count)
+                {
+                    aviaries[--userInput].ShowInfo();
+                }
+                else if (userInput == exitCommand)
+                {
+                    isWork = false;
+                }
+                else
+                {
+                    UserUtils.Print($"\nНет такой команды!!!", ConsoleColor.Red);
+                }
+
+                UserUtils.Print($"\nДля продолжения нажмите любую клавишу", ConsoleColor.Green);
+                Console.ReadKey();
             }
 
-            Console.ReadKey();
+            UserUtils.Print($"\n\nРабота программы завершена!", ConsoleColor.Green);
+        }
+
+        private void ShowAviariesName(List<Aviary> aviaries)
+        {
+            int index = 0;
+
+            UserUtils.Print($"\nСписок вальеров:", ConsoleColor.Green);
+
+            aviaries.ForEach((aviary) =>
+                UserUtils.Print($"\n{++index}. {aviary.Name}"));
         }
     }
 
@@ -40,22 +67,30 @@
     {
         private List<Animal> _animals;
 
-        public Aviary(List<Animal> animals)
-        {
+        public Aviary(List<Animal> animals) =>
             _animals = animals;
-        }
+
+        public string Name =>
+            $"Вальер с <{_animals.First().Name}>";
 
         public void ShowInfo()
         {
-            UserUtils.Print($"\n");
-            UserUtils.Print($"\n{_animals.Count}");
-            UserUtils.Print($"\n{_animals.First().Name}");
-            _animals.First().MakeSound();
+            UserUtils.Print($"\nИнформация:");
+            UserUtils.Print($"\n{Name}");
+            UserUtils.Print($"\nКоличество животных: {_animals.Count}");
 
-            //Что за вольер
-            //Количество животных в вольере
-            //Показать пол животных
-            //Какой звук издают
+            ShowAnimals();
+            _animals.First().MakeSound();
+        }
+
+        private void ShowAnimals()
+        {
+            int index = 0;
+
+            UserUtils.Print($"\nCписок животных:", ConsoleColor.Green);
+
+            _animals.ForEach((animal) =>
+                UserUtils.Print($"\n{++index}. {animal.GetInfo()}"));
         }
     }
 
@@ -65,7 +100,7 @@
         {
             List<Aviary> aviaries = new();
 
-            List<AnimalType> animalTypes = new() 
+            List<AnimalType> animalTypes = new()
             {
                 AnimalType.Bear,
                 AnimalType.Rhinoceros,
@@ -83,8 +118,7 @@
 
         private Aviary CreateAviary(AnimalType animalType)
         {
-            AnimalFactory animalFactory = new();
-            List<Animal> animals = animalFactory.CreateAnimals(animalType, UserUtils.GenerateRandomNumber(5, 15));
+            List<Animal> animals = new AnimalFactory().CreateAnimals(animalType, UserUtils.GenerateRandomNumber(5, 15));
 
             return new Aviary(animals);
         }
@@ -121,10 +155,15 @@
 
         private string GetRandomGender()
         {
-            List<string> genders = new() { "Самец", "Самка" };
-            int newGenderIndex = UserUtils.GenerateRandomNumber(0, genders.Count - 1);
+            List<string> genders = new()
+            {
+                "Самец",
+                "Самка"
+            };
 
-            return genders[newGenderIndex];
+            int randomGenderIndex = UserUtils.GenerateRandomNumber(0, genders.Count - 1);
+
+            return genders[randomGenderIndex];
         }
     }
 
@@ -147,50 +186,34 @@
 
     public class Bear : Animal
     {
-        public Bear(string name, string gender) : base(name, gender)
-        {
-        }
+        public Bear(string name, string gender) : base(name, gender) { }
 
-        public override void MakeSound()
-        {
-            UserUtils.Print($"");
-        }
+        public override void MakeSound() =>
+            UserUtils.Print($"\n<{Name}> издаёт пронзительный рёв!", ConsoleColor.DarkYellow);
     }
 
     public class Tiger : Animal
     {
-        public Tiger(string name, string gender) : base(name, gender)
-        {
-        }
+        public Tiger(string name, string gender) : base(name, gender) { }
 
-        public override void MakeSound()
-        {
-            UserUtils.Print($"");
-        }
+        public override void MakeSound() =>
+            UserUtils.Print($"\n<{Name}> рычит, Р-р-р-р-р!", ConsoleColor.DarkYellow);
     }
 
     public class Rhinoceros : Animal
     {
-        public Rhinoceros(string name, string gender) : base(name, gender)
-        {
-        }
+        public Rhinoceros(string name, string gender) : base(name, gender) { }
 
-        public override void MakeSound()
-        {
-            UserUtils.Print($"");
-        }
+        public override void MakeSound() =>
+            UserUtils.Print($"\n<{Name}> пыхтит, пыффф пыффф..!", ConsoleColor.DarkYellow);
     }
 
     public class Antiloup : Animal
     {
-        public Antiloup(string name, string gender) : base(name, gender)
-        {
-        }
+        public Antiloup(string name, string gender) : base(name, gender) { }
 
-        public override void MakeSound()
-        {
-            UserUtils.Print($"");
-        }
+        public override void MakeSound() =>
+            UserUtils.Print($"\n<{Name}> блеет, Мм-уу-мм-уу", ConsoleColor.DarkYellow);
     }
 
     public enum AnimalType
