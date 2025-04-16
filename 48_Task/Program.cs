@@ -186,10 +186,9 @@
 
         public static void Print<T>(T message, ConsoleColor consoleColor = ConsoleColor.White)
         {
-            ConsoleColor defaultColor = Console.ForegroundColor;
             Console.ForegroundColor = consoleColor;
             Print(message);
-            Console.ForegroundColor = defaultColor;
+            Console.ResetColor();
         }
     }
 }
