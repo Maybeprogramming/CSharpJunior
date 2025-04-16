@@ -179,7 +179,7 @@
 
         public abstract void MakeSound();
 
-        public virtual string GetInfo() =>
+        public string GetInfo() =>
             $"{Name}, гендер: <{Gender}>";
     }
 
