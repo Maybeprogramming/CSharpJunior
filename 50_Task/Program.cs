@@ -61,7 +61,7 @@
         public DetailType DetailType { get; }
 
         public string Name =>
-            DetailsData.GetNameByType(DetailType);
+            DetailsData.GetName(DetailType);
 
         public bool IsBroken { get; }
 
@@ -174,7 +174,7 @@
             {DetailType.Headlight, "Фара"}
         };
 
-        public static string GetNameByType(DetailType type)
+        public static string GetName(DetailType type)
         {
             s_detailNames.TryGetValue(type, out string name);
 
