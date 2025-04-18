@@ -43,6 +43,7 @@
                 UserUtils.Print($"\n{ServeCarCommand} - Обслужить автомобиль" +
                                 $"\n{ShowCarsQueueCommand} - Посмотреть очередь автомобилей" +
                                 $"\n{ShowWarhouseCommand} - Посмотреть складские запасы запчастей" +
+                                $"\n{ShowPriceListCommand} - Посмотреть прайслист на запчасти и работу" +
                                 $"\n{ExitCommand} - Закрыть автосервис");
                 UserUtils.Print($"\n\nВведите команду: ", ConsoleColor.DarkYellow);
 
@@ -75,7 +76,7 @@
         private void ShowPriceList()
         {
             _priceList.ShowPriceListDetails();
-            UserUtils.Print($"\n{new string ('-', 70)}");
+            UserUtils.Print($"\n{new string('-', 70)}");
             _priceList.ShowPriceListWork();
         }
 
@@ -90,6 +91,7 @@
             List<Detail> repairedDetails = new();
             int userInput;
             int totalCost = 0;
+            int penaltyForRefusal = 100;
 
             if (cars.Count == 0)
             {
@@ -119,17 +121,20 @@
                 userInput = UserUtils.ReadInputNumber();
 
                 if (userInput == refuseToRepairCommand)
-                {
+                {                    
                     isSurveCar = false;
-                    int penaltyForRefusal = 100;
+                    totalCost = 0;
 
                     if (isDuringRepair)
                     {
-
+                        totalCost = GetTotalCostByRefused(brokenDetails, repairedDetails);
+                        _balanceMoney -= totalCost;
+                        UserUtils.Print($"\nВы заплатили штраф за отказ в процессе ремонта машины - <{totalCost}>");
                     }
                     else
                     {
                         _balanceMoney -= penaltyForRefusal;
+                        UserUtils.Print($"\nВы заплатили фиксированный штраф за отказ ремонтировать машину - <{penaltyForRefusal}>");
                     }
                 }
                 else if (userInput == showWarehouseCommand)
@@ -158,13 +163,32 @@
                 Console.ReadKey();
             }
 
+            if (brokenDetails.Count == 0)
+            {
+                _balanceMoney += totalCost;
+                UserUtils.Print($"\nЗа успешный ремонт автомобиля вы получили <{totalCost}> $", ConsoleColor.DarkYellow);
+            }
+
             UserUtils.Print($"\nАвтомобиль <{car.GetInfo()}> выехал из сервиса", ConsoleColor.Green);
         }
 
-        private static List<Detail> GetBrokenDetails(Car car)
+        private int GetTotalCostByRefused(List<Detail> brokenDetails, List<Detail> repairedDetails) => 
+            CalculatelCost(brokenDetails) + CalculatelCost(repairedDetails);
+
+        private int CalculatelCost(List<Detail> details)
         {
-            return car.Details.Where(detail => detail.IsBroken).ToList();
+            int totalCost = 0;
+
+            foreach (Detail brokenDetail in details)
+            {
+                totalCost += _priceList.GetPriceDetail(brokenDetail.DetailType);
+            }
+
+            return totalCost;
         }
+
+        private static List<Detail> GetBrokenDetails(Car car) => 
+            car.Details.Where(detail => detail.IsBroken).ToList();
 
         private void ShowBrokenDetails(List<Detail> brokenDetails)
         {
@@ -190,23 +214,6 @@
             UserUtils.Print($"\nВ машине <{car.GetInfo()}> была заменена деталь <{brokenDetail.Name}> на новую");
             return true;
         }
-
-        private void RefuseToRepairCar(bool isDuringRepair)
-        {
-            int penaltyForRefusal = 100;
-            int penaltyForRefusalDuringRepair = 50;
-
-            if (isDuringRepair)
-            {
-                //заплатить штраф за каждую деталь
-                //Нужен список деталей и цен на них
-                _balanceMoney -= penaltyForRefusalDuringRepair;
-            }
-            else
-            {
-                _balanceMoney -= penaltyForRefusal;
-            }
-        }
     }
 
     public class PriceList
@@ -227,9 +234,6 @@
 
         public int GetPriceDetail(DetailType detailType) =>
             GetPrice(_detailsPrice, detailType);
-
-        public int GetPriceWork(DetailType detailType) =>
-            GetPrice(_workPrice, detailType);
 
         public int GetTotalCost(DetailType detailType) =>
              GetPrice(_detailsPrice, detailType) + GetPrice(_workPrice, detailType);
@@ -380,7 +384,6 @@
             {
                 detail = new Detail(_detail.DetailType);
                 --Amount;
-
                 return true;
             }
             else
