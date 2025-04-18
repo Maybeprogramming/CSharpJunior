@@ -68,10 +68,56 @@
 
         private void ServeCars(Queue<Car> cars)
         {
-            int penaltyForRefusal = 100;
-            int penaltyForRefusalDuringRepair = 100;
+            const string DoRepairCommand = "1";
+            const string RefuseToRepair = "2";
+
+            bool isSurve = true;
+            bool isDuringRepair = false;
+
+            while (isSurve && cars.Count > 0)
+            {
+                Car car = cars.Dequeue();
+                IEnumerable<Detail> brokenDetail = car.Details.Where(detail => detail.IsBroken);
+
+                Console.Clear();
+                UserUtils.Print($"Автомобиль <{car.GetInfo()}> заехал на обслуживание", ConsoleColor.DarkYellow);
+                UserUtils.Print(brokenDetail, "\nСписок сломанных деталей в автомобиле: ");
+
+                UserUtils.Print("\n\nКоманды: ", ConsoleColor.Green);
+                UserUtils.Print($"\n{DoRepairCommand} - Отремонтировать одну деталь" +
+                                $"\n{RefuseToRepair} - Отказать в ремонте");
+
+                switch (Console.ReadLine())
+                {
+                    case DoRepairCommand:
+                        break;
+                    case RefuseToRepair:
+                        RefuseToRepairCar(isDuringRepair, ref isSurve);
+                        break;
+                    default:
+                        break;
+                }
+            }
 
             UserUtils.Print($"\nОбслуживание авто когда нибудь");
+        }
+
+        private void RefuseToRepairCar(bool isDuringRepair, ref bool isServe)
+        {
+            int penaltyForRefusal = 100;
+            int penaltyForRefusalDuringRepair = 50;
+            isServe = false;
+
+            if (isDuringRepair)
+            {
+                //заплатить штраф за каждую деталь
+                //Нужен список деталей и цен на них
+                _balanceMoney -= penaltyForRefusalDuringRepair;
+            }
+            else
+            {
+                _balanceMoney -= penaltyForRefusal;
+            }
         }
     }
 
@@ -103,7 +149,7 @@
         }
     }
 
-    public class Detail
+    public class Detail: Iinfoable
     {
         public Detail(DetailType detailType, bool isBroken = false)
         {
@@ -122,7 +168,7 @@
             IsBroken == true ? "Сломана" : "Исправна";
 
         public string GetInfo() =>
-            $"{Name}";
+            $"{Name} - {IsBrokenStatus}";
     }
 
     public class CellFactory
@@ -298,17 +344,6 @@
         {
             _details.Remove(GetReplaceableDetail(newDetail));
             _details.Add(newDetail);
-        }
-
-        public void ShowInfo()
-        {
-            int index = 0;
-
-            UserUtils.Print($"\nИнформация об машине:" +
-                            $"\nМодель <{Name}>");
-
-            _details.ForEach((detail) =>
-                UserUtils.Print($"\n{++index}. Деталь <{detail.Name}> - {detail.IsBrokenStatus}"));
         }
 
         public string GetInfo() =>
