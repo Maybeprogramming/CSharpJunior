@@ -1,4 +1,6 @@
-﻿namespace _50_Task
+﻿using System.Data.SqlTypes;
+
+namespace _50_Task
 {
     public class Programm
     {
@@ -13,20 +15,21 @@
     public class CarService
     {
         private int _balanceMoney;
+        private Warehouse _warehouse;
 
         public CarService()
         {
             _balanceMoney = 0;
+            _warehouse = new Warehouse();
         }
 
-        internal void Work()
+        public void Work()
         {
             const string ServeCarCommand = "1";
             const string ShowCarsQueueCommand = "2";
             const string ShowWarhouseCommand = "3";
             const string ExitCommand = "4";
 
-            Warehouse warehouse = new Warehouse();
             Queue<Car> cars = new CarFactory().CreateCarsQueue();
             bool isWork = true;
 
@@ -51,7 +54,7 @@
                         UserUtils.Print(cars, "\nОчередь автомобилей: ");
                         break;
                     case ShowWarhouseCommand:
-                        warehouse.ShowCells();
+                        _warehouse.ShowCells();
                         break;
                     case ExitCommand:
                         isWork = false;
@@ -67,6 +70,9 @@
 
         private void ServeCars(Queue<Car> cars)
         {
+            int penaltyForRefusal = 100;
+            int penaltyForRefusalDuringRepair = 100;
+
             UserUtils.Print($"\nОбслуживание авто когда нибудь");
         }
     }
@@ -89,13 +95,11 @@
             if (cell.TryGetDetail(out detail))
             {
                 UserUtils.Print($"\nСо склада взята запчасть: {detail.GetInfo()}", ConsoleColor.Green);
-
                 return detail;
             }
             else
             {
                 UserUtils.Print($"\nНа складе нет нужной запчасти: {DetailsData.GetName(detailType)}", ConsoleColor.Red);
-
                 return detail;
             }
         }
@@ -147,7 +151,7 @@
         }
     }
 
-    public class Cell: Iinfoable
+    public class Cell : Iinfoable
     {
         private Detail _detail;
         private int _amount;
@@ -318,16 +322,8 @@
 
     public enum DetailType
     {
-        OilFilter,
-        SparkPlugs,
-        AirFilter,
-        Battery,
-        Generator,
-        TimingBelt,
-        Wheel,
-        BrakePads,
-        Antifreeze,
-        Headlight
+        OilFilter, SparkPlugs, AirFilter, Battery, Generator,
+        TimingBelt, Wheel, BrakePads, Antifreeze, Headlight
     }
 
     public interface Iinfoable
@@ -354,7 +350,6 @@
         public static string GetName(DetailType type)
         {
             s_detailsName.TryGetValue(type, out string name);
-
             return name;
         }
 
