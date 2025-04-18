@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace _50_Task
+﻿namespace _50_Task
 {
     public class Programm
     {
@@ -35,7 +33,9 @@ namespace _50_Task
             while (isWork)
             {
                 Console.Clear();
-                UserUtils.Print($"Команды:");
+                UserUtils.Print($"Баланс автосервиса: <{_balanceMoney}> $", ConsoleColor.DarkYellow);
+
+                UserUtils.Print($"\n\nКоманды:");
                 UserUtils.Print($"\n{ServeCarCommand} - Обслужить автомобиль" +
                                 $"\n{ShowCarsQueueCommand} - Посмотреть очередь автомобилей" +
                                 $"\n{ShowWarhouseCommand} - Посмотреть складские запасы запчастей" +
@@ -48,7 +48,7 @@ namespace _50_Task
                         ServeCars(cars);
                         break;
                     case ShowCarsQueueCommand:
-                        ShowCarsQueue(cars);
+                        UserUtils.Print(cars, "\nОчередь автомобилей: ");
                         break;
                     case ShowWarhouseCommand:
                         warehouse.ShowCells();
@@ -69,17 +69,6 @@ namespace _50_Task
         {
             UserUtils.Print($"\nОбслуживание авто когда нибудь");
         }
-
-        private void ShowCarsQueue(IEnumerable<Car> cars)
-        {
-            int index = 0;
-            UserUtils.Print($"Очередь автомобилей:", ConsoleColor.Green);
-
-            foreach (Car car in cars) 
-            {
-                UserUtils.Print($"\n{++index}. <{car.Name}>", ConsoleColor.Green);
-            }
-        }
     }
 
     public class Warehouse
@@ -89,16 +78,8 @@ namespace _50_Task
         public Warehouse() =>
             _cells = new CellFactory().GetCells();
 
-        public void ShowCells()
-        {
-            int index = 0;
-            UserUtils.Print($"\nСкладские запасы:", ConsoleColor.Green);
-
-            foreach (Cell cell in _cells)
-            {
-                UserUtils.Print($"\n{++index}. {cell.GetInfo()}");
-            }
-        }
+        public void ShowCells() =>
+            UserUtils.Print(_cells, "\nСкладские запасы:");
 
         public Detail TryGetDetail(DetailType detailType)
         {
@@ -166,7 +147,7 @@ namespace _50_Task
         }
     }
 
-    public class Cell
+    public class Cell: Iinfoable
     {
         private Detail _detail;
         private int _amount;
@@ -297,7 +278,7 @@ namespace _50_Task
         }
     }
 
-    public class Car
+    public class Car : Iinfoable
     {
         private List<Detail> _details;
 
@@ -328,6 +309,9 @@ namespace _50_Task
                 UserUtils.Print($"\n{++index}. Деталь <{detail.Name}> - {detail.IsBrokenStatus}"));
         }
 
+        public string GetInfo() =>
+            $"{Name}";
+
         private Detail GetReplaceableDetail(Detail newDetail) =>
             _details.Where(detail => detail.DetailType == newDetail.DetailType).First();
     }
@@ -344,6 +328,11 @@ namespace _50_Task
         BrakePads,
         Antifreeze,
         Headlight
+    }
+
+    public interface Iinfoable
+    {
+        string GetInfo();
     }
 
     public static class DetailsData
@@ -397,6 +386,17 @@ namespace _50_Task
             Console.ForegroundColor = consoleColor;
             Print(message);
             Console.ResetColor();
+        }
+
+        public static void Print<T>(IEnumerable<T> items, string message) where T : Iinfoable
+        {
+            int index = 0;
+            Print($"{message}", ConsoleColor.Green);
+
+            foreach (var item in items)
+            {
+                Print($"\n{++index}. {item.GetInfo()}");
+            }
         }
 
         public static int ReadInputNumber()
