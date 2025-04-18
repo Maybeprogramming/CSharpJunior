@@ -251,7 +251,6 @@
                 int price = priceList.Values.ToArray()[i];
                 UserUtils.Print($"\n<{detailName}> - цена <{price}> $");
             }
-
         }
 
         private Dictionary<DetailType, int> FillPriceList(int minPrice, int maxPrice)
