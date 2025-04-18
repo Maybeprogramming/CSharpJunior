@@ -111,7 +111,7 @@
                 }
             }
 
-            UserUtils.Print($"\nОбслуживание авто когда нибудь");
+            UserUtils.Print($"\nАвтомобиль <{car.GetInfo()}> выехал из сервиса", ConsoleColor.Green);
         }
 
         private void RepairCar(Car car, ref bool isSurve)
