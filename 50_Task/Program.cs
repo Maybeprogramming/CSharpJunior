@@ -73,12 +73,20 @@
 
             bool isSurve = true;
             bool isDuringRepair = false;
+            Car car;
+            List<Detail> brokenDetail;
 
-            while (isSurve && cars.Count > 0)
+            if (cars.Count == 0)
             {
-                Car car = cars.Dequeue();
-                IEnumerable<Detail> brokenDetail = car.Details.Where(detail => detail.IsBroken);
+                UserUtils.Print($"\n\nОчередь пуста!", ConsoleColor.Red);
+                return;
+            }
 
+            car = cars.Dequeue();
+            brokenDetail = car.Details.Where(detail => detail.IsBroken).ToList();
+
+            while (isSurve)
+            {
                 Console.Clear();
                 UserUtils.Print($"Автомобиль <{car.GetInfo()}> заехал на обслуживание", ConsoleColor.DarkYellow);
                 UserUtils.Print(brokenDetail, "\nСписок сломанных деталей в автомобиле: ");
@@ -87,19 +95,28 @@
                 UserUtils.Print($"\n{DoRepairCommand} - Отремонтировать одну деталь" +
                                 $"\n{RefuseToRepair} - Отказать в ремонте");
 
+                UserUtils.Print($"\n\nВведите команду: ", ConsoleColor.Green);
+
                 switch (Console.ReadLine())
                 {
                     case DoRepairCommand:
+                        RepairCar(car, ref isSurve);
                         break;
                     case RefuseToRepair:
                         RefuseToRepairCar(isDuringRepair, ref isSurve);
                         break;
                     default:
+                        UserUtils.Print($"\nНет такой команды!!");
                         break;
                 }
             }
 
             UserUtils.Print($"\nОбслуживание авто когда нибудь");
+        }
+
+        private void RepairCar(Car car, ref bool isSurve)
+        {
+            isSurve = false;
         }
 
         private void RefuseToRepairCar(bool isDuringRepair, ref bool isServe)
@@ -149,7 +166,7 @@
         }
     }
 
-    public class Detail: Iinfoable
+    public class Detail : Iinfoable
     {
         public Detail(DetailType detailType, bool isBroken = false)
         {
