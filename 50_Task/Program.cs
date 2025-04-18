@@ -22,6 +22,7 @@ namespace _50_Task
         {
             #region For Test #########################################################################################
 
+            //########################## TEST CarFactory
             //Queue<Car> cars = new CarFactory().CreateCarsQueue(10);
 
             //foreach (Car car in cars)
@@ -29,19 +30,31 @@ namespace _50_Task
             //    car.ShowInfo();
             //}
 
-            Warehouse warehouse = new Warehouse();
-            warehouse.ShowCells();
 
-            warehouse.TryGetDetail(DetailType.Wheel);
-            warehouse.TryGetDetail(DetailType.Wheel);
-            warehouse.TryGetDetail(DetailType.Wheel);
-            warehouse.TryGetDetail(DetailType.Wheel);
-            warehouse.TryGetDetail(DetailType.Wheel);
-            warehouse.TryGetDetail(DetailType.Wheel);
-            warehouse.TryGetDetail(DetailType.Wheel);
-            warehouse.TryGetDetail(DetailType.Wheel);
+            //#######################  TEST Warehouse
+            //while (true)
+            //{
+            //    Console.Clear();
+            //    Warehouse warehouse = new Warehouse();
+            //    warehouse.ShowCells();
 
-            warehouse.ShowCells();
+            //    Detail detail = warehouse.TryGetDetail(DetailType.Wheel);
+
+            //    detail = warehouse.TryGetDetail(DetailType.Wheel);
+            //    detail = warehouse.TryGetDetail(DetailType.Wheel);
+            //    detail = warehouse.TryGetDetail(DetailType.Wheel);
+            //    detail = warehouse.TryGetDetail(DetailType.Wheel);
+            //    detail = warehouse.TryGetDetail(DetailType.Wheel);
+            //    detail = warehouse.TryGetDetail(DetailType.Wheel);
+            //    detail = warehouse.TryGetDetail(DetailType.Wheel);
+            //    detail = warehouse.TryGetDetail(DetailType.Wheel);
+            //    detail = warehouse.TryGetDetail(DetailType.Wheel);
+
+            //    warehouse.ShowCells();
+
+            //    Console.ReadKey();
+            //}
+
 
             #endregion ###############################################################################################
 
@@ -141,9 +154,9 @@ namespace _50_Task
 
         public Cell(Detail detail, int amount)
         {
-            _detail = detail;
-            _amount = amount;
             _maxCapacity = UserUtils.GenerateRandomNumber(0, 10);
+            _detail = detail;
+            Amount = amount;
         }
 
         public Detail Detail => _detail;
@@ -156,10 +169,10 @@ namespace _50_Task
 
         public bool TryGetDetail(out Detail detail)
         {
-            if (_amount > 0)
+            if (Amount > 0)
             {
                 detail = new Detail(_detail.DetailType);
-                Amount--;
+                --Amount;
 
                 return true;
             }
