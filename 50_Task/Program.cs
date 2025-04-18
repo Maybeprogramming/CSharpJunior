@@ -14,11 +14,13 @@
     {
         private int _balanceMoney;
         private Warehouse _warehouse;
+        private PriceList _priceList;
 
         public CarService()
         {
             _balanceMoney = 0;
             _warehouse = new Warehouse();
+            _priceList = new PriceList();
         }
 
         public void Work()
@@ -26,7 +28,8 @@
             const string ServeCarCommand = "1";
             const string ShowCarsQueueCommand = "2";
             const string ShowWarhouseCommand = "3";
-            const string ExitCommand = "4";
+            const string ShowPriceListCommand = "4";
+            const string ExitCommand = "5";
 
             Queue<Car> cars = new CarFactory().CreateCarsQueue();
             bool isWork = true;
@@ -54,6 +57,9 @@
                     case ShowWarhouseCommand:
                         _warehouse.ShowCells();
                         break;
+                    case ShowPriceListCommand:
+                        ShowPriceList();
+                        break;
                     case ExitCommand:
                         isWork = false;
                         break;
@@ -66,14 +72,24 @@
             }
         }
 
+        private void ShowPriceList()
+        {
+            _priceList.ShowPriceListDetails();
+            UserUtils.Print($"\n{new string ('-', 70)}");
+            _priceList.ShowPriceListWork();
+        }
+
         private void ServeCars(Queue<Car> cars)
         {
             int refuseToRepairCommand;
+            int showWarehouseCommand;
             bool isSurveCar = true;
             bool isDuringRepair = false;
             Car car;
-            List<Detail> brokenDetail;
+            List<Detail> brokenDetails;
+            List<Detail> repairedDetails = new();
             int userInput;
+            int totalCost = 0;
 
             if (cars.Count == 0)
             {
@@ -82,24 +98,21 @@
             }
 
             car = cars.Dequeue();
-            brokenDetail = car.Details.Where(detail => detail.IsBroken).ToList();
-            refuseToRepairCommand = brokenDetail.Count() + 1;
+            brokenDetails = GetBrokenDetails(car);
 
-            while (isSurveCar && brokenDetail.Count != 0)
+            while (isSurveCar && brokenDetails.Count != 0)
             {
-                int index = 0;
+                showWarehouseCommand = brokenDetails.Count() + 1;
+                refuseToRepairCommand = showWarehouseCommand + 1;
 
                 Console.Clear();
                 UserUtils.Print($"Автомобиль <{car.GetInfo()}> заехал на обслуживание", ConsoleColor.DarkYellow);
-                UserUtils.Print(brokenDetail, "\nСписок сломанных деталей в автомобиле: ");
-
+                UserUtils.Print(brokenDetails, "\nСписок сломанных деталей в автомобиле: ");
                 UserUtils.Print("\n\nКоманды: ", ConsoleColor.Green);
 
-                foreach (Detail detail in brokenDetail)
-                {
-                    UserUtils.Print($"\n{++index}. Отремонтировать <{detail.Name}>");
-                }
+                ShowBrokenDetails(brokenDetails);
 
+                UserUtils.Print($"\n{showWarehouseCommand}. Посмотреть запасы деталей на складе", ConsoleColor.DarkYellow);
                 UserUtils.Print($"\n{refuseToRepairCommand}. Отказать в ремонте", ConsoleColor.Red);
                 UserUtils.Print($"\n\nВведите команду: ", ConsoleColor.Green);
 
@@ -107,18 +120,40 @@
 
                 if (userInput == refuseToRepairCommand)
                 {
-                    RefuseToRepairCar(isDuringRepair);
                     isSurveCar = false;
+                    int penaltyForRefusal = 100;
+
+                    if (isDuringRepair)
+                    {
+
+                    }
+                    else
+                    {
+                        _balanceMoney -= penaltyForRefusal;
+                    }
                 }
-                else if (userInput > 0 && userInput <= brokenDetail.Count)
+                else if (userInput == showWarehouseCommand)
                 {
-                    RepairCar(car, brokenDetail[--userInput]);
+                    _warehouse.ShowCells();
+                }
+                else if (userInput > 0 && userInput <= brokenDetails.Count)
+                {
+                    Detail brokenDetail = brokenDetails[--userInput];
+
+                    if (TryRepairCar(car, brokenDetail))
+                    {
+                        totalCost += _priceList.GetTotalCost(brokenDetail.DetailType);
+                        isDuringRepair = true;
+                        brokenDetails.Remove(brokenDetail);
+                        repairedDetails.Add(brokenDetail);
+                    }
                 }
                 else
                 {
                     UserUtils.Print($"\nНет такой команды!!");
                 }
 
+                brokenDetails = GetBrokenDetails(car);
                 UserUtils.Print($"\nДля продолжения нажмите любую клавишу", ConsoleColor.Green);
                 Console.ReadKey();
             }
@@ -126,9 +161,34 @@
             UserUtils.Print($"\nАвтомобиль <{car.GetInfo()}> выехал из сервиса", ConsoleColor.Green);
         }
 
-        private void RepairCar(Car car, Detail detail)
+        private static List<Detail> GetBrokenDetails(Car car)
         {
+            return car.Details.Where(detail => detail.IsBroken).ToList();
+        }
 
+        private void ShowBrokenDetails(List<Detail> brokenDetails)
+        {
+            int index = 0;
+
+            foreach (Detail detail in brokenDetails)
+            {
+                UserUtils.Print($"\n{++index}. Отремонтировать <{detail.Name}>");
+            }
+        }
+
+        private bool TryRepairCar(Car car, Detail brokenDetail)
+        {
+            Detail newDetail = _warehouse.TryGetDetail(brokenDetail.DetailType);
+
+            if (newDetail == null)
+            {
+                UserUtils.Print($"\n<{brokenDetail.Name}> - заменить не получится, её нет в наличии", ConsoleColor.Red);
+                return false;
+            }
+
+            car.Repair(newDetail);
+            UserUtils.Print($"\nВ машине <{car.GetInfo()}> была заменена деталь <{brokenDetail.Name}> на новую");
+            return true;
         }
 
         private void RefuseToRepairCar(bool isDuringRepair)
@@ -146,6 +206,77 @@
             {
                 _balanceMoney -= penaltyForRefusal;
             }
+        }
+    }
+
+    public class PriceList
+    {
+        private Dictionary<DetailType, int> _detailsPrice;
+        private Dictionary<DetailType, int> _workPrice;
+
+        public PriceList()
+        {
+            int minPriceDetail = 100;
+            int maxPriceDetail = 300;
+            int minPriceWork = 200;
+            int maxPriceWork = 400;
+
+            _detailsPrice = FillPriceList(minPriceDetail, maxPriceDetail);
+            _workPrice = FillPriceList(minPriceWork, maxPriceWork);
+        }
+
+        public int GetPriceDetail(DetailType detailType) =>
+            GetPrice(_detailsPrice, detailType);
+
+        public int GetPriceWork(DetailType detailType) =>
+            GetPrice(_workPrice, detailType);
+
+        public int GetTotalCost(DetailType detailType) =>
+             GetPrice(_detailsPrice, detailType) + GetPrice(_workPrice, detailType);
+
+        public void ShowPriceListDetails() =>
+            ShowPrice(_detailsPrice, "\nПрайслист на запчасти: ");
+
+        public void ShowPriceListWork() =>
+            ShowPrice(_workPrice, "\nПрайслист за работу: ");
+
+        public void ShowPrice(Dictionary<DetailType, int> priceList, string message)
+        {
+            int index = 0;
+            UserUtils.Print($"{message}", ConsoleColor.Green);
+
+            for (int i = 0; i < priceList.Count; i++)
+            {
+                string detailName = DetailsData.GetName(priceList.Keys.ToArray()[i]);
+                int price = priceList.Values.ToArray()[i];
+                UserUtils.Print($"\n<{detailName}> - цена <{price}> $");
+            }
+
+        }
+
+        private Dictionary<DetailType, int> FillPriceList(int minPrice, int maxPrice)
+        {
+            List<DetailType> detailTypes = DetailsData.GetDetailsType();
+            Dictionary<DetailType, int> priceList = new();
+
+            for (int i = 0; i < detailTypes.Count; i++)
+            {
+                priceList.Add(detailTypes[i], UserUtils.GenerateRandomNumber(minPrice, maxPrice));
+            }
+
+            return priceList;
+        }
+
+        private int GetPrice(Dictionary<DetailType, int> priceList, DetailType detailType)
+        {
+            int priceValue = 0;
+
+            if (priceList.TryGetValue(detailType, out priceValue))
+            {
+                return priceValue;
+            }
+
+            return priceValue;
         }
     }
 
