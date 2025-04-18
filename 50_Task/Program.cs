@@ -1,4 +1,6 @@
-﻿namespace _50_Task
+﻿using System.Collections.Generic;
+
+namespace _50_Task
 {
     public class Programm
     {
@@ -27,6 +29,8 @@
                 car.ShowInfo();
             }
 
+            new Warehouse().ShowCells();
+
             #endregion ###############################################################################################
 
             Console.ReadKey();
@@ -35,7 +39,23 @@
 
     public class Warehouse
     {
-        //Склад деталей
+        private List<Cell> _cells;
+
+        public Warehouse()
+        {
+            _cells = new CellFactory().GetCells();
+        }
+
+        public void ShowCells()
+        {
+            int index = 0;
+            UserUtils.Print($"\nСкладские запасы:", ConsoleColor.Green);
+
+            foreach (Cell cell in _cells)
+            {
+                UserUtils.Print($"\n{++index}. {cell.GetInfo()}");
+            }
+        }
     }
 
     public class Detail
@@ -56,8 +76,32 @@
         public string IsBrokenStatus =>
             IsBroken == true ? "Сломана" : "Исправна";
 
-        public override string ToString() =>
+        public string GetInfo() =>
             $"{Name}";
+    }
+
+    public class CellFactory
+    {
+        public List<Cell> GetCells()
+        {
+            List<Cell> cells = new();
+            List<Detail> details = new DetailFactory().GetDetails();
+
+            for (int i = 0; i < details.Count; i++)
+            {
+                cells.Add(CreatrCell(details[i]));
+            }
+
+            return cells;
+        }
+
+        private Cell CreatrCell(Detail detail)
+        {
+            int maxAmount = 10;
+            int randomDetailAmount = UserUtils.GenerateRandomNumber(0, maxAmount);
+
+            return new Cell(detail, randomDetailAmount);
+        }
     }
 
     public class Cell
@@ -89,7 +133,7 @@
             return new Detail(_detail.DetailType, isBroken);
         }
 
-        public override string ToString() =>
+        public string GetInfo() =>
             $"<{_detail.Name}>, количество: <{Amount}>";
     }
 
@@ -134,16 +178,16 @@
         public List<Detail> CreateDetailsWithBroken(int brokenDetailCount = 1)
         {
             List<DetailType> detailsType = DetailsData.GetDetailsType();
-            List<DetailType> brokenDetailTypes = GetBrokenDetailTypes(brokenDetailCount, detailsType);
+            List<DetailType> brokenDetailTypes = GetBrokenDetailsTypes(brokenDetailCount, detailsType);
             List<Detail> details = new();
-            bool isDetailBroken;            
+            bool isDetailBroken;
 
             for (int i = 0; i < detailsType.Count; i++)
             {
                 if (brokenDetailTypes.Contains(detailsType[i]))
                 {
                     isDetailBroken = true;
-                    details.Add(new Detail(detailsType[i], true));
+                    details.Add(new Detail(detailsType[i], isDetailBroken));
                 }
                 else
                 {
@@ -154,18 +198,29 @@
 
             return details;
         }
-
-        private List<DetailType> GetBrokenDetailTypes(int brokenDetailCount, List<DetailType> detailsType)
+        public List<Detail> GetDetails()
         {
-            List<DetailType> brokenDetailTypes = new();
+            List<Detail> details = new();
+
+            for (int i = 0; i < DetailsData.GetDetailsType().Count; i++)
+            {
+                details.Add(new Detail(DetailsData.GetDetailsType()[i]));
+            }
+
+            return details;
+        }
+
+        private List<DetailType> GetBrokenDetailsTypes(int brokenDetailCount, List<DetailType> detailsTypes)
+        {
+            List<DetailType> brokenDetailsTypes = new();
 
             for (int i = 0; i < brokenDetailCount; i++)
             {
-                DetailType randomDetailType = detailsType[UserUtils.GenerateRandomNumber(0, detailsType.Count - 1)];
-                brokenDetailTypes.Add(randomDetailType);
+                DetailType randomDetailType = detailsTypes[UserUtils.GenerateRandomNumber(0, detailsTypes.Count - 1)];
+                brokenDetailsTypes.Add(randomDetailType);
             }
 
-            return brokenDetailTypes;
+            return brokenDetailsTypes;
         }
     }
 
