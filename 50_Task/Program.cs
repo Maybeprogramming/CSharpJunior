@@ -14,51 +14,71 @@ namespace _50_Task
 
     public class CarService
     {
+        private int _balanceMoney;
+
         public CarService()
         {
+            _balanceMoney = 0;
         }
 
         internal void Work()
         {
-            #region For Test #########################################################################################
+            const string ServeCarCommand = "1";
+            const string ShowCarsQueueCommand = "2";
+            const string ShowWarhouseCommand = "3";
+            const string ExitCommand = "4";
 
-            //########################## TEST CarFactory
-            //Queue<Car> cars = new CarFactory().CreateCarsQueue(10);
+            Warehouse warehouse = new Warehouse();
+            Queue<Car> cars = new CarFactory().CreateCarsQueue();
+            bool isWork = true;
 
-            //foreach (Car car in cars)
-            //{
-            //    car.ShowInfo();
-            //}
+            while (isWork)
+            {
+                Console.Clear();
+                UserUtils.Print($"Команды:");
+                UserUtils.Print($"\n{ServeCarCommand} - Обслужить автомобиль" +
+                                $"\n{ShowCarsQueueCommand} - Посмотреть очередь автомобилей" +
+                                $"\n{ShowWarhouseCommand} - Посмотреть складские запасы запчастей" +
+                                $"\n{ExitCommand} - Закрыть автосервис");
+                UserUtils.Print($"\n\nВведите команду: ", ConsoleColor.DarkYellow);
 
+                switch (Console.ReadLine())
+                {
+                    case ServeCarCommand:
+                        ServeCars(cars);
+                        break;
+                    case ShowCarsQueueCommand:
+                        ShowCarsQueue(cars);
+                        break;
+                    case ShowWarhouseCommand:
+                        warehouse.ShowCells();
+                        break;
+                    case ExitCommand:
+                        isWork = false;
+                        break;
+                    default:
+                        UserUtils.Print($"Нет такой команды!", ConsoleColor.Red);
+                        break;
+                }
 
-            //#######################  TEST Warehouse
-            //while (true)
-            //{
-            //    Console.Clear();
-            //    Warehouse warehouse = new Warehouse();
-            //    warehouse.ShowCells();
+                Console.ReadKey();
+            }
+        }
 
-            //    Detail detail = warehouse.TryGetDetail(DetailType.Wheel);
+        private void ServeCars(Queue<Car> cars)
+        {
+            UserUtils.Print($"\nОбслуживание авто когда нибудь");
+        }
 
-            //    detail = warehouse.TryGetDetail(DetailType.Wheel);
-            //    detail = warehouse.TryGetDetail(DetailType.Wheel);
-            //    detail = warehouse.TryGetDetail(DetailType.Wheel);
-            //    detail = warehouse.TryGetDetail(DetailType.Wheel);
-            //    detail = warehouse.TryGetDetail(DetailType.Wheel);
-            //    detail = warehouse.TryGetDetail(DetailType.Wheel);
-            //    detail = warehouse.TryGetDetail(DetailType.Wheel);
-            //    detail = warehouse.TryGetDetail(DetailType.Wheel);
-            //    detail = warehouse.TryGetDetail(DetailType.Wheel);
+        private void ShowCarsQueue(IEnumerable<Car> cars)
+        {
+            int index = 0;
+            UserUtils.Print($"Очередь автомобилей:", ConsoleColor.Green);
 
-            //    warehouse.ShowCells();
-
-            //    Console.ReadKey();
-            //}
-
-
-            #endregion ###############################################################################################
-
-            Console.ReadKey();
+            foreach (Car car in cars) 
+            {
+                UserUtils.Print($"\n{++index}. <{car.Name}>", ConsoleColor.Green);
+            }
         }
     }
 
@@ -189,11 +209,14 @@ namespace _50_Task
 
     public class CarFactory
     {
-        public Queue<Car> CreateCarsQueue(int carCount)
+        public Queue<Car> CreateCarsQueue()
         {
+            int minCarCount = 5;
+            int maxCarCount = 10;
+            int randomCarCount = UserUtils.GenerateRandomNumber(minCarCount, maxCarCount);
             Queue<Car> cars = new();
 
-            for (int i = 0; i < carCount; i++)
+            for (int i = 0; i < randomCarCount; i++)
             {
                 cars.Enqueue(CreateCar());
             }
