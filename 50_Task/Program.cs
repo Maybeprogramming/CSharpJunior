@@ -22,14 +22,26 @@ namespace _50_Task
         {
             #region For Test #########################################################################################
 
-            Queue<Car> cars = new CarFactory().CreateCarsQueue(10);
+            //Queue<Car> cars = new CarFactory().CreateCarsQueue(10);
 
-            foreach (Car car in cars)
-            {
-                car.ShowInfo();
-            }
+            //foreach (Car car in cars)
+            //{
+            //    car.ShowInfo();
+            //}
 
-            new Warehouse().ShowCells();
+            Warehouse warehouse = new Warehouse();
+            warehouse.ShowCells();
+
+            warehouse.TryGetDetail(DetailType.Wheel);
+            warehouse.TryGetDetail(DetailType.Wheel);
+            warehouse.TryGetDetail(DetailType.Wheel);
+            warehouse.TryGetDetail(DetailType.Wheel);
+            warehouse.TryGetDetail(DetailType.Wheel);
+            warehouse.TryGetDetail(DetailType.Wheel);
+            warehouse.TryGetDetail(DetailType.Wheel);
+            warehouse.TryGetDetail(DetailType.Wheel);
+
+            warehouse.ShowCells();
 
             #endregion ###############################################################################################
 
@@ -41,10 +53,8 @@ namespace _50_Task
     {
         private List<Cell> _cells;
 
-        public Warehouse()
-        {
+        public Warehouse() =>
             _cells = new CellFactory().GetCells();
-        }
 
         public void ShowCells()
         {
@@ -54,6 +64,25 @@ namespace _50_Task
             foreach (Cell cell in _cells)
             {
                 UserUtils.Print($"\n{++index}. {cell.GetInfo()}");
+            }
+        }
+
+        public Detail TryGetDetail(DetailType detailType)
+        {
+            Cell cell = _cells.Where(cell => cell.Detail.DetailType == detailType).First();
+            Detail detail = null;
+
+            if (cell.TryGetDetail(out detail))
+            {
+                UserUtils.Print($"\nСо склада взята запчасть: {detail.GetInfo()}", ConsoleColor.Green);
+
+                return detail;
+            }
+            else
+            {
+                UserUtils.Print($"\nНа складе нет нужной запчасти: {DetailsData.GetName(detailType)}", ConsoleColor.Red);
+
+                return detail;
             }
         }
     }
@@ -125,12 +154,20 @@ namespace _50_Task
             private set => _amount = Math.Clamp(value, 0, _maxCapacity);
         }
 
-        public Detail GetDetail()
+        public bool TryGetDetail(out Detail detail)
         {
-            bool isBroken = false;
-            Amount--;
+            if (_amount > 0)
+            {
+                detail = new Detail(_detail.DetailType);
+                Amount--;
 
-            return new Detail(_detail.DetailType, isBroken);
+                return true;
+            }
+            else
+            {
+                detail = null;
+                return false;
+            }
         }
 
         public string GetInfo() =>
