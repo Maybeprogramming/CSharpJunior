@@ -1,6 +1,4 @@
-﻿using System.Data.SqlTypes;
-
-namespace _50_Task
+﻿namespace _50_Task
 {
     public class Programm
     {
