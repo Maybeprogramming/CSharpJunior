@@ -363,6 +363,13 @@
         public static int GenerateRandomNumber(int minNumber, int maxNumber) =>
             s_random.Next(minNumber, maxNumber);
 
+        public static bool IsPositiveChance(int currentChancePercent, int minChancePercent = 0, int maxChancePercent = 100)
+        {
+            int randomNumber = GenerateRandomNumber(minChancePercent, maxChancePercent);
+
+            return randomNumber <= currentChancePercent;
+        }
+
         public static void Print<T>(T message) =>
             Console.Write(message.ToString());
 

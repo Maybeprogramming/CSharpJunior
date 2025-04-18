@@ -20,24 +20,12 @@
         {
             #region For Test #########################################################################################
 
-            Cell cell = new Cell(new Detail(DetailType.Wheel, false), 10);
-            UserUtils.Print($"{cell}", ConsoleColor.Green);
-            UserUtils.Print($"\n{cell.Detail}");
+            Queue<Car> cars = new CarFactory().CreateCarsQueue(10);
 
-            Detail detail = new Detail(DetailType.Wheel, false);
-            Detail detail1 = new Detail(DetailType.AirFilter, true);
-
-            Detail detail2 = new Detail(DetailType.Wheel, true);
-            Detail detail3 = new Detail(DetailType.AirFilter, false);
-
-            List<Detail> listDetails = new List<Detail>() { detail, detail1 };
-
-            Car car = new(listDetails, "БМВ");
-
-
-            car.ShowInfo();
-            car.Repair(detail3);
-            car.ShowInfo();
+            foreach (Car car in cars)
+            {
+                car.ShowInfo();
+            }
 
             #endregion ###############################################################################################
 
@@ -52,7 +40,7 @@
 
     public class Detail
     {
-        public Detail(DetailType detailType, bool isBroken)
+        public Detail(DetailType detailType, bool isBroken = false)
         {
             DetailType = detailType;
             IsBroken = isBroken;
@@ -105,10 +93,82 @@
             $"<{_detail.Name}>, количество: <{Amount}>";
     }
 
-    //Машина состоит из деталей
-    //Количество поломанных не меньше 1 детали
-    //Надо показать все детали которые поломаны -> дейтсвие которое должен сделать слесарь
-    //****Сама же машина не определяет сломана она или нет, соответственно это определяет внешний класс по списку деталей которые находятся в машине
+    public class CarFactory
+    {
+        public Queue<Car> CreateCarsQueue(int carCount)
+        {
+            Queue<Car> cars = new();
+
+            for (int i = 0; i < carCount; i++)
+            {
+                cars.Enqueue(CreateCar());
+            }
+
+            return cars;
+        }
+
+        private Car CreateCar()
+        {
+            List<string> modelName = new()
+            {
+                "Shkoda Octavia", "Audi Q5", "Audi A6", "BMW X3", "BMW X6",
+                "Chevrolet Cruze", "Chevrolet Malibu", "Ford Mondeo", "Ford Mustang",
+                "Honda Accord","Honda Civic", "Huyndai Solaris","Huyndai Creta",
+                "Kia Ceed", "Kia Sorento", "Mazda CX-5", "Mazda 6", "Opel Corsa",
+                "Opel Astra", "Nissan Murano", "Nissan X-Trail","Toyota Camry",
+                "Toyota RAV4", "Volkswagen Tiguan", "Volkswagen Golf"
+            };
+
+            int minBrokenDetail = 1;
+            int maxBrokenDetail = 3;
+            int randomBrokenCount = UserUtils.GenerateRandomNumber(minBrokenDetail, maxBrokenDetail);
+            List<Detail> details = new DetailFactory().CreateDetailsWithBroken(randomBrokenCount);
+            string randomName = modelName[UserUtils.GenerateRandomNumber(0, modelName.Count - 1)];
+
+            return new Car(details, randomName);
+        }
+    }
+
+    public class DetailFactory
+    {
+        public List<Detail> CreateDetailsWithBroken(int brokenDetailCount = 1)
+        {
+            List<DetailType> detailsType = DetailsData.GetDetailsType();
+            List<DetailType> brokenDetailTypes = GetBrokenDetailTypes(brokenDetailCount, detailsType);
+            List<Detail> details = new();
+            bool isDetailBroken;            
+
+            for (int i = 0; i < detailsType.Count; i++)
+            {
+                if (brokenDetailTypes.Contains(detailsType[i]))
+                {
+                    isDetailBroken = true;
+                    details.Add(new Detail(detailsType[i], true));
+                }
+                else
+                {
+                    isDetailBroken = false;
+                    details.Add(new Detail(detailsType[i], isDetailBroken));
+                }
+            }
+
+            return details;
+        }
+
+        private List<DetailType> GetBrokenDetailTypes(int brokenDetailCount, List<DetailType> detailsType)
+        {
+            List<DetailType> brokenDetailTypes = new();
+
+            for (int i = 0; i < brokenDetailCount; i++)
+            {
+                DetailType randomDetailType = detailsType[UserUtils.GenerateRandomNumber(0, detailsType.Count - 1)];
+                brokenDetailTypes.Add(randomDetailType);
+            }
+
+            return brokenDetailTypes;
+        }
+    }
+
     public class Car
     {
         private List<Detail> _details;
@@ -136,11 +196,11 @@
             UserUtils.Print($"\nИнформация об машине:" +
                             $"\nМодель <{Name}>");
 
-            _details.ForEach((detail) => 
+            _details.ForEach((detail) =>
                 UserUtils.Print($"\n{++index}. Деталь <{detail.Name}> - {detail.IsBrokenStatus}"));
         }
 
-        private Detail GetReplaceableDetail(Detail newDetail) => 
+        private Detail GetReplaceableDetail(Detail newDetail) =>
             _details.Where(detail => detail.DetailType == newDetail.DetailType).First();
     }
 
@@ -160,7 +220,7 @@
 
     public static class DetailsData
     {
-        private static Dictionary<DetailType, string> s_detailNames = new()
+        private static Dictionary<DetailType, string> s_detailsName = new()
         {
             {DetailType.OilFilter,  "Масляный фильтр"},
             {DetailType.SparkPlugs, "Свечи зажигания"},
@@ -176,9 +236,14 @@
 
         public static string GetName(DetailType type)
         {
-            s_detailNames.TryGetValue(type, out string name);
+            s_detailsName.TryGetValue(type, out string name);
 
             return name;
+        }
+
+        public static List<DetailType> GetDetailsType()
+        {
+            return s_detailsName.Keys.ToList();
         }
     }
 
@@ -188,6 +253,13 @@
 
         public static int GenerateRandomNumber(int minNumber, int maxNumber) =>
             s_random.Next(minNumber, ++maxNumber);
+
+        public static bool IsPositiveChance(int currentChancePercent, int minChancePercent = 0, int maxChancePercent = 100)
+        {
+            int randomNumber = GenerateRandomNumber(minChancePercent, maxChancePercent);
+
+            return randomNumber <= currentChancePercent;
+        }
 
         public static void Print<T>(T message) =>
             Console.Write(message.ToString());
