@@ -68,13 +68,12 @@
 
         private void ServeCars(Queue<Car> cars)
         {
-            const string DoRepairCommand = "1";
-            const string RefuseToRepair = "2";
-
-            bool isSurve = true;
+            int refuseToRepairCommand;
+            bool isSurveCar = true;
             bool isDuringRepair = false;
             Car car;
             List<Detail> brokenDetail;
+            int userInput;
 
             if (cars.Count == 0)
             {
@@ -84,46 +83,58 @@
 
             car = cars.Dequeue();
             brokenDetail = car.Details.Where(detail => detail.IsBroken).ToList();
+            refuseToRepairCommand = brokenDetail.Count() + 1;
 
-            while (isSurve)
+            while (isSurveCar && brokenDetail.Count != 0)
             {
+                int index = 0;
+
                 Console.Clear();
                 UserUtils.Print($"Автомобиль <{car.GetInfo()}> заехал на обслуживание", ConsoleColor.DarkYellow);
                 UserUtils.Print(brokenDetail, "\nСписок сломанных деталей в автомобиле: ");
 
                 UserUtils.Print("\n\nКоманды: ", ConsoleColor.Green);
-                UserUtils.Print($"\n{DoRepairCommand} - Отремонтировать одну деталь" +
-                                $"\n{RefuseToRepair} - Отказать в ремонте");
 
+                foreach (Detail detail in brokenDetail)
+                {
+                    UserUtils.Print($"\n{++index}. Отремонтировать <{detail.Name}>");
+                }
+
+                UserUtils.Print($"\n{refuseToRepairCommand}. Отказать в ремонте", ConsoleColor.Red);
                 UserUtils.Print($"\n\nВведите команду: ", ConsoleColor.Green);
 
-                switch (Console.ReadLine())
+                userInput = UserUtils.ReadInputNumber();
+
+                if (userInput == refuseToRepairCommand)
                 {
-                    case DoRepairCommand:
-                        RepairCar(car, ref isSurve);
-                        break;
-                    case RefuseToRepair:
-                        RefuseToRepairCar(isDuringRepair, ref isSurve);
-                        break;
-                    default:
-                        UserUtils.Print($"\nНет такой команды!!");
-                        break;
+                    RefuseToRepairCar(isDuringRepair);
+                    isSurveCar = false;
                 }
+                else if (userInput > 0 && userInput <= brokenDetail.Count)
+                {
+                    RepairCar(car, brokenDetail[--userInput]);
+                }
+                else
+                {
+                    UserUtils.Print($"\nНет такой команды!!");
+                }
+
+                UserUtils.Print($"\nДля продолжения нажмите любую клавишу", ConsoleColor.Green);
+                Console.ReadKey();
             }
 
             UserUtils.Print($"\nАвтомобиль <{car.GetInfo()}> выехал из сервиса", ConsoleColor.Green);
         }
 
-        private void RepairCar(Car car, ref bool isSurve)
+        private void RepairCar(Car car, Detail detail)
         {
-            isSurve = false;
+
         }
 
-        private void RefuseToRepairCar(bool isDuringRepair, ref bool isServe)
+        private void RefuseToRepairCar(bool isDuringRepair)
         {
             int penaltyForRefusal = 100;
             int penaltyForRefusalDuringRepair = 50;
-            isServe = false;
 
             if (isDuringRepair)
             {
@@ -151,9 +162,9 @@
         public Detail TryGetDetail(DetailType detailType)
         {
             Cell cell = _cells.Where(cell => cell.Detail.DetailType == detailType).First();
-            Detail detail = null;
 
-            if (cell.TryGetDetail(out detail))
+
+            if (cell.TryGetDetail(out Detail detail))
             {
                 UserUtils.Print($"\nСо склада взята запчасть: {detail.GetInfo()}", ConsoleColor.Green);
                 return detail;
@@ -161,7 +172,7 @@
             else
             {
                 UserUtils.Print($"\nНа складе нет нужной запчасти: {DetailsData.GetName(detailType)}", ConsoleColor.Red);
-                return detail;
+                return null;
             }
         }
     }
