@@ -52,3 +52,15 @@ if (userInput == refuseToRepairCommand)
 if (userInput > 0 && userInput <= brokenDetails.Count)
 
 И отображение данных в отдельные методы. 
+
+----------------------------------------------------------------------------------------------------------------------------------------
+Оценено в	суббота, 19 апреля 2025, 21:58
+Оценено	Сергей Куделин
+
+DetailFactory.GetDetails - лучше закешировать DetailsData.GetDetailsType в переменную. 
+
++TryGetDetail - get по логике должен только возвращать значение. Тут больше подойдет Take 
+
++В GoRepairCar userInput можно передавать не через ref. 
+
++GoRepairCar  - можно без go - RepairCarDetail 

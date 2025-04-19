@@ -111,7 +111,7 @@
                 }
                 else if (userInput > 0 && userInput <= brokenDetails.Count)
                 {
-                    GoRepairCar(ref isDuringRepair, car, brokenDetails, repairedDetails, ref userInput, ref totalCost);
+                    RepairCar(ref isDuringRepair, car, brokenDetails, repairedDetails, userInput, ref totalCost);
                 }
                 else
                 {
@@ -162,7 +162,7 @@
             }
         }
 
-        private void GoRepairCar(ref bool isDuringRepair, Car car, List<Detail> brokenDetails, List<Detail> repairedDetails, ref int userInput, ref int totalCost)
+        private void RepairCar(ref bool isDuringRepair, Car car, List<Detail> brokenDetails, List<Detail> repairedDetails, int userInput, ref int totalCost)
         {
             Detail brokenDetail = brokenDetails[--userInput];
 
@@ -224,7 +224,7 @@
 
         private bool TryRepairCar(Car car, Detail brokenDetail)
         {
-            Detail newDetail = _warehouse.TryGetDetail(brokenDetail.DetailType);
+            Detail newDetail = _warehouse.TryTakeDetail(brokenDetail.DetailType);
 
             if (newDetail == null)
             {
@@ -315,7 +315,7 @@
         public void ShowCells() =>
             UserUtils.Print(_cells, "\nСкладские запасы:");
 
-        public Detail TryGetDetail(DetailType detailType)
+        public Detail TryTakeDetail(DetailType detailType)
         {
             Cell cell = _cells.Where(cell => cell.Detail.DetailType == detailType).First();
 
@@ -484,6 +484,7 @@
 
             return details;
         }
+
         public List<Detail> GetDetails()
         {
             List<Detail> details = new();
@@ -550,6 +551,11 @@
 
     public static class DetailsData
     {
+        private static IEnumerable<DetailType> s_detailTypes;
+
+        static DetailsData() => 
+            s_detailTypes = s_detailsName.Keys.ToList();
+
         private static Dictionary<DetailType, string> s_detailsName = new()
         {
             {DetailType.OilFilter,  "Масляный фильтр"},
@@ -570,10 +576,8 @@
             return name;
         }
 
-        public static List<DetailType> GetDetailsType()
-        {
-            return s_detailsName.Keys.ToList();
-        }
+        public static List<DetailType> GetDetailsType() =>
+            new List<DetailType>(s_detailTypes);
     }
 
     public static class UserUtils
