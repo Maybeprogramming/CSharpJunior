@@ -91,51 +91,19 @@
             List<Detail> repairedDetails = new();
             int userInput;
             int totalCost = 0;
-            int penaltyForRefusal = 100;
 
-            if (cars.Count == 0)
-            {
-                UserUtils.Print($"\n\nОчередь пуста!", ConsoleColor.Red);
-                return;
-            }
-
+            CheckingCarsQueue(cars);
             car = cars.Dequeue();
             brokenDetails = GetBrokenDetails(car);
 
             while (isSurveCar && brokenDetails.Count != 0)
             {
-                showWarehouseCommand = brokenDetails.Count() + 1;
-                refuseToRepairCommand = showWarehouseCommand + 1;
-
-                Console.Clear();
-                UserUtils.Print($"Автомобиль <{car.GetInfo()}> заехал на обслуживание", ConsoleColor.DarkYellow);
-                UserUtils.Print(brokenDetails, "\nСписок сломанных деталей в автомобиле: ");
-                UserUtils.Print("\n\nКоманды: ", ConsoleColor.Green);
-
-                ShowBrokenDetails(brokenDetails);
-
-                UserUtils.Print($"\n{showWarehouseCommand}. Посмотреть запасы деталей на складе", ConsoleColor.DarkYellow);
-                UserUtils.Print($"\n{refuseToRepairCommand}. Отказать в ремонте", ConsoleColor.Red);
-                UserUtils.Print($"\n\nВведите команду: ", ConsoleColor.Green);
-
+                ShowMenuToRepairCar(out refuseToRepairCommand, out showWarehouseCommand, car, brokenDetails);
                 userInput = UserUtils.ReadInputNumber();
 
                 if (userInput == refuseToRepairCommand)
-                {                    
-                    isSurveCar = false;
-                    totalCost = 0;
-
-                    if (isDuringRepair)
-                    {
-                        totalCost = GetTotalCostByRefused(brokenDetails, repairedDetails);
-                        _balanceMoney -= totalCost;
-                        UserUtils.Print($"\nВы заплатили штраф за отказ в процессе ремонта машины - <{totalCost}>");
-                    }
-                    else
-                    {
-                        _balanceMoney -= penaltyForRefusal;
-                        UserUtils.Print($"\nВы заплатили фиксированный штраф за отказ ремонтировать машину - <{penaltyForRefusal}>");
-                    }
+                {
+                    RefuseToReparCar(out isSurveCar, isDuringRepair, car, brokenDetails, repairedDetails);
                 }
                 else if (userInput == showWarehouseCommand)
                 {
@@ -143,15 +111,7 @@
                 }
                 else if (userInput > 0 && userInput <= brokenDetails.Count)
                 {
-                    Detail brokenDetail = brokenDetails[--userInput];
-
-                    if (TryRepairCar(car, brokenDetail))
-                    {
-                        totalCost += _priceList.GetTotalCost(brokenDetail.DetailType);
-                        isDuringRepair = true;
-                        brokenDetails.Remove(brokenDetail);
-                        repairedDetails.Add(brokenDetail);
-                    }
+                    GoRepairCar(ref isDuringRepair, car, brokenDetails, repairedDetails, ref userInput, ref totalCost);
                 }
                 else
                 {
@@ -163,17 +123,79 @@
                 Console.ReadKey();
             }
 
+            CheckingCarHealth(brokenDetails, totalCost);
+            UserUtils.Print($"\nАвтомобиль <{car.GetInfo()}> выехал из сервиса", ConsoleColor.Green);
+        }
+
+        private void CheckingCarsQueue(Queue<Car> cars)
+        {
+            if (cars.Count == 0)
+            {
+                UserUtils.Print($"\n\nОчередь пуста!", ConsoleColor.Red);
+                return;
+            }
+        }
+
+        private void ShowMenuToRepairCar(out int refuseToRepairCommand, out int showWarehouseCommand, Car car, List<Detail> brokenDetails)
+        {
+            showWarehouseCommand = brokenDetails.Count() + 1;
+            refuseToRepairCommand = showWarehouseCommand + 1;
+
+            Console.Clear();
+            UserUtils.Print($"Автомобиль <{car.GetInfo()}> заехал на обслуживание", ConsoleColor.DarkYellow);
+            UserUtils.Print(brokenDetails, "\nСписок сломанных деталей в автомобиле: ");
+            UserUtils.Print("\n\nКоманды: ", ConsoleColor.Green);
+
+            ShowBrokenDetails(brokenDetails);
+
+            UserUtils.Print($"\n{showWarehouseCommand}. Посмотреть запасы деталей на складе", ConsoleColor.DarkYellow);
+            UserUtils.Print($"\n{refuseToRepairCommand}. Отказать в ремонте", ConsoleColor.Red);
+            UserUtils.Print($"\n\nВведите команду: ", ConsoleColor.Green);
+        }
+
+        private void CheckingCarHealth(List<Detail> brokenDetails, int totalCost)
+        {
             if (brokenDetails.Count == 0)
             {
                 _balanceMoney += totalCost;
                 UserUtils.Print($"\nЗа успешный ремонт автомобиля вы получили <{totalCost}> $", ConsoleColor.DarkYellow);
             }
-
-            UserUtils.Print($"\nАвтомобиль <{car.GetInfo()}> выехал из сервиса", ConsoleColor.Green);
         }
 
-        private int GetTotalCostByRefused(List<Detail> brokenDetails, List<Detail> repairedDetails) => 
-            CalculatelCost(brokenDetails) + CalculatelCost(repairedDetails);
+        private void GoRepairCar(ref bool isDuringRepair, Car car, List<Detail> brokenDetails, List<Detail> repairedDetails, ref int userInput, ref int totalCost)
+        {
+            Detail brokenDetail = brokenDetails[--userInput];
+
+            if (TryRepairCar(car, brokenDetail))
+            {
+                totalCost += _priceList.GetTotalCost(brokenDetail.DetailType);
+                isDuringRepair = true;
+                brokenDetails.Remove(brokenDetail);
+                repairedDetails.Add(brokenDetail);
+            }
+        }
+
+        private void RefuseToReparCar(out bool isSurveCar, bool isDuringRepair, Car car, List<Detail> brokenDetails, List<Detail> repairedDetails)
+        {
+            int totalCost = 0;
+            int penaltyForRefusal = 100;
+            isSurveCar = false;
+
+            if (isDuringRepair)
+            {
+                int penaltyCost = CalculatelCost(brokenDetails);
+                int repairedCost = CalculatelCost(repairedDetails);
+                totalCost = repairedCost - penaltyCost;
+                _balanceMoney += totalCost;
+                UserUtils.Print($"\nВы заплатили штраф за отказ в процессе ремонта машины - <{penaltyCost}>" +
+                                $"\nЗа ремонт деталей автомобиля <{car.GetInfo()}> получили - <{repairedCost}>");
+            }
+            else
+            {
+                _balanceMoney -= penaltyForRefusal;
+                UserUtils.Print($"\nВы заплатили фиксированный штраф за отказ ремонтировать машину - <{penaltyForRefusal}>");
+            }
+        }
 
         private int CalculatelCost(List<Detail> details)
         {
@@ -187,7 +209,7 @@
             return totalCost;
         }
 
-        private static List<Detail> GetBrokenDetails(Car car) => 
+        private static List<Detail> GetBrokenDetails(Car car) =>
             car.Details.Where(detail => detail.IsBroken).ToList();
 
         private void ShowBrokenDetails(List<Detail> brokenDetails)
@@ -311,7 +333,7 @@
         }
     }
 
-    public class Detail : Iinfoable
+    public class Detail : IHaveInfo
     {
         public Detail(DetailType detailType, bool isBroken = false)
         {
@@ -326,19 +348,24 @@
 
         public bool IsBroken { get; }
 
-        public string IsBrokenStatus =>
+        public string BrokenStatus =>
             IsBroken == true ? "Сломана" : "Исправна";
 
         public string GetInfo() =>
-            $"{Name} - {IsBrokenStatus}";
+            $"{Name} - {BrokenStatus}";
     }
 
     public class CellFactory
     {
+        private DetailFactory _detailFactory;
+
+        public CellFactory() =>
+            _detailFactory = new DetailFactory();
+
         public List<Cell> GetCells()
         {
             List<Cell> cells = new();
-            List<Detail> details = new DetailFactory().GetDetails();
+            List<Detail> details = _detailFactory.GetDetails();
 
             for (int i = 0; i < details.Count; i++)
             {
@@ -357,20 +384,19 @@
         }
     }
 
-    public class Cell : Iinfoable
+    public class Cell : IHaveInfo
     {
-        private Detail _detail;
         private int _amount;
         private int _maxCapacity;
 
         public Cell(Detail detail, int amount)
         {
             _maxCapacity = UserUtils.GenerateRandomNumber(0, 10);
-            _detail = detail;
+            Detail = detail;
             Amount = amount;
         }
 
-        public Detail Detail => _detail;
+        public Detail Detail { get; }
 
         public int Amount
         {
@@ -382,7 +408,7 @@
         {
             if (Amount > 0)
             {
-                detail = new Detail(_detail.DetailType);
+                detail = new Detail(Detail.DetailType);
                 --Amount;
                 return true;
             }
@@ -394,11 +420,16 @@
         }
 
         public string GetInfo() =>
-            $"<{_detail.Name}>, количество: <{Amount}>";
+            $"<{Detail.Name}>, количество: <{Amount}>";
     }
 
     public class CarFactory
     {
+        private DetailFactory _detailFactory;
+
+        public CarFactory() =>
+            _detailFactory = new DetailFactory();
+
         public Queue<Car> CreateCarsQueue()
         {
             int minCarCount = 5;
@@ -429,7 +460,7 @@
             int minBrokenDetail = 1;
             int maxBrokenDetail = 3;
             int randomBrokenCount = UserUtils.GenerateRandomNumber(minBrokenDetail, maxBrokenDetail);
-            List<Detail> details = new DetailFactory().CreateDetailsWithBroken(randomBrokenCount);
+            List<Detail> details = _detailFactory.CreateDetailsWithBroken(randomBrokenCount);
             string randomName = modelName[UserUtils.GenerateRandomNumber(0, modelName.Count - 1)];
 
             return new Car(details, randomName);
@@ -447,16 +478,8 @@
 
             for (int i = 0; i < detailsType.Count; i++)
             {
-                if (brokenDetailTypes.Contains(detailsType[i]))
-                {
-                    isDetailBroken = true;
-                    details.Add(new Detail(detailsType[i], isDetailBroken));
-                }
-                else
-                {
-                    isDetailBroken = false;
-                    details.Add(new Detail(detailsType[i], isDetailBroken));
-                }
+                isDetailBroken = brokenDetailTypes.Contains(detailsType[i]);
+                details.Add(new Detail(detailsType[i], isDetailBroken));
             }
 
             return details;
@@ -487,7 +510,7 @@
         }
     }
 
-    public class Car : Iinfoable
+    public class Car : IHaveInfo
     {
         private List<Detail> _details;
 
@@ -520,7 +543,7 @@
         TimingBelt, Wheel, BrakePads, Antifreeze, Headlight
     }
 
-    public interface Iinfoable
+    public interface IHaveInfo
     {
         string GetInfo();
     }
@@ -577,7 +600,7 @@
             Console.ResetColor();
         }
 
-        public static void Print<T>(IEnumerable<T> items, string message) where T : Iinfoable
+        public static void Print<T>(IEnumerable<T> items, string message) where T : IHaveInfo
         {
             int index = 0;
             Print($"{message}", ConsoleColor.Green);

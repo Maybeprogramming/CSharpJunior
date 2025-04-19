@@ -13,3 +13,42 @@
 Тормозные колодки		Brake pads
 Антифриз				Antifreeze
 Фара					Headlight
+
+
+Оценено в	пятница, 18 апреля 2025, 21:43
+Оценено	Сергей Куделин
+Отзыв в виде комментария	
+
++Iinfoable - лучше IHaveInfo) 
+
++CreateDetailsWithBroken - цикл можно упростить: 
+
+for (int i = 0; i < detailsType.Count; i++)
+
+{
+    isDetailBroken = brokenDetailTypes.Contains(detailsType[i]);
+    details.Add(new Detail(detailsType[i], isDetailBroken));
+}
+
++new DetailFactory().CreateDetailsWithBroken(randomBrokenCount); - не нужно для создания каждой детали создавать новую фабрику детали. 
+Храни фабрику детали в поле. 
++Аналогично для ячейки - List<Detail> details = new DetailFactory().GetDetails();
+
+
++public Detail Detail => _detail; - лучше автосвойством: public Detail Detail { get; }
+
++public string IsBrokenStatus - свойство не булевое, можно не называть его с Is
+
++ totalCost = GetTotalCostByRefused(brokenDetails, repairedDetails);
+_balanceMoney -= totalCost; - автосервис не должен платить за починенные детали. 
+Он их починил, а с последующими вышла беда - не смог. 
+Вот за те, что не смог и нужно заплатить. 
+
+
++В ServeCars у тебя много логики. вынеси содержимое 
+
+if (userInput == refuseToRepairCommand)
+
+if (userInput > 0 && userInput <= brokenDetails.Count)
+
+И отображение данных в отдельные методы. 
