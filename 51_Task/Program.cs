@@ -5,19 +5,8 @@
         static void Main()
         {
             Console.Title = "ДЗ: Поиск преступника";
-
-            List<Criminal> criminals = new CriminalFactory().GetCriminals(30);
-
-            int index = 0;
-
-            UserUtils.Print($"Список преступников:");
-
-            foreach (var c in criminals)
-            {
-                UserUtils.Print($"\n{++index}. ");
-                c.ShowInfo();
-            }
-             
+            DetectiveOffice detectiveOffice = new DetectiveOffice();
+            detectiveOffice.Work();
             Console.ReadKey();
         }
     }
@@ -26,15 +15,94 @@
     {
         public void Work()
         {
-            ShowMenu();
+            const string FindCriminalsCommand = "1";
+            const string ShowAllCriminalsCommand = "2";
+            const string ExitCommand = "3";
+
+            bool isWork = true;
+            int criminalsCount = 1000;
+            List<Criminal> criminals = new CriminalFactory().GetCriminals(criminalsCount);
+
+            while (isWork)
+            {
+                ShowMenu(FindCriminalsCommand, ShowAllCriminalsCommand, ExitCommand);
+
+                switch (Console.ReadLine())
+                {
+                    case FindCriminalsCommand:
+                        FindCriminals(criminals);
+                        break;
+                    case ShowAllCriminalsCommand:
+                        ShowCriminals(criminals);
+                        break;
+                    case ExitCommand:
+                        isWork = false;
+                        break;
+                    default:
+                        UserUtils.Print($"\nНет такой команды!", ConsoleColor.Red);
+                        break;
+                }
+
+                UserUtils.Print($"\nДля продолжения нажмите любую клавишу", ConsoleColor.Green);
+                Console.ReadKey();
+            }
         }
 
-        private void ShowMenu()
+        private void FindCriminals(List<Criminal> criminals)
+        {
+            int height;
+            int weight;
+            string nationality;
+            bool isArrest = false;
+            List<Criminal> foundCriminals = new List<Criminal>();
+
+            UserUtils.Print($"\nДля поиска преступника введите следующие данные:", ConsoleColor.Green);
+
+            UserUtils.Print("\nРост преступника: ");
+            height = UserUtils.ReadInputNumber();
+
+            UserUtils.Print("\nВес преступника: ");
+            weight = UserUtils.ReadInputNumber();
+
+            UserUtils.Print("\nНациональность преступника: ");
+            nationality = Console.ReadLine();
+
+            foundCriminals = new List<Criminal>(criminals).Where(criminal => criminal.Height == height &&
+                                                                             criminal.Weight == weight &&
+                                                                             criminal.Nationality.ToLower() == nationality.ToLower() &&
+                                                                             criminal.IsUnderArrest == isArrest).ToList();
+
+            if (foundCriminals.Count > 0)
+            {
+                ShowCriminals(foundCriminals);
+            }
+            else
+            {
+                UserUtils.Print($"\nС такими параметрами ничего не найдено", ConsoleColor.Red);
+            }
+        }
+
+        private void ShowCriminals(List<Criminal> criminals)
+        {
+            int index = 0;
+
+            UserUtils.Print($"Список преступников:");
+
+            foreach (Criminal criminal in criminals)
+            {
+                UserUtils.Print($"\n{++index}. ");
+                criminal.ShowInfo();
+            }
+        }
+
+        private void ShowMenu(string findCommand, string showCriminals, string exitCommand)
         {
             Console.Clear();
-
             UserUtils.Print($"Команды:", ConsoleColor.Green);
-            UserUtils.Print($"\n");
+            UserUtils.Print($"\n{findCommand}. Найти преступника по заданным параметрам" +
+                            $"\n{showCriminals}. Показать всех преступников" +
+                            $"\n{exitCommand}. Закрыть приложение");
+            UserUtils.Print($"\n\nВведите команду: ", ConsoleColor.Green);
         }
     }
 
@@ -53,7 +121,7 @@
         public string Nationality { get; }
         public int Height { get; }
         public int Weight { get; }
-        bool IsUnderArrest { get; }
+        public bool IsUnderArrest { get; }
         string ArrestStatus => IsUnderArrest == true ? "под стражей" : "на свободе";
 
         public string GetInfo() =>
@@ -82,10 +150,10 @@
 
         private Criminal CreateCrimanal()
         {
-            string name = CriminalData.GetRandomName() + " " + CriminalData.GetRanddomSurName();
-            string nationality = CriminalData.GetRandomNationality();
-            int height = CriminalData.GetRandomHeight();
-            int weight = CriminalData.GetRandomWeight();
+            string name = CriminalData.TakeRandomName() + " " + CriminalData.TakeRanddomSurName();
+            string nationality = CriminalData.TakeRandomNationality();
+            int height = CriminalData.TakeRandomHeight();
+            int weight = CriminalData.TakeRandomWeight();
             bool isUnderArrest = IsUnderArrestRandom();
 
             return new Criminal(name, nationality, height, weight, isUnderArrest);
@@ -93,10 +161,7 @@
 
         private bool IsUnderArrestRandom()
         {
-            bool[] statusArrests = new[]
-            {
-                true, false
-            };
+            bool[] statusArrests = new[] { true, false };
 
             return statusArrests[UserUtils.GenerateRandomNumber(0, statusArrests.Length - 1)];
         }
@@ -108,7 +173,7 @@
         private static string[] s_surNames;
         private static int[] s_height;
         private static int[] s_weight;
-        private static string[] s_nationality;
+        private static string[] s_nationalities;
 
         static CriminalData()
         {
@@ -128,7 +193,7 @@
                 "Авушкин", "Фролов", "Никитин", "Маркин", "Сливушкин"
             };
 
-            s_nationality = new string[]
+            s_nationalities = new string[]
             {
                 "Русский", "Татарин", "Чувашин", "Башкир", "Мордвин"
             };
@@ -144,20 +209,20 @@
             };
         }
 
-        public static string GetRandomName() =>
+        public static string TakeRandomName() =>
             GetRandomElement(s_names);
 
-        public static string GetRanddomSurName() =>
+        public static string TakeRanddomSurName() =>
             GetRandomElement(s_surNames);
 
-        public static int GetRandomHeight() =>
+        public static int TakeRandomHeight() =>
             GetRandomElement(s_height);
 
-        public static int GetRandomWeight() =>
+        public static int TakeRandomWeight() =>
             GetRandomElement(s_weight);
 
-        public static string GetRandomNationality() =>
-           GetRandomElement(s_nationality);
+        public static string TakeRandomNationality() =>
+           GetRandomElement(s_nationalities);
 
         private static T GetRandomElement<T>(T[] array) =>
             array[UserUtils.GenerateRandomNumber(0, array.Length - 1)];
