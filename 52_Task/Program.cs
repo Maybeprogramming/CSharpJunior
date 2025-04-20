@@ -25,7 +25,7 @@
             UserUtils.Print($"\nСписок заключенных до амнистии:", ConsoleColor.Green);
             ShowCriminals(criminals);
 
-            criminals.Select(criminal => criminal.Crime != crimeAmnesty).ToList();
+            criminals = criminals.Where(criminal => criminal.Crime != crimeAmnesty).ToList();
 
             UserUtils.Print($"\nСписок заключенных после амнистии:", ConsoleColor.Green);
             ShowCriminals(criminals);
@@ -38,7 +38,7 @@
         {
             int index = 0;
 
-            UserUtils.Print($"Список преступников:");
+            UserUtils.Print($"\nСписок заключенных:");
 
             foreach (Criminal criminal in criminals)
             {
