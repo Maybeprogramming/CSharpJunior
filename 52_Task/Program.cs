@@ -144,17 +144,5 @@
             Print(message);
             Console.ResetColor();
         }
-
-        public static int ReadInputNumber()
-        {
-            int result;
-
-            while (int.TryParse(Console.ReadLine(), out result) == false)
-            {
-                Print($"\nВы ввели не число!\nПопробуйте снова: ", ConsoleColor.DarkYellow);
-            }
-
-            return result;
-        }
     }
 }
