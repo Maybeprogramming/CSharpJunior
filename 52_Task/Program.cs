@@ -38,8 +38,6 @@
         {
             int index = 0;
 
-            UserUtils.Print($"\nСписок заключенных:");
-
             foreach (Criminal criminal in criminals)
             {
                 UserUtils.Print($"\n{++index}. {criminal.GetInfo()}");
