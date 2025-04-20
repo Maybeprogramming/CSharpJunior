@@ -20,4 +20,14 @@
     { 
 
     }
+
+    public static class CrimanalData
+    {
+        private static string s_names;
+        private static string s_surNames;
+        private static int s_height;
+        private static int s_weight;
+
+
+    }
 }
