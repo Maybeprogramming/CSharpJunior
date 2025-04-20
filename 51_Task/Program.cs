@@ -7,7 +7,6 @@
             Console.Title = "ДЗ: Поиск преступника";
             DetectiveOffice detectiveOffice = new DetectiveOffice();
             detectiveOffice.Work();
-            Console.ReadKey();
         }
     }
 
