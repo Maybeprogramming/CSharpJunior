@@ -1,11 +1,11 @@
-﻿using System.Drawing;
-
-namespace _51_Task
+﻿namespace _51_Task
 {
     public class Program
     {
         static void Main()
         {
+            Console.Title = "ДЗ: Поиск преступника";
+
             List<Criminal> criminals = new CriminalFactory().GetCriminals(30);
 
             int index = 0;
@@ -17,8 +17,24 @@ namespace _51_Task
                 UserUtils.Print($"\n{++index}. ");
                 c.ShowInfo();
             }
-
+             
             Console.ReadKey();
+        }
+    }
+
+    public class DetectiveOffice
+    {
+        public void Work()
+        {
+            ShowMenu();
+        }
+
+        private void ShowMenu()
+        {
+            Console.Clear();
+
+            UserUtils.Print($"Команды:", ConsoleColor.Green);
+            UserUtils.Print($"\n");
         }
     }
 
