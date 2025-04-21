@@ -7,6 +7,14 @@ namespace _56_Task
         static void Main()
         {
             Console.Title = "ДЗ: Отчёт о вооружении";
+
+            int soldiersCount = 30;
+            List<Soldier> soldiers = new SoldierFactory().CreateSoldiers(soldiersCount);
+
+            soldiers.ForEach((soldier) => 
+                UserUtils.Print($"\n{soldier.GetInfo()}"));
+
+
         }
     }
 
@@ -29,29 +37,30 @@ namespace _56_Task
             $"{Name}, звание: <{Rank}>, вооружение: <{Weapon}>, время службы: <{ServiceTime}>";
     }
 
-    public class PlayerFactory
+    public class SoldierFactory
     {
-        public List<Player> CreatePlayers(int count)
+        public List<Soldier> CreateSoldiers(int count)
         {
-            List<Player> players = new();
+            List<Soldier> soldiers = new();
 
             for (int i = 0; i < count; i++)
             {
-                players.Add(CreatePlayer());
+                soldiers.Add(CreateSoldier());
             }
 
-            return players;
+            return soldiers;
         }
 
-        private Player CreatePlayer()
+        private Soldier CreateSoldier()
         {
             string name = TakeRandomName();
             string rank = TakeRandomRank();
             string weapon = TakeRandomWeapon();
             int minServiceTime = 1;
             int maxServiceTime = 36;
+            int serviceTime =  UserUtils.GenerateRandomNumber(minServiceTime, maxServiceTime);
 
-            return new Player(name, level, strength);
+            return new Soldier(name, weapon, rank, serviceTime);
         }
 
         private string TakeRandomName()
