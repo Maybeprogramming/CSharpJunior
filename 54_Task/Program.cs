@@ -21,6 +21,7 @@
 
             bool isWork = true;
             int playerCount = 30;
+            int playerTopCount = 3;
             List<Player> players = new PlayerFactory().GetPlayers(playerCount);
 
             while (isWork)
@@ -30,10 +31,10 @@
                 switch (UserUtils.ReadInputNumber())
                 {
                     case ShowTopByLevelCommand:
-                        ShowTopByLevel(players);
+                        ShowTopByLevel(players, playerTopCount);
                         break;
                     case ShowTopByStrengthCommand:
-                        ShowTopByStrenght(players);
+                        ShowTopByStrenght(players, playerTopCount);
                         break;
                     case ShowPlayersCommand:
                         ShowPacients(players);
@@ -50,16 +51,16 @@
             }
         }
 
-        private void ShowTopByStrenght(List<Player> players)
-        {
-            List<Player> playersTopByStrength = new List<Player>();
-            ShowPacients(players);
-        }
+        private void ShowTopByStrenght(List<Player> players, int playerCount) =>
+            ShowTopByParametr(players, playerCount, player => player.Strength);
 
-        private void ShowTopByLevel(List<Player> players)
+        private void ShowTopByLevel(List<Player> players, int playerCount) =>
+            ShowTopByParametr(players, playerCount, player => player.Level);
+
+        private void ShowTopByParametr(List<Player> players, int playerCount, Func<Player, int> sortParametr)
         {
-            List<Player> playersTopByLevel = new List<Player>();
-            ShowPacients(players);
+            List<Player> playersTop = players.OrderByDescending(sortParametr).Take(playerCount).ToList();
+            ShowPacients(playersTop);
         }
 
         private void ShowPacients(List<Player> players)
