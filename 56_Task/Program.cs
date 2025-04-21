@@ -8,13 +8,63 @@ namespace _56_Task
         {
             Console.Title = "ДЗ: Отчёт о вооружении";
 
+
+
+
+        }
+    }
+
+    public class Report
+    {
+        public void Work()
+        {
             int soldiersCount = 30;
             List<Soldier> soldiers = new SoldierFactory().CreateSoldiers(soldiersCount);
 
-            soldiers.ForEach((soldier) => 
+            soldiers.ForEach((soldier) =>
                 UserUtils.Print($"\n{soldier.GetInfo()}"));
 
+            Create(soldiers);
+        }
 
+        private void ShowInfo()
+        {
+
+        }
+
+        private void Create(List<Soldier> soldiers)
+        {
+            string requestRank;
+            bool isRun = true;
+
+            while (isRun == true)
+            {
+                UserUtils.Print($"\nВведите звание для формирования отчёта: ", ConsoleColor.Green);
+                requestRank = Console.ReadLine();
+
+                if (_ranks.Contains(requestRank) == true)
+                {
+                    UserUtils.Print($"\nФормируем новый отчет:", ConsoleColor.Green);
+
+                    var soldiersForRaport = soldiers.Where(soldier => soldier.Rank.ToLower().Equals(requestRank.ToLower()) == true)
+                                            .Select(soldier => new
+                                            {
+                                                soldier.Name,
+                                                soldier.Rank
+                                            }).ToList();
+
+                    for (int i = 0; i < soldiers.Count; i++)
+                    {
+                        UserUtils.Print($"\n{i + 1}. {soldiers[i].Name}. Звание: {soldiers[i].Rank}");
+                    }
+
+                    isRun = false;
+                }
+                else
+                {
+                    UserUtils.Print($"\nТаких данных нет! Попробуйте снова!", ConsoleColor.Red);
+                }
+            }
         }
     }
 
