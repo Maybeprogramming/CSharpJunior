@@ -35,7 +35,7 @@
             ShowSquadInfo(_squadTwo);
 
             UserUtils.Print($"\nПроизводим трансфер", ConsoleColor.DarkYellow);
-            TransferSoldiers(conditionTransfer);
+            TransferSoldiers(ref _squadOne, ref _squadTwo, conditionTransfer);
 
             UserUtils.Print($"\nОтряд 1 после трансфера", ConsoleColor.Green);
             ShowSquadInfo(_squadOne);
@@ -53,16 +53,17 @@
                 UserUtils.Print($"\n{++index}. {soldier.GetInfo()}"));
         }
 
-        private void TransferSoldiers(string conditionTransfer)
+        private void TransferSoldiers(ref List<Soldier> squadOne, ref List<Soldier> squadTwo, string conditionTransfer)
         {
-            List<Soldier> transferSoldiers = _squadOne.Where(soldier => soldier.Name.StartsWith(conditionTransfer)).ToList();
+            List<Soldier> transferSoldiers = new List<Soldier>(squadOne.Where(soldier => 
+                soldier.Name.StartsWith(conditionTransfer)).ToList());
 
             UserUtils.Print($"\nБойцы для трансфера:", ConsoleColor.Red);
             ShowSquadInfo(transferSoldiers);
             UserUtils.Print($"\n####################", ConsoleColor.Red);
 
-            _squadOne = _squadOne.Except(transferSoldiers).ToList();
-            _squadTwo = _squadTwo.Union(transferSoldiers).ToList();
+            squadOne = new List<Soldier>(squadOne.Except(transferSoldiers).ToList());
+            squadTwo = new List<Soldier>(squadTwo.Union(transferSoldiers).ToList());
         }
     }
 
