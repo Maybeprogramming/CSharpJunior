@@ -4,6 +4,12 @@
     {
         static void Main()
         {
+            Console.Title = "ДЗ: Топ игроков сервера";
         }
+    }
+
+    public class TablePlayer
+    {
+
     }
 }
