@@ -41,8 +41,9 @@
             {
                 UserUtils.Print($"\nВведите звание для формирования отчёта: ", ConsoleColor.Green);
                 requestRank = Console.ReadLine();
+                int soldierRequestCount = soldiers.Where(soldier => soldier.Rank.ToLower() == requestRank.ToLower()).Count();
 
-                if (soldiers.Where(soldier => soldier.Rank.ToLower() == requestRank.ToLower()).Count() > 0)
+                if (soldierRequestCount > 0)
                 {
                     UserUtils.Print($"\nФормируем новый отчет:", ConsoleColor.Green);
 
