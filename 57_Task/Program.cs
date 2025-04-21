@@ -13,22 +13,35 @@
 
     public class Barraks
     {
+        private List<Soldier> _squadOne;
+        private List<Soldier> _squadTwo;
+
+        public Barraks()
+        {
+            int soldiersCount = 20;
+            SoldierFactory soldierFactory = new SoldierFactory();
+            _squadOne = soldierFactory.CreateSoldiers(soldiersCount);
+            _squadTwo = soldierFactory.CreateSoldiers(soldiersCount);
+        }
+
         public void Work()
         {
             string conditionTransfer = "Б";
-            int soldiersCount = 20;
-            SoldierFactory soldierFactory = new SoldierFactory();
-            List<Soldier> squadOne = soldierFactory.CreateSoldiers(soldiersCount);
-            List<Soldier> squadTwo = soldierFactory.CreateSoldiers(soldiersCount);
 
-            UserUtils.Print($"\nОтряд 1 до трансфера");
-            ShowSquadInfo(squadOne);
+            UserUtils.Print($"Отряд 1 до трансфера", ConsoleColor.Green);
+            ShowSquadInfo(_squadOne);
 
-            UserUtils.Print($"\nОтряд 2 до трансфера");
-            ShowSquadInfo(squadTwo);
+            UserUtils.Print($"\nОтряд 2 до трансфера", ConsoleColor.Green);
+            ShowSquadInfo(_squadTwo);
 
-            UserUtils.Print($"\nПроизводим трансфер бойцов", ConsoleColor.DarkYellow);
-            TransferSoldiers(squadOne, squadTwo, conditionTransfer);
+            UserUtils.Print($"\nПроизводим трансфер", ConsoleColor.DarkYellow);
+            TransferSoldiers(_squadOne, _squadTwo, conditionTransfer);
+
+            UserUtils.Print($"\nОтряд 1 после трансфера", ConsoleColor.Green);
+            ShowSquadInfo(_squadOne);
+
+            UserUtils.Print($"\nОтряд 2 после трансфера", ConsoleColor.Green);
+            ShowSquadInfo(_squadTwo);
         }
 
         private static void ShowSquadInfo(List<Soldier> soldiers)
@@ -42,7 +55,14 @@
 
         private void TransferSoldiers(List<Soldier> squadOne, List<Soldier> squadTwo, string conditionTransfer)
         {
+            List<Soldier> transferSoldiers = squadOne.Where(soldier => soldier.Name.StartsWith(conditionTransfer)).ToList();
 
+            UserUtils.Print($"\nБойцы для трансфера:", ConsoleColor.Red);
+            ShowSquadInfo(transferSoldiers);
+            UserUtils.Print($"\n####################", ConsoleColor.Red);
+
+            _squadOne = squadOne.Except(transferSoldiers).ToList();
+            _squadTwo = squadTwo.Union(transferSoldiers).ToList();
         }
     }
 
