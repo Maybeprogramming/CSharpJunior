@@ -4,8 +4,8 @@
 
 <details>
 <summary>01 - Задача Переменные </summary>
-[https://github.com/Maybeprogramming/CSharpJunior/tree/master/01_Task
-](Решение задачи)  
+[Решение задачи]([url](https://github.com/Maybeprogramming/CSharpJunior/tree/master/01_Task))  
+  
 Попрактикуйтесь в создании переменных. 
 
 Объявите 10 переменных и присвойте им значения. 
