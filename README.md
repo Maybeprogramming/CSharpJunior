@@ -4,7 +4,7 @@
 
 <details>
 <summary>01 - Задача Переменные </summary>
-[Решение задачи]([url](https://github.com/Maybeprogramming/CSharpJunior/tree/master/01_Task))  
+[Решение задачи](https://github.com/Maybeprogramming/CSharpJunior/tree/master/01_Task)  
   
 Попрактикуйтесь в создании переменных. 
 
