@@ -132,7 +132,7 @@
 
         private string TakeRandomName()
         {
-            string[] names = new []
+            string[] names = new[]
             {
                 "Павел", "Иван", "Сергей", "Олег", "Константин",
                 "Анатолий", "Аркадий", "Петр", "Вячеслав", "Николай",
