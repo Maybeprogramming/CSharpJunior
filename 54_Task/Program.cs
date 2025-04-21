@@ -14,21 +14,21 @@
     {
         public void Work()
         {
-            const int ShowTopByLevelCommand = 1;
-            const int ShowTopByStrengthCommand = 2;
-            const int ShowPlayersCommand = 3;
-            const int ExitCommand = 4;
+            const string ShowTopByLevelCommand = "1";
+            const string ShowTopByStrengthCommand = "2";
+            const string ShowPlayersCommand = "3";
+            const string ExitCommand = "4";
 
             bool isWork = true;
             int playerCount = 30;
             int playerTopCount = 3;
-            List<Player> players = new PlayerFactory().GetPlayers(playerCount);
+            List<Player> players = new PlayerFactory().CreatePlayers(playerCount);
 
             while (isWork)
             {
                 ShowMenu(ShowTopByLevelCommand, ShowTopByStrengthCommand, ShowPlayersCommand, ExitCommand);
 
-                switch (UserUtils.ReadInputNumber())
+                switch (Console.ReadLine())
                 {
                     case ShowTopByLevelCommand:
                         ShowTopByLevel(players, playerTopCount);
@@ -37,12 +37,13 @@
                         ShowTopByStrenght(players, playerTopCount);
                         break;
                     case ShowPlayersCommand:
-                        ShowPacients(players);
+                        ShowPlayers(players);
                         break;
                     case ExitCommand:
                         isWork = false;
                         break;
                     default:
+                        UserUtils.Print($"\nНет такой команды!", ConsoleColor.Red);
                         break;
                 }
 
@@ -60,10 +61,10 @@
         private void ShowTopByParametr(List<Player> players, int playerCount, Func<Player, int> sortParametr)
         {
             List<Player> playersTop = players.OrderByDescending(sortParametr).Take(playerCount).ToList();
-            ShowPacients(playersTop);
+            ShowPlayers(playersTop);
         }
 
-        private void ShowPacients(List<Player> players)
+        private void ShowPlayers(List<Player> players)
         {
             int index = 0;
             UserUtils.Print($"Список игроков: ", ConsoleColor.Green);
@@ -72,7 +73,7 @@
                 UserUtils.Print($"\n{++index}. {player.GetInfo()}"));
         }
 
-        private void ShowMenu(int showTopByLevelCommand, int showTopByStrengthCommand, int showPlayersCommand, int exitCommand)
+        private void ShowMenu(string showTopByLevelCommand, string showTopByStrengthCommand, string showPlayersCommand, string exitCommand)
         {
             Console.Clear();
             UserUtils.Print($"Команды:", ConsoleColor.Green);
@@ -104,7 +105,7 @@
 
     public class PlayerFactory
     {
-        public List<Player> GetPlayers(int count)
+        public List<Player> CreatePlayers(int count)
         {
             List<Player> players = new();
 
@@ -118,7 +119,7 @@
 
         private Player CreatePlayer()
         {
-            string name = PlayerData.TakeRandomName();
+            string name = TakeRandomName();
             int minLevel = 1;
             int maxLevel = 100;
             int minStrength = 100;
@@ -128,26 +129,21 @@
 
             return new Player(name, level, strength);
         }
-    }
 
-    public static class PlayerData
-    {
-        private static string[] s_names;
-
-        static PlayerData()
+        private string TakeRandomName()
         {
-            s_names = new string[]
+            string[] names = new []
             {
                 "Павел", "Иван", "Сергей", "Олег", "Константин",
                 "Анатолий", "Аркадий", "Петр", "Вячеслав", "Николай",
                 "Владислав", "Роман", "Дмитрий", "Василий", "Михаил",
                 "Руслан", "Равиль", "Фёдор", "Валерий", "Евгений"
             };
-        }
 
-        public static string TakeRandomName() =>
-             s_names[UserUtils.GenerateRandomNumber(0, s_names.Length - 1)];
+            return names[UserUtils.GenerateRandomNumber(0, names.Length - 1)];
+        }
     }
+
     public static class UserUtils
     {
         private static Random s_random = new Random();
@@ -163,18 +159,6 @@
             Console.ForegroundColor = consoleColor;
             Print(message);
             Console.ResetColor();
-        }
-
-        public static int ReadInputNumber()
-        {
-            int result;
-
-            while (int.TryParse(Console.ReadLine(), out result) == false)
-            {
-                Print($"\nВы ввели не число!\nПопробуйте снова: ", ConsoleColor.DarkYellow);
-            }
-
-            return result;
         }
     }
 }

@@ -34,6 +34,7 @@
         public string GetInfo() =>
             $"{Name}, - Год производства: {ProductionDate}, - Срок годности до: {ExpirationDate}";
     }
+
     public class PreservesFactory
     {
         public List<Preserves> CreateSomePreserves(int count)
