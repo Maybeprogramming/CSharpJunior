@@ -146,10 +146,7 @@
         }
 
         public static string TakeRandomName() =>
-            GetRandomElement(s_names);
-
-        private static T GetRandomElement<T>(T[] array) =>
-            array[UserUtils.GenerateRandomNumber(0, array.Length - 1)];
+             s_names[UserUtils.GenerateRandomNumber(0, s_names.Length - 1)];
     }
     public static class UserUtils
     {
