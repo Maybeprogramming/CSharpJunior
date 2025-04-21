@@ -7,10 +7,8 @@ namespace _56_Task
         static void Main()
         {
             Console.Title = "ДЗ: Отчёт о вооружении";
-
-
-
-
+            Report report = new Report();
+            report.Work();
         }
     }
 
@@ -18,21 +16,25 @@ namespace _56_Task
     {
         public void Work()
         {
-            int soldiersCount = 30;
+            int soldiersCount = 20;
             List<Soldier> soldiers = new SoldierFactory().CreateSoldiers(soldiersCount);
+
+            ShowSoldiersInfo(soldiers);
+            CreateInfo(soldiers);
+
+            UserUtils.Print($"\n\nНажмите любую клавишу для продолжения", ConsoleColor.Green);
+            Console.ReadKey();
+        }
+
+        private void ShowSoldiersInfo(List<Soldier> soldiers)
+        {
+            UserUtils.Print($"Список солдат: ", ConsoleColor.Green);
 
             soldiers.ForEach((soldier) =>
                 UserUtils.Print($"\n{soldier.GetInfo()}"));
-
-            Create(soldiers);
         }
 
-        private void ShowInfo()
-        {
-
-        }
-
-        private void Create(List<Soldier> soldiers)
+        private void CreateInfo(List<Soldier> soldiers)
         {
             string requestRank;
             bool isRun = true;
@@ -42,20 +44,18 @@ namespace _56_Task
                 UserUtils.Print($"\nВведите звание для формирования отчёта: ", ConsoleColor.Green);
                 requestRank = Console.ReadLine();
 
-                if (_ranks.Contains(requestRank) == true)
+                if (soldiers.Where(soldier => soldier.Rank.ToLower() == requestRank.ToLower()).Count() > 0)
                 {
                     UserUtils.Print($"\nФормируем новый отчет:", ConsoleColor.Green);
 
-                    var soldiersForRaport = soldiers.Where(soldier => soldier.Rank.ToLower().Equals(requestRank.ToLower()) == true)
-                                            .Select(soldier => new
-                                            {
-                                                soldier.Name,
-                                                soldier.Rank
-                                            }).ToList();
+                    var soldiersForRaport = soldiers.Where(soldier => 
+                                                        soldier.Rank.ToLower().Equals(requestRank.ToLower()) == true)
+                                                    .Select(soldier => 
+                                                        new { soldier.Name, soldier.Rank }).ToList();
 
-                    for (int i = 0; i < soldiers.Count; i++)
+                    for (int i = 0; i < soldiersForRaport.Count; i++)
                     {
-                        UserUtils.Print($"\n{i + 1}. {soldiers[i].Name}. Звание: {soldiers[i].Rank}");
+                        UserUtils.Print($"\n{i + 1}. {soldiersForRaport[i].Name}. Звание: {soldiersForRaport[i].Rank}");
                     }
 
                     isRun = false;
@@ -108,7 +108,7 @@ namespace _56_Task
             string weapon = TakeRandomWeapon();
             int minServiceTime = 1;
             int maxServiceTime = 36;
-            int serviceTime =  UserUtils.GenerateRandomNumber(minServiceTime, maxServiceTime);
+            int serviceTime = UserUtils.GenerateRandomNumber(minServiceTime, maxServiceTime);
 
             return new Soldier(name, weapon, rank, serviceTime);
         }
