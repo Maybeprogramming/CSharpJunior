@@ -14,7 +14,64 @@
     {
         public void Work()
         {
+            const string ShowPreserversByExpirationDateCommand = "1";
+            const string ShowAllPreserversCommand = "2";
+            const string ExitCommand = "3";
 
+            bool isWork = true;
+            int preserversCount = 30;
+            int currentDate = 2025;
+            List<Preserves> preserves = new PreservesFactory().CreateSomePreserves(preserversCount);
+
+            while (isWork)
+            {
+                ShowMenu(ShowPreserversByExpirationDateCommand, ShowAllPreserversCommand, ExitCommand);
+
+                switch (Console.ReadLine())
+                {
+                    case ShowPreserversByExpirationDateCommand:
+                        ShowPreserversByExpirationDate(preserves, currentDate);
+                        break;
+                    case ShowAllPreserversCommand:
+                        ShowPreserves(preserves);
+                        break;
+                    case ExitCommand:
+                        isWork = false;
+                        break;
+                    default:
+                        UserUtils.Print($"\nНет такой команды!", ConsoleColor.Red);
+                        break;
+                }
+
+                UserUtils.Print($"\nДля продолжения нажмите любую клавишу", ConsoleColor.Green);
+                Console.ReadKey();
+            }
+        }
+
+        private void ShowPreserversByExpirationDate(List<Preserves> preserves, int currentDate)
+        {
+            List<Preserves> preserversByExpirationDate = preserves.Where(preserves => preserves.ExpirationDate < currentDate).ToList();
+            ShowPreserves(preserversByExpirationDate);
+        }
+
+        private void ShowPreserves(List<Preserves> preservers)
+        {
+            int index = 0;
+            UserUtils.Print($"Список тушонки: ", ConsoleColor.Green);
+
+            preservers.ForEach((preserves) =>
+                UserUtils.Print($"\n{++index}. {preserves.GetInfo()}"));
+        }
+
+        private void ShowMenu(string ShowPreserversByExpirationDateCommand, string ShowAllPreserversCommand, string exitCommand)
+        {
+            Console.Clear();
+            UserUtils.Print($"Команды:", ConsoleColor.Green);
+            UserUtils.Print($"\n{ShowPreserversByExpirationDateCommand}. Показать просрочку тушенки" +
+                            $"\n{ShowAllPreserversCommand}. Показать весь запас тушенки");
+            UserUtils.Print($"\n{exitCommand}. Закрыть программу", ConsoleColor.Red);
+
+            UserUtils.Print($"\nВведите команду: ", ConsoleColor.Green);
         }
     }
 
@@ -88,18 +145,6 @@
             Console.ForegroundColor = consoleColor;
             Print(message);
             Console.ResetColor();
-        }
-
-        public static int ReadInputNumber()
-        {
-            int result;
-
-            while (int.TryParse(Console.ReadLine(), out result) == false)
-            {
-                Print($"\nВы ввели не число!\nПопробуйте снова: ", ConsoleColor.DarkYellow);
-            }
-
-            return result;
         }
     }
 }
