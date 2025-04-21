@@ -126,26 +126,21 @@
 
     public class PacientFactory
     {
-        private static string[] s_names;
-        private static string[] s_surNames;
-        private static int[] s_age;
-        private static string[] s_sickness;
-
         public List<Pacient> CreatePacients(int count)
         {
-            List<Pacient> criminals = new();
+            List<Pacient> pacients = new();
 
             for (int i = 0; i < count; i++)
             {
-                criminals.Add(CreatePacient());
+                pacients.Add(CreatePacient());
             }
 
-            return criminals;
+            return pacients;
         }
 
         private Pacient CreatePacient()
         {
-            string name = TakeRandomName() + " " + TakeRanddomSurName();
+            string name = TakeRandomName() + " " + TakeRandomSurName();
             string sickness = TakeRandomSickness();
             int minAge = 1;
             int maxAge = 200;
@@ -154,7 +149,7 @@
             return new Pacient(name, sickness, age);
         }
 
-        public string TakeRandomName()
+        private string TakeRandomName()
         {
             string[] names = new[]
             {
@@ -167,7 +162,7 @@
             return names[UserUtils.GenerateRandomNumber(0, names.Length - 1)];
         }
 
-        public string TakeRanddomSurName()
+        private string TakeRandomSurName()
         {
             string[] surNames = new[]
             {
@@ -180,7 +175,7 @@
             return surNames[UserUtils.GenerateRandomNumber(0, surNames.Length - 1)];
         }
 
-        public string TakeRandomSickness()
+        private string TakeRandomSickness()
         {
             string[] sickness = new[]
             {
