@@ -1,6 +1,4 @@
-﻿using System.Reflection.Emit;
-
-namespace _56_Task
+﻿namespace _56_Task
 {
     public class Program
     {
