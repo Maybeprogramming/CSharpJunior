@@ -22,7 +22,7 @@
 
             bool isWork = true;
             int pacientsCount = 30;
-            List<Pacient> pacients = new PacientFactory().GetPacients(pacientsCount);
+            List<Pacient> pacients = new PacientFactory().CreatePacients(pacientsCount);
 
             while (isWork)
             {
@@ -72,15 +72,15 @@
             ShowPacients(pacientsBySickness);
         }
 
-        private void SortByAge(List<Pacient> pacients) =>
-            SortByParametr<Pacient>(pacients, pacient => pacient.Age.ToString());
-
-        private void SortByName(List<Pacient> pacients) =>
-            SortByParametr<Pacient>(pacients, pacient => pacient.Name);
-
-        private void SortByParametr<T>(List<Pacient> pacients, Func<Pacient, string> sortSelector)
+        private void SortByAge(List<Pacient> pacients)
         {
-            pacients = pacients.OrderBy(sortSelector).ToList();
+            pacients = pacients.OrderBy(pacient => pacient.Age).ToList();
+            ShowPacients(pacients);
+        }
+
+        private void SortByName(List<Pacient> pacients)
+        {
+            pacients = pacients.OrderBy(pacient => pacient.Name).ToList();
             ShowPacients(pacients);
         }
 
@@ -126,7 +126,12 @@
 
     public class PacientFactory
     {
-        public List<Pacient> GetPacients(int count)
+        private static string[] s_names;
+        private static string[] s_surNames;
+        private static int[] s_age;
+        private static string[] s_sickness;
+
+        public List<Pacient> CreatePacients(int count)
         {
             List<Pacient> criminals = new();
 
@@ -140,26 +145,18 @@
 
         private Pacient CreatePacient()
         {
-            string name = PacientData.TakeRandomName() + " " + PacientData.TakeRanddomSurName();
-            string sickness = PacientData.TakeRandomSickness();
-            int minAge = 16;
-            int maxAge = 80;
+            string name = TakeRandomName() + " " + TakeRanddomSurName();
+            string sickness = TakeRandomSickness();
+            int minAge = 1;
+            int maxAge = 200;
             int age = UserUtils.GenerateRandomNumber(minAge, maxAge);
 
             return new Pacient(name, sickness, age);
         }
-    }
 
-    public static class PacientData
-    {
-        private static string[] s_names;
-        private static string[] s_surNames;
-        private static int[] s_age;
-        private static string[] s_sickness;
-
-        static PacientData()
+        public string TakeRandomName()
         {
-            s_names = new string[]
+            string[] names = new[]
             {
                 "Павел", "Иван", "Сергей", "Олег", "Константин",
                 "Анатолий", "Аркадий", "Петр", "Вячеслав", "Николай",
@@ -167,7 +164,12 @@
                 "Руслан", "Равиль", "Фёдор", "Валерий", "Евгений"
             };
 
-            s_surNames = new string[]
+            return names[UserUtils.GenerateRandomNumber(0, names.Length - 1)];
+        }
+
+        public string TakeRanddomSurName()
+        {
+            string[] surNames = new[]
             {
                 "Иванов", "Петров", "Сидоров", "Овечкин", "Царьков",
                 "Овсянников", "Пирожков", "Галкин", "Пугачев", "Ивушкин",
@@ -175,23 +177,18 @@
                 "Авушкин", "Фролов", "Никитин", "Маркин", "Сливушкин"
             };
 
-            s_sickness = new string[]
+            return surNames[UserUtils.GenerateRandomNumber(0, surNames.Length - 1)];
+        }
+
+        public string TakeRandomSickness()
+        {
+            string[] sickness = new[]
             {
                 "Грипп", "Язва", "Тахикардия", "Гастрит", "Панкреатит", "Ангина"
             };
+
+            return sickness[UserUtils.GenerateRandomNumber(0, sickness.Length - 1)];
         }
-
-        public static string TakeRandomName() =>
-            GetRandomElement(s_names);
-
-        public static string TakeRanddomSurName() =>
-            GetRandomElement(s_surNames);
-
-        public static string TakeRandomSickness() =>
-           GetRandomElement(s_sickness);
-
-        private static T GetRandomElement<T>(T[] array) =>
-            array[UserUtils.GenerateRandomNumber(0, array.Length - 1)];
     }
 
     public static class UserUtils
