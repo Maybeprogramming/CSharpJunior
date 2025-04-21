@@ -5,12 +5,50 @@
         static void Main()
         {
             Console.Title = "ДЗ: Перевод бойцов";
+            Barraks barraks = new Barraks();
+            barraks.Work();
+            Console.ReadKey();
+        }
+    }
+
+    public class Barraks
+    {
+        public void Work()
+        {
+            string conditionTransfer = "Б";
+            int soldiersCount = 20;
+            SoldierFactory soldierFactory = new SoldierFactory();
+            List<Soldier> squadOne = soldierFactory.CreateSoldiers(soldiersCount);
+            List<Soldier> squadTwo = soldierFactory.CreateSoldiers(soldiersCount);
+
+            UserUtils.Print($"\nОтряд 1 до трансфера");
+            ShowSquadInfo(squadOne);
+
+            UserUtils.Print($"\nОтряд 2 до трансфера");
+            ShowSquadInfo(squadTwo);
+
+            UserUtils.Print($"\nПроизводим трансфер бойцов", ConsoleColor.DarkYellow);
+            TransferSoldiers(squadOne, squadTwo, conditionTransfer);
+        }
+
+        private static void ShowSquadInfo(List<Soldier> soldiers)
+        {
+            int index = 0;
+            UserUtils.Print($"\nСписок бойцов: ");
+
+            soldiers.ForEach((soldier) =>
+                UserUtils.Print($"\n{++index}. {soldier.GetInfo()}"));
+        }
+
+        private void TransferSoldiers(List<Soldier> squadOne, List<Soldier> squadTwo, string conditionTransfer)
+        {
+
         }
     }
 
     public class Soldier
     {
-        public Soldier(string name,string rank)
+        public Soldier(string name, string rank)
         {
             Name = name;
             Rank = rank;
@@ -49,10 +87,9 @@
         {
             string[] names = new[]
             {
-                "Павел", "Иван", "Сергей", "Олег", "Константин",
-                "Анатолий", "Аркадий", "Петр", "Вячеслав", "Николай",
-                "Владислав", "Роман", "Дмитрий", "Василий", "Михаил",
-                "Руслан", "Равиль", "Фёдор", "Валерий", "Евгений"
+                "Баранов", "Петров", "Сидоров", "Овечкин", "Царьков",
+                "Овсянников", "Пирожков", "Галкин", "Бирюков", "Ивушкин",
+                "Баландин", "Дубровский", "Ушкин", "Васильев", "Тарзанов"
             };
 
             return names[UserUtils.GenerateRandomNumber(0, names.Length - 1)];
