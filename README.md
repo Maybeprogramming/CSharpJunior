@@ -1,15 +1,11 @@
----
-layout: post
-title: Blogging Like a Hacker
----
 
 Актуальность условий задач на 07.10.2024
 
-#  Основы программирования
+# Основы программирования
+[Решение задачи](https://github.com/Maybeprogramming/CSharpJunior/blob/6b82d4cd4af858ebb24fda089131bd6b8a832c32/01_Task/Program.cs)
 
 <details>
 <summary>01 - Задача Переменные </summary>
-[Решение задачи](https://github.com/Maybeprogramming/CSharpJunior/blob/6b82d4cd4af858ebb24fda089131bd6b8a832c32/01_Task/Program.cs)
 
 Попрактикуйтесь в создании переменных.
 Объявите 10 переменных и присвойте им значения. 
