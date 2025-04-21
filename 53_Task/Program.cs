@@ -21,7 +21,7 @@
             const int ExitCommand = 5;
 
             bool isWork = true;
-            int pacientsCount = 100;
+            int pacientsCount = 30;
             List<Pacient> pacients = new PacientFactory().GetPacients(pacientsCount);
 
             while (isWork)
@@ -37,6 +37,7 @@
                         SortByAge(pacients);
                         break;
                     case ShowBySicknessCommand:
+                        ShowBySickness(pacients);
                         break;
                     case ShowPacientsCommand:
                         ShowPacients(pacients);
@@ -48,19 +49,38 @@
                         break;
                 }
 
-                UserUtils.Print($"\nДля продолжения нажмите любую клавишу");
+                UserUtils.Print($"\nДля продолжения нажмите любую клавишу", ConsoleColor.Green);
                 Console.ReadKey();
             }
         }
 
-        private void SortByAge(List<Pacient> pacients)
+        private void ShowBySickness(List<Pacient> pacients)
         {
-            pacients.OrderBy();
+            string inputSickness;
+            List<Pacient> pacientsBySickness;
+
+            do
+            {
+                UserUtils.Print($"\nВведите наименование заболевания для вывода пациентов: ", ConsoleColor.Green);
+                inputSickness = Console.ReadLine();
+
+                pacientsBySickness = pacients.Where(pacient => pacient.Sickness.ToLower() == inputSickness.ToLower()).ToList();
+            }
+            while (pacientsBySickness.Count == 0);
+
+            ShowPacients(pacientsBySickness);
         }
 
-        private void SortByName(List<Pacient> pacients)
+        private void SortByAge(List<Pacient> pacients) =>
+            SortByParametr<Pacient>(pacients, pacient => pacient.Age.ToString());
+
+        private void SortByName(List<Pacient> pacients) =>
+            SortByParametr<Pacient>(pacients, pacient => pacient.Name);
+
+        private void SortByParametr<T>(List<Pacient> pacients, Func<Pacient, string> sortSelector)
         {
-            throw new NotImplementedException();
+            pacients = pacients.OrderBy(sortSelector).ToList();
+            ShowPacients(pacients);
         }
 
         private void ShowPacients(List<Pacient> pacients)
@@ -76,11 +96,11 @@
         {
             Console.Clear();
             UserUtils.Print($"Команды:", ConsoleColor.Green);
-            UserUtils.Print($"\n{sortByNameCommand}. " +
-                            $"\n{sortByAgeCommand}. " +
-                            $"\n{showBySicknessCommand}. " +
-                            $"\n{showPacientsCommand}. ");
-            UserUtils.Print($"\n{exitCommand}. ", ConsoleColor.Red);
+            UserUtils.Print($"\n{sortByNameCommand}. Отсортировать пациентов по имени" +
+                            $"\n{sortByAgeCommand}. Отсортировать пациентов по возрасту" +
+                            $"\n{showBySicknessCommand}. Найти пациентов по заболеванию" +
+                            $"\n{showPacientsCommand}. Показать всех пациентов");
+            UserUtils.Print($"\n{exitCommand}. Закрыть программу", ConsoleColor.Red);
 
             UserUtils.Print($"\nВведите команду: ", ConsoleColor.Green);
         }
@@ -156,7 +176,7 @@
 
             s_sickness = new string[]
             {
-                "Грип", "Язва", "Тахикардия", "Гастрит", "Панкреатит", "Ангина"
+                "Грипп", "Язва", "Тахикардия", "Гастрит", "Панкреатит", "Ангина"
             };
         }
 
