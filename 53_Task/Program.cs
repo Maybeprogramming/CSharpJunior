@@ -14,11 +14,11 @@
     {
         public void Work()
         {
-            const int SortByNameCommand = 1;
-            const int SortByAgeCommand = 2;
-            const int ShowBySicknessCommand = 3;
-            const int ShowPacientsCommand = 4;
-            const int ExitCommand = 5;
+            const string SortByNameCommand = "1";
+            const string SortByAgeCommand = "2";
+            const string ShowBySicknessCommand = "3";
+            const string ShowPacientsCommand = "4";
+            const string ExitCommand = "5";
 
             bool isWork = true;
             int pacientsCount = 30;
@@ -28,7 +28,7 @@
             {
                 ShowMenu(SortByNameCommand, SortByAgeCommand, ShowBySicknessCommand, ShowPacientsCommand, ExitCommand);
 
-                switch (UserUtils.ReadInputNumber())
+                switch (Console.ReadLine())
                 {
                     case SortByNameCommand:
                         SortByName(pacients);
@@ -46,6 +46,7 @@
                         isWork = false;
                         break;
                     default:
+                        UserUtils.Print($"\nНет такой команды!", ConsoleColor.Red);
                         break;
                 }
 
@@ -92,7 +93,7 @@
                 UserUtils.Print($"\n{++index}. {pacient.GetInfo()}"));
         }
 
-        private void ShowMenu(int sortByNameCommand, int sortByAgeCommand, int showBySicknessCommand, int showPacientsCommand, int exitCommand)
+        private void ShowMenu(string sortByNameCommand, string sortByAgeCommand, string showBySicknessCommand, string showPacientsCommand, string exitCommand)
         {
             Console.Clear();
             UserUtils.Print($"Команды:", ConsoleColor.Green);
@@ -208,18 +209,6 @@
             Console.ForegroundColor = consoleColor;
             Print(message);
             Console.ResetColor();
-        }
-
-        public static int ReadInputNumber()
-        {
-            int result;
-
-            while (int.TryParse(Console.ReadLine(), out result) == false)
-            {
-                Print($"\nВы ввели не число!\nПопробуйте снова: ", ConsoleColor.DarkYellow);
-            }
-
-            return result;
         }
     }
 }
